@@ -108,5 +108,17 @@ pip install --force-reinstall -r requirements.txt
                         </html>
 
 
+### :file_folder: DATA
 
-### 💻 Run project  
+The data is available at the link ```<link>```
+
+* Download the file `data.zip` and the folder `models`;
+* Copy the folders to the project's root directory.
+* Now you are ready to run the project.
+  
+### 💻 Run project
+> The scripts have been named numerically to follow the order in which they should be executed.
+
+:scissors: 1_cropping_opt_images.py
+
+> This script performs cropping and resizing of optical images.
