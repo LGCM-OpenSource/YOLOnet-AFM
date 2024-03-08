@@ -110,7 +110,7 @@ pip install --force-reinstall -r requirements.txt
 
 ### :file_folder: DATA
 
-The data is available at the link ```<link>```
+The data is available at the link ```<[link](https://drive.google.com/drive/folders/15N1tuNQ12LPO_nU7bUBwtT78i2IcD40k?usp=drive_link)>```
 
 * Download the file `data.zip` and the folder `models`;
 * Copy the folders to the project's root directory.
