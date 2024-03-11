@@ -133,5 +133,28 @@ The data is available at the link ```[link](https://drive.google.com/drive/folde
 :open_file_folder: 3_preprocess_pixel.py 
 > This script is responsible for creating the features 'Norm Height' and 'Height Position', which are derived from the feature 'Flatten Height'. Additionally, it normalizes the features 'MaxPosition_F0500pN' and 'YM_Fmax0500pN' using the StandardScaler technique from the scikit-learn lib.
 
-> 
+> ![Ap038_Segmentação enxugado - Copia pptx](https://github.com/ArtRocha/Unet_AFM/assets/61946276/e55d929e-4ffc-4adb-8131-4427e19a814c)
+
+:dart: 4_vUnet_AFM_predict.py
+> This script performs segmentations using the vUnet_AFM model, where pixel-wise segmentation is triggered in cases where the Unet_AFM does not provide adequate segmentation and sends the results to the folder `data/output/vunet_AFM_predictions/`.
+
+:dart: 5_Unet_AFM_predict.py
+> This script performs segmentations using the Unet_AFM model and sends the results to the folder `data/output/unet_AFM_predictions/`
+
+:dart: 6_pixel_predict.py
+> This script performs segmentations using the pixel-wise segmentation model and sends the results to the folder `data/output/only_afm_predictions/`.
+
+:bar_chart: 7_eval_model.py
+> This script retrieves information from the specified folders in line 7:
+
+* vUnet_AFM: `data\output\vunet_AFM_predictions\predict_sheets`
+* Unet_AFM: `data\output\unet_AFM_predictions\predict_sheets`
+* Pixel Segmentation: `data\output\only_afm_predictions\predict_sheets`
+  
+And it generates metrics for the specified model in the `metrics.csv` spreadsheet or at the path specified by the user in line 8.
+
+:bar_chart: 8_eval_model_per_cell.py
+> In this script, the user selects the path based on the model to be evaluated, and the script returns the segmented cell and its respective metrics.
+
+
 
