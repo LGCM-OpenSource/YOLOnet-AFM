@@ -1,5 +1,7 @@
-from dataframe_treatment import PreProcessDataframe 
 import os 
+import sys
+sys.path.append(f'dev{os.sep}scripts')
+from dataframe_treatment import PreProcessDataframe 
 from tqdm import tqdm 
 
 

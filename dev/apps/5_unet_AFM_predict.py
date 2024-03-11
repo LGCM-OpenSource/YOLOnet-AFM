@@ -1,6 +1,7 @@
-from models import UnetProcess, PixelProcess 
-from dataframe_treatment import PreProcessDataframe 
 import os
+import sys
+sys.path.append(f'dev{os.sep}scripts')
+from models import UnetProcess 
 from tqdm import tqdm
 
 preprocess_image = f'data{os.sep}intermediate{os.sep}pre_processing_optico_and_afm{os.sep}image{os.sep}'
@@ -8,9 +9,6 @@ mask = f'data{os.sep}intermediate{os.sep}pre_processing_optico_and_afm{os.sep}ma
 opt_image = f'data{os.sep}input{os.sep}optical_images_resized{os.sep}'
 save_path = f'data{os.sep}output{os.sep}unet_AFM_predictions{os.sep}'
 predict_path = f'data{os.sep}input{os.sep}Usefull_data{os.sep}'
-
-save_preprocess_pixel_path = f'data{os.sep}intermediate{os.sep}pre_processing_only_afm{os.sep}'
-
 dire = os.listdir(preprocess_image)
 
 opt_image_path = [opt_image + file.replace('_channels_added.png', '_optico_crop_resized.png') for file in dire]
@@ -19,21 +17,8 @@ usefull_path = [predict_path+file.replace('_channels_added.png', '_UsefullData.t
 mask_path = [mask+file for file in dire]
 save_path = [save_path+file.replace('_channels_added.png', '_unet.png') for file in dire]
 
-
-save_preprocess_pixel_path = [save_preprocess_pixel_path+file.replace('_channels_added.png', '_UsefullData_normalized.tsv') for file in dire]
-
-
-
 for i in tqdm(range(len(opt_image_path))):
-    unetTrat =   UnetProcess(opt_image_path[i], preprocess_image_path[i], usefull_path[i], mask_path[i]) 
-    _, __, result = unetTrat.unet_predict(save_path[i],usefull_path =usefull_path[i])
-    
-    if result: 
-        save_path[i] = save_path[i].replace('_unet.png', '.png')
-
-        only_afm_process = PreProcessDataframe(usefull_path[i])
-        only_afm_process.run_preprocess_pixel_segmentation(save_preprocess_pixel_path[i])
+        unetTrat =   UnetProcess(opt_image_path[i], preprocess_image_path[i], usefull_path[i], mask_path[i]) 
         
-        
-        pixel = PixelProcess(save_preprocess_pixel_path[i], opt_image_path[i])
-        pixel.pixel_predict(save_path[i], usefull_path[i])
+        usefull_path_unet = usefull_path[i].replace(f'data{os.sep}input{os.sep}Usefull_data{os.sep}',f'data{os.sep}output{os.sep}unet_AFM_predictions{os.sep}predict_sheets{os.sep}')
+        unetTrat.unet_predict(save_path[i],usefull_path =usefull_path_unet)

@@ -7,12 +7,12 @@ import plotly.express as px
 from plotly.subplots import make_subplots
 import cv2
 from sklearn.metrics import accuracy_score, f1_score, jaccard_score, precision_score, recall_score, roc_curve
-from dataframe_treatment import DataFrameTrat
 
-import sys 
-sys.path.append('/home/arthur/lgcm/projects/Segmentation_union_projects/dev/scripts')
+
+import sys
+sys.path.append(f'dev{os.sep}scripts')
 from colors_to_pcr import HEXA_COLORS
-
+from dataframe_treatment import DataFrameTrat
 def open_image(path):
     img = cv2.imread(path)
     return img
@@ -40,7 +40,30 @@ def select_model(model_name):
         return False, True 
     return True, False
 
-result_path = f'data{os.sep}output{os.sep}predict_sheets{os.sep}'
+
+while True:
+    print(
+        '''
+        Select a number according to which model you want to evaluate:\n
+        1 - vUnet_AFM
+        2 - Unet_AFM
+        3 - Pixel_AFM
+        '''
+        )
+    option  = input('Enter the number of the desired option')
+    
+    if option.isdigit() and int(option) in [1, 2, 3]:
+        option = int(option)
+        break
+    else: 
+        print("Enter a valid option: ")
+if option == 1:
+    result_path = f'data{os.sep}output{os.sep}vunet_AFM_predictions{os.sep}predict_sheeets{os.sep}'
+elif option == 2:
+    result_path = f'data{os.sep}output{os.sep}unet_AFM_predictions{os.sep}predict_sheets{os.sep}'
+elif option == 3:
+    result_path = f'data{os.sep}output{os.sep}only_afm_predictions{os.sep}predict_sheets{os.sep}'
+
 img_path = f'data{os.sep}output{os.sep}afm_optico_predict{os.sep}'
 final_metrics_results_path = f"data{os.sep}output{os.sep}metric_results{os.sep}"
 results_files = os.listdir(img_path)

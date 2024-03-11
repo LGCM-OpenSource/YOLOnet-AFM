@@ -1,5 +1,7 @@
-from image_treatment import GenerateAFMOptico 
 import os 
+import sys
+sys.path.append(f'dev{os.sep}scripts')
+from image_treatment import GenerateAFMOptico 
 from tqdm import tqdm 
 
 
