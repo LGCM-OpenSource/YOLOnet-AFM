@@ -576,9 +576,8 @@ class UnetProcess:
             y_pred_resized, y_pred_flatten = self.resize_prediction_to_original_size(y_pred)
             
             if usefull_path:
-                save_usefulll_path = usefull_path.replace(f'data{os.sep}input{os.sep}Usefull_data{os.sep}',f'data{os.sep}output{os.sep}predict_sheets{os.sep}') 
-                df = DataFrameTrat(usefull_path)
-                df_afm = df.df
+                
+                df_afm = self.df_afm.df
                 
                 df_afm['unet_prediction'] = y_pred_flatten
                 
@@ -590,26 +589,27 @@ class UnetProcess:
             y_pred = self.preprocess_image.predicted_nucleus_to_image(optical_image, y_pred_resized)
 
             '''Save results'''
-            if save_unet_path:
-                fig = plt.figure(figsize=(15,7))
-                fig.patch.set_facecolor('white')
-                ax1 = fig.add_subplot(1,2,1)
-                ax1.set_title('Original optico')
-                plt.imshow(self.preprocess_image.image, cmap='gray')
+            # if save_unet_path:
+            #     fig = plt.figure(figsize=(15,7))
+            #     fig.patch.set_facecolor('white')
+            #     ax1 = fig.add_subplot(1,2,1)
+            #     ax1.set_title('Original optico')
+            #     plt.imshow(self.preprocess_image.image, cmap='gray')
 
-                ax2 = fig.add_subplot(1,2,2)
-                ax2.set_title('unet predict')
-                plt.imshow(y_pred, cmap='gray')
+            #     ax2 = fig.add_subplot(1,2,2)
+            #     ax2.set_title('unet predict')
+            #     plt.imshow(y_pred, cmap='gray')
 
-                fig.savefig(save_path)
+            #     fig.savefig(save_path)
                 
             if verify_count < 177*0.2 or verify_objects > 1:   
                 '''to run pixel segmentation '''   
                 return y, y_proba, True
             
-            df_afm.to_csv(save_usefulll_path, sep='\t', index=False)
+            df_afm.to_csv(usefull_path, sep='\t', index=False)
             self.preprocess_image.save_image(save_path, y_pred)
             return y, y_proba, False
+        
         except Exception:
             print(traceback.format_exc())
 
@@ -670,7 +670,7 @@ class PixelProcess:
                 'YM_Fmax0500pN',
                 'Generic Segmentation']
     
-    def __init__(self, usefull_data_path, optical_image_path):
+    def __init__(self, usefull_path, optical_image_path):
         '''
         Initializes the PixelProcess object.
 
@@ -687,7 +687,7 @@ class PixelProcess:
                             'logisticRegression': Models('logreg'), 
                             'logisticRegression_proba': Models('logreg')
                            }
-        self.df_afm_normalized = DataFrameTrat(usefull_data_path)
+        self.df_afm = DataFrameTrat(usefull_path)
         self.optical_image = ImageTrat(optical_image_path)
 
     def vector_to_image(self, vector, dimensions):
@@ -945,7 +945,7 @@ class PixelProcess:
         predict_df = predict_df.drop([distance_from_centroid], axis=1)
         return predict_df      
     
-    def pixel_predict(self, save_path, usefull_path, save_pixel_path=False):
+    def pixel_predict(self, save_path, usefull_path, usefull_path_to_save=False):
         '''
         Performs pixel-based prediction and saves the results.
 
@@ -963,7 +963,7 @@ class PixelProcess:
         
         original_df = pd.read_csv(usefull_path, index_col=0, sep='\t')
         
-        df_afm = self.df_afm_normalized.df
+        df_afm = self.df_afm.df
         df_afm = df_afm[self.features]
                 
         opt_image = self.optical_image.image
@@ -978,9 +978,9 @@ class PixelProcess:
             check_proba = model_name.split('_')
             
             x = df_afm.drop(['Process Date'], axis=1)
-            if self.df_afm_normalized.target:
-                y = df_afm[self.df_afm_normalized.target]
-                x = x.drop([self.df_afm_normalized.target], axis=1)
+            if self.df_afm.target:
+                y = df_afm[self.df_afm.target]
+                x = x.drop([self.df_afm.target], axis=1)
             
             #drop null, inf, -inf values
             x = x.apply(lambda col: col.replace((np.inf, -np.inf, np.nan), col.mean()).reset_index(drop=True))
@@ -1001,10 +1001,10 @@ class PixelProcess:
             nucleus_predict, predict_count = self.check_prediction(nucleus_predict)
             
             predict_centroid = self.centroid_calc(nucleus_predict)
-            predict_eccentricity = self.eccentricity_calc(nucleus_predict)
+            # predict_eccentricity = self.eccentricity_calc(nucleus_predict)
             
             #transpose nucleus to image
-            nucleus_img = self.optical_image.predicted_nucleus_to_image(opt_image, nucleus_predict)
+            # nucleus_img = self.optical_image.predicted_nucleus_to_image(opt_image, nucleus_predict)
             
             
             #remove outliers
@@ -1034,22 +1034,21 @@ class PixelProcess:
 
         # Save results
         save_path = save_path.replace('.png', f'_{best_model_name}.png')
-        save_usefull_path = usefull_path.replace(f'data{os.sep}input{os.sep}Usefull_data{os.sep}', f'data{os.sep}output{os.sep}predict_sheets{os.sep}')
         
         self.optical_image.save_image(save_path, best_img)
-        best_segment.to_csv(save_usefull_path, index=False, sep='\t')
+        best_segment.to_csv(usefull_path_to_save, index=False, sep='\t')
 
-        if save_pixel_path:
-            save_pixel_path = save_pixel_path.replace(".png", "")
-            fig = plt.figure(figsize=(15,7))
-            fig.patch.set_facecolor('white')
+        # if save_pixel_path:
+        #     save_pixel_path = save_pixel_path.replace(".png", "")
+        #     fig = plt.figure(figsize=(15,7))
+        #     fig.patch.set_facecolor('white')
 
-            best_img = cv2.cvtColor(best_img, cv2.COLOR_BGR2RGB)
-            opt_image = cv2.cvtColor(opt_image, cv2.COLOR_BGR2RGB)
+        #     best_img = cv2.cvtColor(best_img, cv2.COLOR_BGR2RGB)
+        #     opt_image = cv2.cvtColor(opt_image, cv2.COLOR_BGR2RGB)
 
-            self.plot_segmentation(fig, [1,2,1], 'Original optico',opt_image)
-            self.plot_segmentation(fig, [1,2,2], best_model_name, best_img)
+        #     self.plot_segmentation(fig, [1,2,1], 'Original optico',opt_image)
+        #     self.plot_segmentation(fig, [1,2,2], best_model_name, best_img)
 
-            fig.savefig(f'{save_pixel_path}_{best_model_name}_voted.png')
-            plt.close(fig)
+        #     fig.savefig(f'{save_pixel_path}_{best_model_name}_voted.png')
+        #     plt.close(fig)
  

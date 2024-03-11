@@ -1,14 +1,15 @@
 from models import EvalModel
-from dataframe_treatment import DataFrameTrat
 import os 
+import sys
+sys.path.append(f'dev{os.sep}scripts')
+from dataframe_treatment import DataFrameTrat
 import pandas as pd
 from tqdm import tqdm
 
 prediction_path = 'data/output/predict_sheets/'
-save_path = 'data/output/metric_results/values'
+save_path = 'metrics.csv'
 
 prediction_files = os.listdir(prediction_path)
-save_dir = [os.path.join(save_path, x.replace('_UsefullData.tsv', '_metrics.tsv')) for x in prediction_files]
 
 df_list = []
 for file in tqdm(prediction_files):
@@ -32,7 +33,7 @@ for file in tqdm(prediction_files):
     df_list.append(metric_df)
     
 final_df = pd.concat(df_list, axis=0)
-eval.save_metrics(final_df)
+eval.save_metrics(final_df, save_path=save_path)
 
 
 

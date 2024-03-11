@@ -1,4 +1,6 @@
 import os
+import sys
+sys.path.append(f'dev{os.sep}scripts')
 from image_treatment import CropImages
 from tqdm import tqdm
 
