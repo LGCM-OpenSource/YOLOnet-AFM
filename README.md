@@ -121,4 +121,17 @@ The data is available at the link ```[link](https://drive.google.com/drive/folde
 
 :scissors: 1_cropping_opt_images.py
 
-> This script performs cropping and resizing of optical images.
+> This script is responsible for matching the pixels of the optical image with the AFM spreadsheet, applying the cropping of the region of interest and resizing the optical images.
+
+> ![Slide1](https://github.com/ArtRocha/Unet_AFM/assets/61946276/11099a1d-a287-41ca-bbae-23626afe96bd)
+
+:framed_picture: 2_preprocess_unet.py
+> This script is responsible for processing the data that will be used in the UNet_AFM, meaning the integration of the optical image with the AFM information.
+
+>  ![Slide1](https://github.com/ArtRocha/Unet_AFM/assets/61946276/4d4579d3-6c4a-4008-af93-a22f9077d976)
+
+:open_file_folder: 3_preprocess_pixel.py 
+> This script is responsible for creating the features 'Norm Height' and 'Height Position', which are derived from the feature 'Flatten Height'. Additionally, it normalizes the features 'MaxPosition_F0500pN' and 'YM_Fmax0500pN' using the StandardScaler technique from the scikit-learn lib.
+
+> 
+
