@@ -23,10 +23,10 @@ self = os.path.dirname(self_absolute_path)
 scripts_list = ['1_cropping_opt_images.py',
                 '2_preprocess_unet.py',
                 '3_preprocess_pixel.py',
-                '4_predictions.py',
+                '4_vUnet_AFM_predictions.py',
                 '4_unet_predict.py',
-                '5_pixel_predict.py',
-                '6_eval_model.py'
+                '7_eval_model.py',
+                '8_eval_model_per_cell.py'
                 ]
 
 print('START PROJECT')

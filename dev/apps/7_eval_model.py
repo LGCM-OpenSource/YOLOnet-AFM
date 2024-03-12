@@ -1,13 +1,41 @@
-from models import EvalModel
 import os 
 import sys
 sys.path.append(f'dev{os.sep}scripts')
 from dataframe_treatment import DataFrameTrat
+from models import EvalModel
 import pandas as pd
 from tqdm import tqdm
 
-prediction_path = 'data/output/predict_sheets/'
-save_path = 'metrics.csv'
+
+while True:
+    print(
+        '''
+        Select a number according to which model you want to evaluate:\n
+        1 - vUnet_AFM
+        2 - Unet_AFM
+        3 - Pixel_AFM
+        '''
+        )
+    option  = input('Enter the number of the desired option:\n')
+    
+    if option.isdigit() and int(option) in [1, 2, 3]:
+        option = int(option)
+        break
+    else: 
+        print("Enter a valid option:\n")
+if option == 1:
+    prediction_path = f'data{os.sep}output{os.sep}vunet_AFM_predictions{os.sep}predict_sheets{os.sep}'
+    save_path = 'vUnet_AFM_metrics.csv'
+    
+elif option == 2:
+    prediction_path = f'data{os.sep}output{os.sep}unet_AFM_predictions{os.sep}predict_sheets{os.sep}'
+    save_path = 'unet_AFM_metrics.csv'
+    
+elif option == 3:
+    img_path = f'data{os.sep}output{os.sep}only_afm_predictions{os.sep}'
+    prediction_path = f'data{os.sep}output{os.sep}only_afm_predictions{os.sep}predict_sheets{os.sep}'
+    save_path = 'pixel_AFM_metrics.csv'
+    
 
 prediction_files = os.listdir(prediction_path)
 
