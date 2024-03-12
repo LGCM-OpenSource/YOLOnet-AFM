@@ -50,109 +50,118 @@ while True:
         3 - Pixel_AFM
         '''
         )
-    option  = input('Enter the number of the desired option')
+    option  = input('Enter the number of the desired option:\n')
     
     if option.isdigit() and int(option) in [1, 2, 3]:
         option = int(option)
         break
     else: 
-        print("Enter a valid option: ")
+        print("Enter a valid option:\n")
 if option == 1:
-    result_path = f'data{os.sep}output{os.sep}vunet_AFM_predictions{os.sep}predict_sheeets{os.sep}'
+    img_path = f'data{os.sep}output{os.sep}vunet_AFM_predictions{os.sep}'
+    result_path = f'data{os.sep}output{os.sep}vunet_AFM_predictions{os.sep}predict_sheets{os.sep}'
+    final_metrics_results_path = f"data{os.sep}output{os.sep}vunet_AFM_predictions{os.sep}metric_results{os.sep}"
+    
 elif option == 2:
+    img_path = f'data{os.sep}output{os.sep}unet_AFM_predictions{os.sep}'
     result_path = f'data{os.sep}output{os.sep}unet_AFM_predictions{os.sep}predict_sheets{os.sep}'
+    final_metrics_results_path = f"data{os.sep}output{os.sep}unet_AFM_predictions{os.sep}metric_results{os.sep}"
+    
 elif option == 3:
+    img_path = f'data{os.sep}output{os.sep}only_afm_predictions{os.sep}'
     result_path = f'data{os.sep}output{os.sep}only_afm_predictions{os.sep}predict_sheets{os.sep}'
+    final_metrics_results_path = f"data{os.sep}output{os.sep}only_afm_predictions{os.sep}metric_results{os.sep}"
+    
 
-img_path = f'data{os.sep}output{os.sep}afm_optico_predict{os.sep}'
-final_metrics_results_path = f"data{os.sep}output{os.sep}metric_results{os.sep}"
+
 results_files = os.listdir(img_path)
 
 
 for img in results_files:
-    process_date = img.split('_')[0]
-    model_name = img.split('_')[1]
-    
+    if os.path.isfile(img_path+img):
+        process_date = img.split('_')[0]
+        model_name = img.split('_')[1]
+        
 
-    if len(img.split('_'))>2:
-        model_name = img.split('_')[1:3]
-        model_name = '_'.join(model_name)
-    
-    df_name = img.replace(f'_{model_name}', '_UsefullData.tsv')
-    df_path = f'{result_path}{df_name}'
-    
-    df_treat = DataFrameTrat(df_path)
-    df_predict = df_treat.df
-    df_predict = df_treat.clean_target(df_predict)
-    
-    #Remove .png extension from model_name
-    model_name = model_name.split('.')[0]
-    column = model_name
-    if model_name == 'unet':
-        column = model_name+'_prediction'
-    else:
-        print('aqyu')
+        if len(img.split('_'))>2:
+            model_name = img.split('_')[1:3]
+            model_name = '_'.join(model_name)
+        
+        df_name = img.replace(f'_{model_name}', '_UsefullData.tsv')
+        df_path = f'{result_path}{df_name}'
+        
+        df_treat = DataFrameTrat(df_path)
+        df_predict = df_treat.df
+        df_predict = df_treat.clean_target(df_predict)
+        
+        #Remove .png extension from model_name
+        model_name = model_name.split('.')[0]
+        column = model_name
+        if model_name == 'unet':
+            column = model_name+'_prediction'
+        else:
+            print('aqyu')
+            
+            
+        y = df_predict['Generic Segmentation'].copy()
+        y_pred = df_predict[column].copy()
+        
+        unet, voted = select_model(model_name)
+        
+        """ Calculating metrics values """
+        SCORE=[]
+        acc_value, f1_value, jac_value, recall_value, precision_value = get_scores(y, y_pred)
+        # unet_acc_value, unet_f1_value, unet_jac_value, unet_recall_value, unet_precision_value = get_scores(y, y_unet)
+        
+        SCORE.append([process_date, unet, voted, model_name, jac_value, recall_value, precision_value, f1_value])
+        # if y_unet.equals(y_pred):
+        #     SCORE=[]
+        #     SCORE.append([process_date, unet, voted, model_name, jac_value, recall_value, precision_value, f1_value])
         
         
-    y = df_predict['Generic Segmentation'].copy()
-    y_pred = df_predict[column].copy()
-    
-    unet, voted = select_model(model_name)
-    
-    """ Calculating metrics values """
-    SCORE=[]
-    acc_value, f1_value, jac_value, recall_value, precision_value = get_scores(y, y_pred)
-    # unet_acc_value, unet_f1_value, unet_jac_value, unet_recall_value, unet_precision_value = get_scores(y, y_unet)
-    
-    SCORE.append([process_date, unet, voted, model_name, jac_value, recall_value, precision_value, f1_value])
-    # if y_unet.equals(y_pred):
-    #     SCORE=[]
-    #     SCORE.append([process_date, unet, voted, model_name, jac_value, recall_value, precision_value, f1_value])
-    
-    
-    
-    df_metrics, data_to_chart = metrics_df(SCORE, unet=unet)
-    # df_metrics.to_csv(f'data{os.sep}output{os.sep}final_prediction_sheets{os.sep}{process_date}_{model_name}.tsv', index=False)
-    
-
-    img = open_image(f'{img_path}{img}')
-    # if column != 'unet_predict':
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         
-    fig = make_subplots(1, 2)
-    # We use go.Image because subplots require traces, whereas px functions return a figure
-    fig.add_trace(go.Image(z=img), 1, 1)
-    fig.add_trace(go.Bar(x = data_to_chart["Metrics"],
-                            y = data_to_chart['Scores'],
-                        marker_color = [HEXA_COLORS['Blue'], HEXA_COLORS['Red'], HEXA_COLORS['Green']],),1,2)
-    fig.update_yaxes(range = [0,1], row=1, col=2)
-    fig.update_xaxes(categoryorder='array', categoryarray= ['Precision','Recall','F1'])
-    fig.update_layout({
-                                
-                                'title': f'Metrics from {model_name}',
-                                },
-                                plot_bgcolor='white',
-                                font_family="Arial",
-                                font = dict(size=10),
-                                title_font_family="Arial",
-                                )
-    fig.update_yaxes(
-    mirror=True,
-    ticks='outside',
-    showline=True,
-    linecolor='black',
-    gridcolor='lightgrey'
-    )
+        df_metrics, data_to_chart = metrics_df(SCORE, unet=unet)
+        # df_metrics.to_csv(f'data{os.sep}output{os.sep}final_prediction_sheets{os.sep}{process_date}_{model_name}.tsv', index=False)
+        
 
-    fig.update_xaxes(
+        img = open_image(f'{img_path}{img}')
+        # if column != 'unet_predict':
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            
+        fig = make_subplots(1, 2)
+        # We use go.Image because subplots require traces, whereas px functions return a figure
+        fig.add_trace(go.Image(z=img), 1, 1)
+        fig.add_trace(go.Bar(x = data_to_chart["Metrics"],
+                                y = data_to_chart['Scores'],
+                            marker_color = [HEXA_COLORS['Blue'], HEXA_COLORS['Red'], HEXA_COLORS['Green']],),1,2)
+        fig.update_yaxes(range = [0,1], row=1, col=2)
+        fig.update_xaxes(categoryorder='array', categoryarray= ['Precision','Recall','F1'])
+        fig.update_layout({
+                                    
+                                    'title': f'Metrics from {model_name}',
+                                    },
+                                    plot_bgcolor='white',
+                                    font_family="Arial",
+                                    font = dict(size=10),
+                                    title_font_family="Arial",
+                                    )
+        fig.update_yaxes(
         mirror=True,
         ticks='outside',
         showline=True,
         linecolor='black',
         gridcolor='lightgrey'
-    )
-    # fig.show()
-    fig.write_image(f"{final_metrics_results_path}{process_date}_{model_name}.svg") 
+        )
+
+        fig.update_xaxes(
+            mirror=True,
+            ticks='outside',
+            showline=True,
+            linecolor='black',
+            gridcolor='lightgrey'
+        )
+        # fig.show()
+        fig.write_image(f"{final_metrics_results_path}{process_date}_{model_name}.svg") 
 
 
 
