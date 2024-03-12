@@ -229,6 +229,59 @@ The data is available at the link ```https://drive.google.com/drive/folders/15N1
 > * [Scikit-Image](https://scikit-image.org/) -  Python lib
 > * [Opencv](https://docs.opencv.org/4.x/d6/d00/tutorial_py_root.html) -  Python lib
 
+## ✒️ Autores
+
+Todos aqueles que ajudaram a levantar o projeto desde o seu início:
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/ArtRocha">
+        <img src="https://drive.google.com/file/d/1ytN-fDiEYwOhMDQOM7gMMC253efdvmUP/view?usp=drive_link" width="150px;" alt="Foto Arthur Rocha" /><br>
+        <sub>
+          <b style="font-size:20px"> Arthur Rocha </b><br>
+          <b>   
+              System architecture, <br>
+              Data Treatment/Analysis, <br>
+              Image Treatment, <br>
+              Codification, <br>
+              Documentation <br>
+              e Implementation
+          </b>
+        </sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/EdCarlos-dev">
+        <img src="https://drive.google.com/file/d/1FtRCmFY6xfcY3qY98rt_IbCRtjr_Q43q/view?usp=drive_link" width="150px;" alt="Foto de Ed Santos e Silva"/><br>
+        <sub>
+          <b style="font-size:20px"> Ed Santos e Silva </b><br>
+          <b>
+              Codification, <br>
+              documentation <br>
+              e implementation
+          </b>
+        </sub>
+      </a>
+    </td>
+     <td align="center" >
+      <a href="https://github.com/cleytonbiffe">
+        <img src="https://drive.google.com/file/d/1JfbfUFgibDdOsNOEA19W9G4-ktiouxiE/view?usp=drive_link" width="150px;" alt="Foto de Cleyton Biffe"/><br>
+        <sub  >
+          <b style="font-size:20px"> Cleyton Biffe </b><br>
+          <b>
+              Data Treatment/Analysis, <br>
+              Image Treatment, <br>
+              Codification, <br>
+              and Implementation
+          </b>
+        </sub>
+      </a>
+    </td>
+  </tr>
+</table>
+
+
 <div align="center"> 
  <img  src="https://genetica.incor.usp.br/wp-content/uploads/2021/05/cropped-temp.png" width="400px;"/>  
 
