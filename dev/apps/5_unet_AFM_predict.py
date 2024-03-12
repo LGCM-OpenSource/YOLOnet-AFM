@@ -7,7 +7,7 @@ from tqdm import tqdm
 preprocess_image = f'data{os.sep}intermediate{os.sep}pre_processing_optico_and_afm{os.sep}image{os.sep}'
 mask = f'data{os.sep}intermediate{os.sep}pre_processing_optico_and_afm{os.sep}mask{os.sep}'
 opt_image = f'data{os.sep}input{os.sep}optical_images_resized{os.sep}'
-save_path = f'data{os.sep}output{os.sep}unet_AFM_predictions{os.sep}'
+save_path = f'data{os.sep}output{os.sep}unet_AFM_predictions{os.sep}predicts{os.sep}'
 predict_path = f'data{os.sep}input{os.sep}Usefull_data{os.sep}'
 dire = os.listdir(preprocess_image)
 

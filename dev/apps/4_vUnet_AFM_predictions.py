@@ -8,7 +8,7 @@ from tqdm import tqdm
 preprocess_image = f'data{os.sep}intermediate{os.sep}pre_processing_optico_and_afm{os.sep}image{os.sep}'
 mask = f'data{os.sep}intermediate{os.sep}pre_processing_optico_and_afm{os.sep}mask{os.sep}'
 opt_image = f'data{os.sep}input{os.sep}optical_images_resized{os.sep}'
-save_path = f'data{os.sep}output{os.sep}vunet_AFM_predictions{os.sep}'
+save_path = f'data{os.sep}output{os.sep}vunet_AFM_predictions{os.sep}predicts{os.sep}'
 usefull_dir = f'data{os.sep}input{os.sep}Usefull_data{os.sep}'
 
 save_preprocess_pixel_path = f'data{os.sep}intermediate{os.sep}pre_processing_only_afm{os.sep}'

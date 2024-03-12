@@ -7,7 +7,7 @@ from tqdm import tqdm
 usefull_data_original_dir = f'data{os.sep}input{os.sep}Usefull_data{os.sep}'
 usefull_data_normalized_dir = f'data{os.sep}intermediate{os.sep}pre_processing_only_afm{os.sep}'
 opt_image_dir = f'data{os.sep}input{os.sep}optical_images_resized{os.sep}'
-save_dir = f'data{os.sep}output{os.sep}only_afm_predictions{os.sep}'
+save_dir = f'data{os.sep}output{os.sep}only_afm_predictions{os.sep}predicts{os.sep}'
 
 dire = os.listdir(usefull_data_normalized_dir)
 

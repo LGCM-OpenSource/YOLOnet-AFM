@@ -58,19 +58,19 @@ while True:
     else: 
         print("Enter a valid option:\n")
 if option == 1:
-    img_path = f'data{os.sep}output{os.sep}vunet_AFM_predictions{os.sep}'
+    img_path = f'data{os.sep}output{os.sep}vunet_AFM_predictions{os.sep}predicts{os.sep}'
     result_path = f'data{os.sep}output{os.sep}vunet_AFM_predictions{os.sep}predict_sheets{os.sep}'
-    final_metrics_results_path = f"data{os.sep}output{os.sep}vunet_AFM_predictions{os.sep}metric_results{os.sep}"
+    final_metrics_results_path = f"data{os.sep}output{os.sep}vunet_AFM_predictions{os.sep}metrics_per_cell{os.sep}"
     
 elif option == 2:
-    img_path = f'data{os.sep}output{os.sep}unet_AFM_predictions{os.sep}'
+    img_path = f'data{os.sep}output{os.sep}unet_AFM_predictions{os.sep}predicts{os.sep}'
     result_path = f'data{os.sep}output{os.sep}unet_AFM_predictions{os.sep}predict_sheets{os.sep}'
-    final_metrics_results_path = f"data{os.sep}output{os.sep}unet_AFM_predictions{os.sep}metric_results{os.sep}"
+    final_metrics_results_path = f"data{os.sep}output{os.sep}unet_AFM_predictions{os.sep}metrics_per_cell{os.sep}"
     
 elif option == 3:
-    img_path = f'data{os.sep}output{os.sep}only_afm_predictions{os.sep}'
+    img_path = f'data{os.sep}output{os.sep}only_afm_predictions{os.sep}predicts{os.sep}'
     result_path = f'data{os.sep}output{os.sep}only_afm_predictions{os.sep}predict_sheets{os.sep}'
-    final_metrics_results_path = f"data{os.sep}output{os.sep}only_afm_predictions{os.sep}metric_results{os.sep}"
+    final_metrics_results_path = f"data{os.sep}output{os.sep}only_afm_predictions{os.sep}metrics_per_cell{os.sep}"
     
 
 
@@ -100,7 +100,7 @@ for img in results_files:
         if model_name == 'unet':
             column = model_name+'_prediction'
         else:
-            print('aqyu')
+            continue
             
             
         y = df_predict['Generic Segmentation'].copy()
