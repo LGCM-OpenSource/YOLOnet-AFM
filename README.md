@@ -218,4 +218,19 @@ The data is available at the link ```https://drive.google.com/drive/folders/15N1
 **OUTPUT:**
 > * Metrics per cell `data/output/<SELECTED_MODEL>/metrics_per_cell`
 
+## 🛠️ Build with
 
+> * [Visual Studio Code](https://code.visualstudio.com/) - Code Editor
+> * [Notion](https://notion.so/) - Task Manager 
+> * [Git Lab](http://172.22.133.244:8081/) - Code repo 
+> * [Python](https://www.python.org/) -  Python superset
+> * [Pandas](https://www.python.org/) -  Python lib
+> * [Scikit-Learn](https://scikit-learn.org/stable/#) -  Python lib
+> * [Scikit-Image](https://scikit-image.org/) -  Python lib
+> * [Opencv](https://docs.opencv.org/4.x/d6/d00/tutorial_py_root.html) -  Python lib
+
+<div align="center"> 
+ <img  src="https://genetica.incor.usp.br/wp-content/uploads/2021/05/cropped-temp.png" width="400px;"/>  
+
+© Todos os direitos reservados, 2024 
+</div>
