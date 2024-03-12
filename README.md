@@ -229,11 +229,9 @@ The data is available at the link ```https://drive.google.com/drive/folders/15N1
 > * [Scikit-Image](https://scikit-image.org/) -  Python lib
 > * [Opencv](https://docs.opencv.org/4.x/d6/d00/tutorial_py_root.html) -  Python lib
 
-## ✒️ Autores
+## ✒️ Authors
 
-Todos aqueles que ajudaram a levantar o projeto desde o seu início:
-
-<table>
+<table align="center">
   <tr>
     <td align="center">
       <a href="https://github.com/ArtRocha">
