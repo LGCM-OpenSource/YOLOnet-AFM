@@ -24,16 +24,16 @@ while True:
     else: 
         print("Enter a valid option:\n")
 if option == 1:
-    prediction_path = f'data{os.sep}output{os.sep}vunet_AFM_predictions{os.sep}predict_sheets{os.sep}predicts{os.sep}'
+    prediction_path = f'data{os.sep}output{os.sep}vunet_AFM_predictions{os.sep}predict_sheets{os.sep}'
     save_path = f'data{os.sep}output{os.sep}vunet_AFM_predictions{os.sep}vUnet_AFM_metrics.csv'
     
 elif option == 2:
-    prediction_path = f'data{os.sep}output{os.sep}unet_AFM_predictions{os.sep}predict_sheets{os.sep}predicts{os.sep}'
+    prediction_path = f'data{os.sep}output{os.sep}unet_AFM_predictions{os.sep}predict_sheets{os.sep}'
     save_path = f'data{os.sep}output{os.sep}unet_AFM_predictions{os.sep}unet_AFM_metrics.csv'
     
 elif option == 3:
     img_path = f'data{os.sep}output{os.sep}only_afm_predictions{os.sep}'
-    prediction_path = f'data{os.sep}output{os.sep}only_afm_predictions{os.sep}predict_sheets{os.sep}predicts{os.sep}'
+    prediction_path = f'data{os.sep}output{os.sep}only_afm_predictions{os.sep}predict_sheets{os.sep}'
     save_path = f'data{os.sep}output{os.sep}only_afm_predictions{os.sep}pixel_AFM_metrics.csv'
     
 
@@ -63,6 +63,7 @@ for file in tqdm(prediction_files):
     
 final_df = pd.concat(df_list, axis=0)
 eval.save_metrics(final_df, save_path=save_path)
+print(f'Metrics Saved in "{save_path}"')
 
 
 

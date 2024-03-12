@@ -163,7 +163,7 @@ for img in results_files:
         # fig.show()
         fig.write_image(f"{final_metrics_results_path}{process_date}_{model_name}.svg") 
 
-
+print(f'Metrics Saved in "{final_metrics_results_path}"')
 
 
 
