@@ -144,27 +144,27 @@ The data is available at the link ```https://drive.google.com/drive/folders/15N1
 > * AFM data file `data/input/Usefull_data`
 
 **OUTPUT:**
-> * Optical Images `data/raw/optical_images`
 > * AFM optical image `data/intermediate/pre_processing_optico_and_afm/image`
 > * Mask `data/intermediate/pre_processing_optico_and_afm/mask`
 
 >  ![Slide1](https://github.com/ArtRocha/Unet_AFM/assets/61946276/4d4579d3-6c4a-4008-af93-a22f9077d976)
 
 :open_file_folder: 3_preprocess_pixel.py 
-> This script is responsible for creating the features 'Norm Height' and 'Height Position', which are derived from the feature 'Flatten Height'. Additionally, it normalizes the features 'MaxPosition_F0500pN' and 'YM_Fmax0500pN' using the StandardScaler technique from the scikit-learn lib.
+> This script is responsible for creating the features 'Norm Height' and 'Height Position', which are derived from the feature 'Flatten Height'. Additionally, it normalizes the features 'MaxPosition_F0500pN' and 'YM_Fmax0500pN' using the StandardScaler method.
 
 **INPUT:**
 > * AFM data file `data/input/Usefull_data`
 
 **OUTPUT**
 > * Normalized AFM data file `data/intermediate/pre_processing_only_afm`
+
 > ![Ap038_Segmentação enxugado - Copia pptx](https://github.com/ArtRocha/Unet_AFM/assets/61946276/e55d929e-4ffc-4adb-8131-4427e19a814c)
 
 :dart: 4_vUnet_AFM_predict.py
 > This script performs segmentations using the vUnet_AFM model, where pixel-wise segmentation is triggered in cases where the Unet_AFM does not provide adequate segmentation and sends the results to the folder `data/output/vunet_AFM_predictions/`.
 
 **INPUT:**
-> * AFM optical image `data/intermediate/pre_processing_optico_and_afm/image`
+> * Optical Images Crop `data/input/optical_images_resized`
 > * AFM data file `data/input/Usefull_data`
 > * AFM optical image `data/intermediate/pre_processing_optico_and_afm/image`
 > * Mask `data/intermediate/pre_processing_optico_and_afm/mask`
@@ -177,7 +177,7 @@ The data is available at the link ```https://drive.google.com/drive/folders/15N1
 > This script performs segmentations using the Unet_AFM model and sends the results to the folder `data/output/unet_AFM_predictions/`
 
 **INPUT:**
-> * AFM optical image `data/intermediate/pre_processing_optico_and_afm/image`
+> * Optical Images Crop `data/input/optical_images_resized`
 > * AFM data file `data/input/Usefull_data`
 > * AFM optical image `data/intermediate/pre_processing_optico_and_afm/image`
 > * Mask `data/intermediate/pre_processing_optico_and_afm/mask`
@@ -187,7 +187,7 @@ The data is available at the link ```https://drive.google.com/drive/folders/15N1
 > * AFM data file segmented `data/output/unet_AFM_predictions/predict_sheets`
 
 :dart: 6_pixel_predict.py
-> This script performs segmentations using the pixel-wise segmentation model and sends the results to the folder `data/output/only_afm_predictions/`.
+> This script performs segmentations using the pixel-wise segmentation model and sends the results to the folder `data/output/only_AFM_predictions/`.
 
 **INPUT:**
 > * Normalized AFM data file `data/intermediate/pre_processing_only_afm`
