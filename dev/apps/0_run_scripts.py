@@ -3,6 +3,7 @@ import time
 import sys
 import platform
 import subprocess
+import argparse
 
 def run_by_operacional_system_ajust(abs_path_file):
     identify = platform.system()
@@ -12,10 +13,9 @@ def run_by_operacional_system_ajust(abs_path_file):
         #,  stdin=None, stdout=None, stderr=None, close_fds=True -> retornei essas variáveis para rodar novamentde no shell
         # ,capture_output=True, text=True, -> para salvar a saída
     else:
-        run_file = subprocess.run([sys.executable, f'{abs_path_file}'], capture_output=True, text=True, shell=True)
-        # , stdin=None, stdout=None, stderr=None, close_fds=True
-
-    return run_file  
+        run_file = subprocess.run([sys.executable,  f'{abs_path_file}'], shell=True, stdin=None, stdout=None, stderr=None, close_fds=True)
+        
+    return run_file
 
 self_absolute_path = os.path.abspath(__file__)
 self = os.path.dirname(self_absolute_path)
@@ -90,10 +90,37 @@ elif option == 3:
         scripts_list_dict['EVAL_CELL'],
     ]
 
+def run_arg_script(file, string , arg = None):
+
+    script = f'{self}{os.sep}{file}'
+
+    if arg == 0 and file.split('_')[1] == 'eval':
+        
+        for i in range(3):
+
+            arg_string = f'-op {i+1}'
+            scrip_and_args = f'{script} {arg_string}'
+            print(f'START {file}... {string}\nPlease wait')
+            run_by_operacional_system_ajust(scrip_and_args)
+
+
+    elif arg > 0 and file.split('_')[1] == 'eval' :
+
+        arg_string = f'-op {arg}'
+        scrip_and_args = f'{script} {arg_string}'
+        print(f'START {file}... {string}\nPlease wait')
+        run_by_operacional_system_ajust(scrip_and_args)
+
+    else:
+        scrip_and_args = f'{script}'
+        print(f'START {file}... {string}\nPlease wait')
+        run_by_operacional_system_ajust(scrip_and_args)
+
+    return print(f' FINISH {file}... {string}')
+
 print('START PROJECT')
 for script, msg in run_list:
-    time.sleep(2)
-    print(f'Start {script}... {msg}\nPlease wait')
-    time.sleep(2)
-    run_by_operacional_system_ajust(f'{self}{os.sep}{script}')
+
+    run_arg_script(file = script, string = msg, arg = option)
+
 print('FINISH PROJECT')
