@@ -12,20 +12,31 @@ These instructions will allow you to obtain a copy of the project up and running
 # 💻 Requirements
 Before you begin, make sure you've met the following requirements:
 <!---Estes são apenas requisitos de exemplo. Adicionar, duplicar ou remover conforme necessário--->
-* You have installed version  `python >= 3.9.12 `
+* You have installed version  `python == 3.11.8 `
 
 
 ### 🔧 Install
 
+> **WINDOWS**
 ```
-pip install -r requirements.txt
+pip install -r requirements_win.txt
 
 ```
 if fail try: 
 ```
-pip install --force-reinstall -r requirements.txt
+pip install --force-reinstall -r requirements_win.txt
 ```
 
+> **LINUX**
+
+```
+pip install -r requirements_linux.txt
+
+```
+if fail try: 
+```
+pip install --force-reinstall -r requirements_linux.txt
+```
 > If any dependency is not installed, the list below has the commands to install the uninstalled libraries manually
                  <!DOCTYPE html>
                         <html>
@@ -110,17 +121,20 @@ pip install --force-reinstall -r requirements.txt
 
 ### :file_folder: DATA
 
-The data is available at the link ```https://drive.google.com/drive/folders/15N1tuNQ12LPO_nU7bUBwtT78i2IcD40k?usp=drive_link```
+The data is available at the [Drive link](https://drive.google.com/drive/folders/15N1tuNQ12LPO_nU7bUBwtT78i2IcD40k?usp=drive_link) 
 
 * Download the file `data.zip` and the folder `models`;
 * Copy the folders to the project's root directory.
 * Now you are ready to run the project.
   
 ### 💻 Run project
-> The scripts have been named numerically to follow the order in which they should be executed.
 
 :robot: 0_run_scripts.py
-> This script is responsible for running all processes, allowing the user to select the model they wish to test and obtain their respective metrics.
+> This script runs the entire project according to the option selected by the user:
+> * Option 0: Runs all models and returns their respective general and specific metrics.
+> * Option 1: Runs the vUnet_AFM model and returns its general and specific metrics.
+> * Option 2: Runs the Unet_AFM model and returns its general and specific metrics.
+> * Option 3: Runs the AFM_only model (per pixel) and returns its general and specific metrics.
 
 :scissors: 1_cropping_opt_images.py
 
@@ -231,48 +245,46 @@ The data is available at the link ```https://drive.google.com/drive/folders/15N1
 
 ## ✒️ Authors
 
+
 <table align="center">
   <tr>
     <td align="center">
       <a href="https://github.com/ArtRocha">
-        <img src="https://drive.google.com/file/d/1ytN-fDiEYwOhMDQOM7gMMC253efdvmUP/view?usp=drive_link" width="150px;" alt="Foto Arthur Rocha" /><br>
+        <img src="https://github.com/ArtRocha/Unet_AFM/assets/61946276/486735c6-716a-445f-a7f9-8a2d849e3d47" width="150px;" alt="Foto Arthur Rocha" /><br>
         <sub>
-          <b style="font-size:20px"> Arthur Rocha </b><br>
-          <b>   
-              System architecture, <br>
-              Data Treatment/Analysis, <br>
-              Image Treatment, <br>
-              Codification, <br>
-              Documentation <br>
-              e Implementation
-          </b>
+          <b style="font-size:20px"> Arthur Rocha </b>
+        </sub>
+      </a>
+    </td>
+    <td align="center" >
+         <a href="http://lattes.cnpq.br/8207473893996045">
+           <img src="https://github.com/ArtRocha/Unet_AFM/assets/61946276/b114b01f-8df3-4acf-bc1a-8981331ff67c" width="150px;" alt="Foto de Ayumi Aurea"/><br>
+           <sub  >
+             <b style="font-size:20px"> Ayumi Aurea Miyakawa </b><br>
+           </sub>
+         </a>
+       </td>
+        <td align="center" >
+      <a href="https://github.com/cleytonbiffe">
+        <img src="https://github.com/ArtRocha/Unet_AFM/assets/61946276/b114b01f-8df3-4acf-bc1a-8981331ff67c" width="150px;" alt="Foto de Cleyton Biffe"/><br>
+        <sub  >
+          <b style="font-size:20px"> Cleyton Biffe </b><br>
         </sub>
       </a>
     </td>
     <td align="center">
       <a href="https://github.com/EdCarlos-dev">
-        <img src="https://drive.google.com/file/d/1FtRCmFY6xfcY3qY98rt_IbCRtjr_Q43q/view?usp=drive_link" width="150px;" alt="Foto de Ed Santos e Silva"/><br>
+        <img src="https://github.com/ArtRocha/Unet_AFM/assets/61946276/558ae40e-626f-4305-b550-cde25f2f8172" width="150px;" alt="Foto de Ed Santos e Silva"/><br>
         <sub>
           <b style="font-size:20px"> Ed Santos e Silva </b><br>
-          <b>
-              Codification, <br>
-              documentation <br>
-              e implementation
-          </b>
         </sub>
       </a>
     </td>
      <td align="center" >
-      <a href="https://github.com/cleytonbiffe">
-        <img src="https://drive.google.com/file/d/1JfbfUFgibDdOsNOEA19W9G4-ktiouxiE/view?usp=drive_link" width="150px;" alt="Foto de Cleyton Biffe"/><br>
+      <a href="http://lattes.cnpq.br/9674023945962136">
+        <img src="https://servicosweb.cnpq.br/wspessoa/servletrecuperafoto?tipo=1&id=K4761668A5" width="150px;" alt="Foto de Jose Patane"/><br>
         <sub  >
-          <b style="font-size:20px"> Cleyton Biffe </b><br>
-          <b>
-              Data Treatment/Analysis, <br>
-              Image Treatment, <br>
-              Codification, <br>
-              and Implementation
-          </b>
+          <b style="font-size:20px"> Jose Patane </b><br>
         </sub>
       </a>
     </td>
