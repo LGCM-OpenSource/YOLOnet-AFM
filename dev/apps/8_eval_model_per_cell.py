@@ -8,8 +8,15 @@ from plotly.subplots import make_subplots
 import cv2
 from sklearn.metrics import accuracy_score, f1_score, jaccard_score, precision_score, recall_score, roc_curve
 
-
 import sys
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-op', '--options', type=int)
+
+args = parser.parse_args()
+options = args.options
+
 sys.path.append(f'dev{os.sep}scripts')
 from colors_to_pcr import HEXA_COLORS
 from dataframe_treatment import DataFrameTrat
@@ -41,22 +48,23 @@ def select_model(model_name):
     return True, False
 
 
-while True:
-    print(
-        '''
-        Select a number according to which model you want to evaluate:\n
-        1 - vUnet_AFM
-        2 - Unet_AFM
-        3 - Pixel_AFM
-        '''
-        )
-    option  = input('Enter the number of the desired option:\n')
+# while True:
+#     print(
+#         '''
+#         Select a number according to which model you want to evaluate:\n
+#         1 - vUnet_AFM
+#         2 - Unet_AFM
+#         3 - Pixel_AFM
+#         '''
+#         )
+#     option  = input('Enter the number of the desired option:\n')
     
-    if option.isdigit() and int(option) in [1, 2, 3]:
-        option = int(option)
-        break
-    else: 
-        print("Enter a valid option:\n")
+#     if option.isdigit() and int(option) in [1, 2, 3]:
+#         option = int(option)
+#         break
+#     else: 
+#         print("Enter a valid option:\n")
+option = options
 if option == 1:
     img_path = f'data{os.sep}output{os.sep}vunet_AFM_predictions{os.sep}predicts{os.sep}'
     result_path = f'data{os.sep}output{os.sep}vunet_AFM_predictions{os.sep}predict_sheets{os.sep}'
@@ -170,7 +178,7 @@ print(f'Metrics Saved in "{final_metrics_results_path}"')
 
 
 
-
+sys.stdout.close()
 
 
 
