@@ -266,7 +266,7 @@ The data is available at the [Drive link](https://drive.google.com/drive/folders
        </td>
         <td align="center" >
       <a href="https://github.com/cleytonbiffe">
-        <img src="https://github.com/ArtRocha/Unet_AFM/assets/61946276/b114b01f-8df3-4acf-bc1a-8981331ff67c" width="150px;" alt="Foto de Cleyton Biffe"/><br>
+        <img src="https://lh3.googleusercontent.com/a-/ALV-UjVJX4GCnUtZU2PSn6qLPI9uDZLvtCZfngd_oRpBnpup62c=s48-p" width="150px;" alt="Foto de Cleyton Biffe"/><br>
         <sub  >
           <b style="font-size:20px"> Cleyton Biffe </b><br>
         </sub>
@@ -282,7 +282,7 @@ The data is available at the [Drive link](https://drive.google.com/drive/folders
     </td>
      <td align="center" >
       <a href="http://lattes.cnpq.br/9674023945962136">
-        <img src="https://servicosweb.cnpq.br/wspessoa/servletrecuperafoto?tipo=1&id=K4761668A5" width="150px;" alt="Foto de Jose Patane"/><br>
+        <img src="https://lh3.googleusercontent.com/a-/ALV-UjUC_CbCkHR3n6mjft683RBUYRlmXo9xZdX01RdaTErJyQ=s272-p-k-rw-no" width="150px;" alt="Foto de Jose Patane"/><br>
         <sub  >
           <b style="font-size:20px"> Jose Patane </b><br>
         </sub>
