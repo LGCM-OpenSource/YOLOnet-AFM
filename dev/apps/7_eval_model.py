@@ -5,24 +5,31 @@ from dataframe_treatment import DataFrameTrat
 from models import EvalModel
 import pandas as pd
 from tqdm import tqdm
+import argparse
 
+parser = argparse.ArgumentParser()
+parser.add_argument('-op', '--options', type=int)
 
-while True:
-    print(
-        '''
-        Select a number according to which model you want to evaluate:\n
-        1 - vUnet_AFM
-        2 - Unet_AFM
-        3 - Pixel_AFM
-        '''
-        )
-    option  = input('Enter the number of the desired option:\n')
+args = parser.parse_args()
+options = args.options
+
+# while True:
+    # print(
+    #     '''
+    #     Select a number according to which model you want to evaluate:\n
+    #     1 - vUnet_AFM
+    #     2 - Unet_AFM
+    #     3 - Pixel_AFM
+    #     '''
+    #     )
+option  = options
+    # input('Enter the number of the desired option:\n')
     
-    if option.isdigit() and int(option) in [1, 2, 3]:
-        option = int(option)
-        break
-    else: 
-        print("Enter a valid option:\n")
+    # if option.isdigit() and int(option) in [1, 2, 3]:
+    #     option = int(option)
+    #     break
+    # else: 
+    #     print("Enter a valid option:\n")
 if option == 1:
     prediction_path = f'data{os.sep}output{os.sep}vunet_AFM_predictions{os.sep}predict_sheets{os.sep}'
     save_path = f'data{os.sep}output{os.sep}vunet_AFM_predictions{os.sep}vUnet_AFM_metrics.csv'
@@ -35,7 +42,7 @@ elif option == 3:
     img_path = f'data{os.sep}output{os.sep}only_afm_predictions{os.sep}'
     prediction_path = f'data{os.sep}output{os.sep}only_afm_predictions{os.sep}predict_sheets{os.sep}'
     save_path = f'data{os.sep}output{os.sep}only_afm_predictions{os.sep}pixel_AFM_metrics.csv'
-    
+
 
 prediction_files = os.listdir(prediction_path)
 
@@ -65,9 +72,4 @@ final_df = pd.concat(df_list, axis=0)
 eval.save_metrics(final_df, save_path=save_path)
 print(f'Metrics Saved in "{save_path}"')
 
-
-
-
-
-
-
+sys.stdout.close()
