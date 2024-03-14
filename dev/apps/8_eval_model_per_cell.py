@@ -7,19 +7,15 @@ import plotly.express as px
 from plotly.subplots import make_subplots
 import cv2
 from sklearn.metrics import accuracy_score, f1_score, jaccard_score, precision_score, recall_score, roc_curve
-from tqdm import tqdm
+
 import sys
 import argparse
-
-parser = argparse.ArgumentParser()
-parser.add_argument('-op', '--options', type=int)
-
-args = parser.parse_args()
-options = args.options
 
 sys.path.append(f'dev{os.sep}scripts')
 from colors_to_pcr import HEXA_COLORS
 from dataframe_treatment import DataFrameTrat
+from tqdm import tqdm
+
 def open_image(path):
     img = cv2.imread(path)
     return img
@@ -47,136 +43,154 @@ def select_model(model_name):
         return False, True 
     return True, False
 
+parser = argparse.ArgumentParser()
+parser.add_argument('-op', '--options', type=int)
 
-# while True:
-#     print(
-#         '''
-#         Select a number according to which model you want to evaluate:\n
-#         1 - vUnet_AFM
-#         2 - Unet_AFM
-#         3 - Pixel_AFM
-#         '''
-#         )
-#     option  = input('Enter the number of the desired option:\n')
-    
-#     if option.isdigit() and int(option) in [1, 2, 3]:
-#         option = int(option)
-#         break
-#     else: 
-#         print("Enter a valid option:\n")
-option = options
-if option == 1:
-    img_path = f'data{os.sep}output{os.sep}vunet_AFM_predictions{os.sep}predicts{os.sep}'
-    result_path = f'data{os.sep}output{os.sep}vunet_AFM_predictions{os.sep}predict_sheets{os.sep}'
-    final_metrics_results_path = f"data{os.sep}output{os.sep}vunet_AFM_predictions{os.sep}metrics_per_cell{os.sep}"
+args = parser.parse_args()
+option = args.options
+dict_dirs = {'img_path':
+                            {
+                            'vUnet_AFM':f'data{os.sep}output{os.sep}vunet_AFM_predictions{os.sep}predicts{os.sep}',
+                            'Unet_AFM': f'data{os.sep}output{os.sep}unet_AFM_predictions{os.sep}predicts{os.sep}',
+                            'Only_AFM': f'data{os.sep}output{os.sep}only_afm_predictions{os.sep}predicts{os.sep}'
+                            }
+                        ,
+             'result_path': {
+                            'vUnet_AFM':f'data{os.sep}output{os.sep}vunet_AFM_predictions{os.sep}predict_sheets{os.sep}',
+                            'Unet_AFM': f'data{os.sep}output{os.sep}unet_AFM_predictions{os.sep}predict_sheets{os.sep}',
+                            'Only_AFM': f'data{os.sep}output{os.sep}only_afm_predictions{os.sep}predict_sheets{os.sep}'
+                            },
+             'final_metrics_results_path':{
+                                            'vUnet_AFM':f"data{os.sep}output{os.sep}vunet_AFM_predictions{os.sep}metrics_per_cell{os.sep}",
+                                            'Unet_AFM': f"data{os.sep}output{os.sep}unet_AFM_predictions{os.sep}metrics_per_cell{os.sep}", 
+                                            'Only_AFM': f"data{os.sep}output{os.sep}only_afm_predictions{os.sep}metrics_per_cell{os.sep}"
+
+                                           }
+             
+             }
+
+if option ==0:
+    img_path = [
+                    dict_dirs['img_path']['vUnet_AFM'],
+                    dict_dirs['img_path']['Unet_AFM'],
+                    dict_dirs['img_path']['Only_AFM']        
+                ]
+    result_path = [
+                    dict_dirs['result_path']['vUnet_AFM'],
+                    dict_dirs['result_path']['Unet_AFM'],
+                    dict_dirs['result_path']['Only_AFM'] 
+                    ]
+    final_metrics_results_path = [
+                                    dict_dirs['final_metrics_results_path']['vUnet_AFM'],
+                                    dict_dirs['final_metrics_results_path']['Unet_AFM'],
+                                    dict_dirs['final_metrics_results_path']['Only_AFM'] 
+                                    ]
+elif option == 1:
+    img_path = [dict_dirs['img_path']['vUnet_AFM']]
+    result_path = [dict_dirs['result_path']['vUnet_AFM']]
+    final_metrics_results_path = [dict_dirs['final_metrics_results_path']['vUnet_AFM']]
     
 elif option == 2:
-    img_path = f'data{os.sep}output{os.sep}unet_AFM_predictions{os.sep}predicts{os.sep}'
-    result_path = f'data{os.sep}output{os.sep}unet_AFM_predictions{os.sep}predict_sheets{os.sep}'
-    final_metrics_results_path = f"data{os.sep}output{os.sep}unet_AFM_predictions{os.sep}metrics_per_cell{os.sep}"
+    img_path = [dict_dirs['img_path']['Unet_AFM']]
+    result_path = [dict_dirs['result_path']['Unet_AFM']]
+    final_metrics_results_path = [dict_dirs['final_metrics_results_path']['Unet_AFM']]
     
 elif option == 3:
-    img_path = f'data{os.sep}output{os.sep}only_afm_predictions{os.sep}predicts{os.sep}'
-    result_path = f'data{os.sep}output{os.sep}only_afm_predictions{os.sep}predict_sheets{os.sep}'
-    final_metrics_results_path = f"data{os.sep}output{os.sep}only_afm_predictions{os.sep}metrics_per_cell{os.sep}"
-    
+    img_path = [dict_dirs['img_path']['Only_AFM']]
+    result_path = [dict_dirs['result_path']['Only_AFM']]
+    final_metrics_results_path = [dict_dirs['final_metrics_results_path']['Only_AFM']]
+ 
+ 
+for  img_p, result_p, final_p in tqdm(zip(img_path, result_path, final_metrics_results_path)):
+    results_files = os.listdir(img_p)
 
 
-results_files = os.listdir(img_path)
+    for img in results_files:
+        if os.path.isfile(img_p+img):
+            process_date = img.split('_')[0]
+            model_name = img.split('_')[1]
+            
 
-
-for img in tqdm(results_files):
-    if os.path.isfile(img_path+img):
-        process_date = img.split('_')[0]
-        model_name = img.split('_')[1]
-        
-
-        if len(img.split('_'))>2:
-            model_name = img.split('_')[1:3]
-            model_name = '_'.join(model_name)
-        
-        df_name = img.replace(f'_{model_name}', '_UsefullData.tsv')
-        df_path = f'{result_path}{df_name}'
-        
-        df_treat = DataFrameTrat(df_path)
-        df_predict = df_treat.df
-        df_predict = df_treat.clean_target(df_predict)
-        
-        #Remove .png extension from model_name
-        model_name = model_name.split('.')[0]
-        column = model_name
-        if model_name == 'unet':
-            column = model_name+'_prediction'
-        else:
-            continue
+            if len(img.split('_'))>2:
+                model_name = img.split('_')[1:3]
+                model_name = '_'.join(model_name)
+            
+            df_name = img.replace(f'_{model_name}', '_UsefullData.tsv')
+            df_path = f'{result_p}{df_name}'
+            
+            df_treat = DataFrameTrat(df_path)
+            df_predict = df_treat.df
+            df_predict = df_treat.clean_target(df_predict)
+            
+            #Remove .png extension from model_name
+            model_name = model_name.split('.')[0]
+            column = model_name
+            if model_name == 'unet':
+                column = model_name+'_prediction'
+            
+                
+                
+            y = df_predict['Generic Segmentation'].copy()
+            y_pred = df_predict[column].copy()
+            
+            unet, voted = select_model(model_name)
+            
+            """ Calculating metrics values """
+            SCORE=[]
+            acc_value, f1_value, jac_value, recall_value, precision_value = get_scores(y, y_pred)
+            # unet_acc_value, unet_f1_value, unet_jac_value, unet_recall_value, unet_precision_value = get_scores(y, y_unet)
+            
+            SCORE.append([process_date, unet, voted, model_name, jac_value, recall_value, precision_value, f1_value])
+            # if y_unet.equals(y_pred):
+            #     SCORE=[]
+            #     SCORE.append([process_date, unet, voted, model_name, jac_value, recall_value, precision_value, f1_value])
             
             
-        y = df_predict['Generic Segmentation'].copy()
-        y_pred = df_predict[column].copy()
-        
-        unet, voted = select_model(model_name)
-        
-        """ Calculating metrics values """
-        SCORE=[]
-        acc_value, f1_value, jac_value, recall_value, precision_value = get_scores(y, y_pred)
-        # unet_acc_value, unet_f1_value, unet_jac_value, unet_recall_value, unet_precision_value = get_scores(y, y_unet)
-        
-        SCORE.append([process_date, unet, voted, model_name, jac_value, recall_value, precision_value, f1_value])
-        # if y_unet.equals(y_pred):
-        #     SCORE=[]
-        #     SCORE.append([process_date, unet, voted, model_name, jac_value, recall_value, precision_value, f1_value])
-        
-        
-        
-        df_metrics, data_to_chart = metrics_df(SCORE, unet=unet)
-        # df_metrics.to_csv(f'data{os.sep}output{os.sep}final_prediction_sheets{os.sep}{process_date}_{model_name}.tsv', index=False)
-        
-
-        img = open_image(f'{img_path}{img}')
-        # if column != 'unet_predict':
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             
-        fig = make_subplots(1, 2)
-        # We use go.Image because subplots require traces, whereas px functions return a figure
-        fig.add_trace(go.Image(z=img), 1, 1)
-        fig.add_trace(go.Bar(x = data_to_chart["Metrics"],
-                                y = data_to_chart['Scores'],
-                            marker_color = [HEXA_COLORS['Blue'], HEXA_COLORS['Red'], HEXA_COLORS['Green']],),1,2)
-        fig.update_yaxes(range = [0,1], row=1, col=2)
-        fig.update_xaxes(categoryorder='array', categoryarray= ['Precision','Recall','F1'])
-        fig.update_layout({
-                                    
-                                    'title': f'Metrics from {model_name}',
-                                    },
-                                    plot_bgcolor='white',
-                                    font_family="Arial",
-                                    font = dict(size=10),
-                                    title_font_family="Arial",
-                                    )
-        fig.update_yaxes(
-        mirror=True,
-        ticks='outside',
-        showline=True,
-        linecolor='black',
-        gridcolor='lightgrey'
-        )
+            df_metrics, data_to_chart = metrics_df(SCORE, unet=unet)
+            # df_metrics.to_csv(f'data{os.sep}output{os.sep}final_prediction_sheets{os.sep}{process_date}_{model_name}.tsv', index=False)
+            
 
-        fig.update_xaxes(
+            img = open_image(f'{img_p}{img}')
+            # if column != 'unet_predict':
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                
+            fig = make_subplots(1, 2)
+            # We use go.Image because subplots require traces, whereas px functions return a figure
+            fig.add_trace(go.Image(z=img), 1, 1)
+            fig.add_trace(go.Bar(x = data_to_chart["Metrics"],
+                                    y = data_to_chart['Scores'],
+                                marker_color = [HEXA_COLORS['Blue'], HEXA_COLORS['Red'], HEXA_COLORS['Green']],),1,2)
+            fig.update_yaxes(range = [0,1], row=1, col=2)
+            fig.update_xaxes(categoryorder='array', categoryarray= ['Precision','Recall','F1'])
+            fig.update_layout({
+                                        
+                                        'title': f'Metrics from {model_name}',
+                                        },
+                                        plot_bgcolor='white',
+                                        font_family="Arial",
+                                        font = dict(size=10),
+                                        title_font_family="Arial",
+                                        )
+            fig.update_yaxes(
             mirror=True,
             ticks='outside',
             showline=True,
             linecolor='black',
             gridcolor='lightgrey'
-        )
-        # fig.show()
-        fig.write_image(f"{final_metrics_results_path}{process_date}_{model_name}.svg") 
+            )
 
-print(f'Metrics Saved in "{final_metrics_results_path}"')
+            fig.update_xaxes(
+                mirror=True,
+                ticks='outside',
+                showline=True,
+                linecolor='black',
+                gridcolor='lightgrey'
+            )
+            # fig.show()
+            fig.write_image(f"{final_p}{process_date}_{model_name}.svg") 
 
-
-
-
-
+    print(f'Metrics Saved in "{final_p}"')
 
 sys.stdout.close()
 

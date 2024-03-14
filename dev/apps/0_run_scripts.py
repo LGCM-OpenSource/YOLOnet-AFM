@@ -21,7 +21,7 @@ def run_by_operacional_system_ajust(abs_path_file):
 self_absolute_path = os.path.abspath(__file__)
 self = os.path.dirname(self_absolute_path)
 
-scripts_list_dict = {
+scripts_dict = {
                     'CROP_IMG':('1_cropping_opt_images.py', 'cropping images...'),
                     'PREP_UNET':('2_preprocess_unet.py', 'Generating optical AFM image...'),
                     'PREP_PIXEL':('3_preprocess_pixel.py', 'Normalizing AFM data file...'),
@@ -54,58 +54,58 @@ while True:
 # all models
 if option == 0:
     run_list = [
-        scripts_list_dict['CROP_IMG'],
-        scripts_list_dict['PREP_UNET'],
-        scripts_list_dict['PREP_PIXEL'],
-        scripts_list_dict['PRED_VUNET'],
-        scripts_list_dict['PRED_UNET'],
-        scripts_list_dict['PRED_PIXEL'],
-        scripts_list_dict['EVAL_MODEL'],
-        scripts_list_dict['EVAL_CELL'],
+        scripts_dict['CROP_IMG'],
+        scripts_dict['PREP_UNET'],
+        scripts_dict['PREP_PIXEL'],
+        scripts_dict['PRED_VUNET'],
+        scripts_dict['PRED_UNET'],
+        scripts_dict['PRED_PIXEL'],
+        scripts_dict['EVAL_MODEL'],
+        scripts_dict['EVAL_CELL'],
     ]
 # vUnet AFM
 elif option == 1:
     run_list = [
-        scripts_list_dict['CROP_IMG'],
-        scripts_list_dict['PREP_UNET'],
-        scripts_list_dict['PRED_VUNET'],
-        scripts_list_dict['EVAL_MODEL'],
-        scripts_list_dict['EVAL_CELL'],
+        scripts_dict['CROP_IMG'],
+        scripts_dict['PREP_UNET'],
+        scripts_dict['PRED_VUNET'],
+        scripts_dict['EVAL_MODEL'],
+        scripts_dict['EVAL_CELL'],
     ]
 # Unet AFM
 elif option == 2:
     run_list = [
-        scripts_list_dict['CROP_IMG'],
-        scripts_list_dict['PREP_UNET'],
-        scripts_list_dict['PRED_UNET'],
-        scripts_list_dict['EVAL_MODEL'],
-        scripts_list_dict['EVAL_CELL'],
+        scripts_dict['CROP_IMG'],
+        scripts_dict['PREP_UNET'],
+        scripts_dict['PRED_UNET'],
+        scripts_dict['EVAL_MODEL'],
+        scripts_dict['EVAL_CELL'],
     ]
 # Pixel
 elif option == 3:
     run_list = [
-        scripts_list_dict['CROP_IMG'],
-        scripts_list_dict['PREP_PIXEL'],
-        scripts_list_dict['PRED_PIXEL'],
-        scripts_list_dict['EVAL_MODEL'],
-        scripts_list_dict['EVAL_CELL'],
+        scripts_dict['CROP_IMG'],
+        scripts_dict['PREP_PIXEL'],
+        scripts_dict['PRED_PIXEL'],
+        scripts_dict['EVAL_MODEL'],
+        scripts_dict['EVAL_CELL'],
     ]
 
 def run_arg_script(file, string , arg = None):
 
     script = f'{self}{os.sep}{file}'
 
-    if arg == 0 and file.split('_')[1] == 'eval':
+    # if arg == 0 and file.split('_')[1] == 'eval':
         
-        for i in range(3):
+    #     for i in range(3):
 
-            arg_string = f'-op {i+1}'
-            scrip_and_args = f'{script} {arg_string}'
-            print(f'START {file}... {string}\nPlease wait')
-            run_by_operacional_system_ajust(scrip_and_args)
+    #         arg_string = f'-op {i+1}'
+    #         scrip_and_args = f'{script} {arg_string}'
+    #         print(f'START {file}... {string}\nPlease wait')
+    #         run_by_operacional_system_ajust(scrip_and_args)
 
 
-    elif arg > 0 and file.split('_')[1] == 'eval' :
+    if file.split('_')[1] == 'eval' :
 
         arg_string = f'-op {arg}'
         scrip_and_args = f'{script} {arg_string}'
