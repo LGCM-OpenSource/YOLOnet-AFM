@@ -4,6 +4,7 @@ import sys
 import platform
 import subprocess
 import argparse
+from tqdm import tqdm
 
 def run_by_operacional_system_ajust(abs_path_file):
     identify = platform.system()
@@ -119,7 +120,7 @@ def run_arg_script(file, string , arg = None):
     return print(f' FINISH {file}... {string}')
 
 print('START PROJECT')
-for script, msg in run_list:
+for script, msg in tqdm(iterable=run_list, colour='green'):
 
     run_arg_script(file = script, string = msg, arg = option)
 
