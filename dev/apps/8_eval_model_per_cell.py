@@ -7,7 +7,7 @@ import plotly.express as px
 from plotly.subplots import make_subplots
 import cv2
 from sklearn.metrics import accuracy_score, f1_score, jaccard_score, precision_score, recall_score, roc_curve
-
+from tqdm import tqdm
 import sys
 import argparse
 
@@ -85,7 +85,7 @@ elif option == 3:
 results_files = os.listdir(img_path)
 
 
-for img in results_files:
+for img in tqdm(results_files):
     if os.path.isfile(img_path+img):
         process_date = img.split('_')[0]
         model_name = img.split('_')[1]
