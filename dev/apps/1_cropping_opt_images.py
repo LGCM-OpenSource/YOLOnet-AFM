@@ -16,7 +16,7 @@ txt_file = thisDir+"data"+os.sep+"raw"+os.sep+"txt_files"+os.sep
 #listing dirs
 dir = os.listdir(dirOptImg)
 
-for img in tqdm(dir):
+for img in tqdm(dir, colour='#0000FF'):
     #Trat file names
     image_bw_name = img.replace('_OpticalImg.png','_OpticalImg-BW.png')
     image_dest_name = img.replace('_OpticalImg.png', '_optico_crop_resized.png')

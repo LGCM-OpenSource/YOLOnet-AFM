@@ -101,11 +101,11 @@ elif option == 3:
     final_metrics_results_path = [dict_dirs['final_metrics_results_path']['Only_AFM']]
  
  
-for  img_p, result_p, final_p in tqdm(zip(img_path, result_path, final_metrics_results_path)):
+for  img_p, result_p, final_p in tqdm(zip(img_path, result_path, final_metrics_results_path), colour='green',):
     results_files = os.listdir(img_p)
 
 
-    for img in results_files:
+    for img in tqdm(results_files, colour='#0000FF'):
         if os.path.isfile(img_p+img):
             process_date = img.split('_')[0]
             model_name = img.split('_')[1]

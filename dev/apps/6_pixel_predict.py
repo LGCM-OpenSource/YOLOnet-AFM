@@ -16,7 +16,7 @@ usefull_data_normalized_path = [os.path.join(usefull_data_normalized_dir, file) 
 opt_image_path = [os.path.join(opt_image_dir, file.replace('_UsefullData.tsv', '_optico_crop_resized.png')) for file in dire]
 save_path = [os.path.join(save_dir, file.replace('_UsefullData.tsv', '.png')) for file in dire]
 
-for i in tqdm(range(len(usefull_data_normalized_path))):
+for i in tqdm(range(len(usefull_data_normalized_path)), colour='#0000FF'):
      usefull_path_save = usefull_data_original_path[i].replace(f'data{os.sep}input{os.sep}Usefull_data{os.sep}',f'data{os.sep}output{os.sep}only_afm_predictions{os.sep}predict_sheets{os.sep}')  
     
      pixel = PixelProcess(usefull_data_normalized_path[i], opt_image_path[i])

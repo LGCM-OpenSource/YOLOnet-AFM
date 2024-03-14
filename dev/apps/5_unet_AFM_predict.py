@@ -17,7 +17,7 @@ usefull_path = [predict_path+file.replace('_channels_added.png', '_UsefullData.t
 mask_path = [mask+file for file in dire]
 save_path = [save_path+file.replace('_channels_added.png', '_unet.png') for file in dire]
 
-for i in tqdm(range(len(opt_image_path))):
+for i in tqdm(range(len(opt_image_path)), colour='#0000FF'):
         unetTrat =   UnetProcess(opt_image_path[i], preprocess_image_path[i], usefull_path[i], mask_path[i]) 
         
         usefull_path_unet = usefull_path[i].replace(f'data{os.sep}input{os.sep}Usefull_data{os.sep}',f'data{os.sep}output{os.sep}unet_AFM_predictions{os.sep}predict_sheets{os.sep}')

@@ -54,7 +54,7 @@ elif option == 3:
 for path, save in zip(prediction_path, save_path):
     prediction_files = os.listdir(path)
     df_list = []
-    for file in tqdm(prediction_files):
+    for file in tqdm(prediction_files, colour='#0000FF'):
         if os.path.isfile(path+file):
             process_date = file.replace('_UsefullData.tsv', '')
             df_predict = DataFrameTrat(os.path.join(path, file))
