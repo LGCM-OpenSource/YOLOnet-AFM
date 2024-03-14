@@ -10,7 +10,7 @@ save_dir = f'data{os.sep}intermediate{os.sep}pre_processing_only_afm{os.sep}'
 
 dire = os.listdir(usefull_data_dir)
 
-for df in tqdm(dire):
+for df in tqdm(dire, colour='#0000FF'):
     usefull_path = usefull_data_dir + df
     save_path = save_dir + df
     

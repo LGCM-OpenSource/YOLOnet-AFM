@@ -26,7 +26,7 @@ save_preprocess_pixel_path = [save_preprocess_pixel_path+file.replace('_channels
 
 
 
-for i in tqdm(range(len(opt_image_path))):
+for i in tqdm(range(len(opt_image_path)), colour='#0000FF'):
     unetTrat =   UnetProcess(opt_image_path[i], preprocess_image_path[i], usefull_path[i], mask_path[i]) 
     
     usefull_path_save = usefull_path[i].replace(f'data{os.sep}input{os.sep}Usefull_data{os.sep}',f'data{os.sep}output{os.sep}vunet_AFM_predictions{os.sep}predict_sheets{os.sep}') 

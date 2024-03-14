@@ -11,7 +11,7 @@ save_dir = f'data{os.sep}intermediate{os.sep}pre_processing_optico_and_afm{os.se
 
 dire = os.listdir(opt_image_dir)
 
-for img in tqdm(dire):
+for img in tqdm(dire, colour='#0000FF'):
     usefull_name = img.replace('_optico_crop_resized.png','_UsefullData.tsv')
     processed_name = img.replace('_optico_crop_resized.png','_channels_added.png')
 
