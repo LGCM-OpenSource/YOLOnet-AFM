@@ -39,11 +39,12 @@ pip install --force-reinstall -r requirements_linux.txt
 ```
 
 ### 🔧 RUN
-```
+
 In the project path Unet_AFM, run:
+
 ```
 python dev/apps/0_run_scripts.py
-
+```
 
 > If any dependency is not installed, the list below has the commands to install the uninstalled libraries manually
                  <!DOCTYPE html>
