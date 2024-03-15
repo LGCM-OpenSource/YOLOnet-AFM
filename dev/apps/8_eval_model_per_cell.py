@@ -16,6 +16,19 @@ from colors_to_pcr import HEXA_COLORS
 from dataframe_treatment import DataFrameTrat
 from tqdm import tqdm
 
+COLOR_METRICS_STYLE = {
+                            'Precision':'#636efa', 
+                            'Recall':'#ef553b',
+                            'F1':'#00cc96', 
+                            'Jaccard':'#ab63fa',
+
+                            'unet_Precision':'#636efa',
+                            'unet_Recall':'#ef553b',
+                            'unet_F1':'#00cc96',
+                            'unet_Jaccard': '#ab63fa'
+
+                            }
+
 def open_image(path):
     img = cv2.imread(path)
     return img
@@ -160,7 +173,7 @@ for  img_p, result_p, final_p in tqdm(zip(img_path, result_path, final_metrics_r
             fig.add_trace(go.Image(z=img), 1, 1)
             fig.add_trace(go.Bar(x = data_to_chart["Metrics"],
                                     y = data_to_chart['Scores'],
-                                marker_color = [HEXA_COLORS['Blue'], HEXA_COLORS['Red'], HEXA_COLORS['Green']],),1,2)
+                                marker_color = [COLOR_METRICS_STYLE['Precision'], COLOR_METRICS_STYLE['Recall'], COLOR_METRICS_STYLE['F1']]),1,2)
             fig.update_yaxes(range = [0,1], row=1, col=2)
             fig.update_xaxes(categoryorder='array', categoryarray= ['Precision','Recall','F1'])
             fig.update_layout({
