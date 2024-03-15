@@ -24,7 +24,18 @@ COLOR_MODELS_STYLE = {
                         
                             }
 
+COLOR_METRICS_STYLE = {
+                            'Precision':'#636efa', 
+                            'Recall':'#ef553b',
+                            'F1':'#00cc96', 
+                            'Jaccard':'#ab63fa',
 
+                            'unet_Precision':'#636efa',
+                            'unet_Recall':'#ef553b',
+                            'unet_F1':'#00cc96',
+                            'unet_Jaccard': '#ab63fa'
+
+                            }
 
 
 '''
