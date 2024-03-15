@@ -274,7 +274,7 @@ The data is available at the [Drive link](https://drive.google.com/drive/folders
          </a>
        </td>
         <td align="center" >
-      <a href="https://github.com/cleytonbiffe">
+      <a href="http://lattes.cnpq.br/0399495551887391">
         <img src="http://servicosweb.cnpq.br/wspessoa/servletrecuperafoto?tipo=1&id=K8153430T2" width="150px;" alt="Foto de Cleyton Biffe"/><br>
         <sub  >
           <b style="font-size:20px"> Cleyton Biffe </b><br>
