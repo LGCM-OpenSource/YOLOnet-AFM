@@ -1,4 +1,14 @@
+#data
 data
 models
 
+#pycache
 __pycache__/
+#Byte files
+*.pyc
+
+#packages
+segmentenv
+vUnet_AFM.egg-info
+dist
+build 
