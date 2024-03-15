@@ -43,7 +43,7 @@ def run_script(file, msg, arg=None):
     script_path = os.path.join(current_directory, file)
 
     if arg is not None and file.split('_')[1] == 'eval':
-        arg_string = f'-op {arg}'
+        arg_string = f' -op {arg}'
         script_path = script_path + arg_string
     else:
         script_path = script_path
