@@ -48,7 +48,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-op', '--options', type=int)
 
 args = parser.parse_args()
-option = 1
+option = args.options
 dict_dirs = {'img_path':
                             {
                             'vUnet_AFM':f'data{os.sep}output{os.sep}vunet_AFM_predictions{os.sep}predicts{os.sep}',
