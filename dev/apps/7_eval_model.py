@@ -21,7 +21,7 @@ predicts_dict = {'vUnet_AFM': f'data{os.sep}output{os.sep}vunet_AFM_predictions{
 save_dict = {
             'vUnet_AFM':f'data{os.sep}output{os.sep}vunet_AFM_predictions{os.sep}vUnet_AFM_metrics.csv', 
             'Unet_AFM': f'data{os.sep}output{os.sep}unet_AFM_predictions{os.sep}Unet_AFM_metrics.csv',
-            'Only_AFM': f'data{os.sep}output{os.sep}only_afm_predictions{os.sep}predict_sheets{os.sep}'
+            'Only_AFM': f'data{os.sep}output{os.sep}only_afm_predictions{os.sep}AFM_only_metrics.csv'
             }
 
 
@@ -51,12 +51,13 @@ elif option == 3:
     save_path = [save_dict['Only_AFM']]
 
 
-for path, save in zip(prediction_path, save_path):
+for path, save_p in zip(prediction_path, save_path): 
     prediction_files = os.listdir(path)
     df_list = []
     for file in tqdm(prediction_files, colour='#0000FF'):
         try:
             if os.path.isfile(path+file):
+                
                 process_date = file.replace('_UsefullData.tsv', '')
                 df_predict = DataFrameTrat(os.path.join(path, file))
 
@@ -79,7 +80,7 @@ for path, save in zip(prediction_path, save_path):
             print(traceback.format_exc())
             
     final_df = pd.concat(df_list, axis=0)
-    eval.save_metrics(final_df, save_path=save)
-    print(f'Metrics Saved in "{save}"')
+    eval.save_metrics(final_df, save_path=save_p)
+    print(f'Metrics Saved in "{save_p}"')
 
 sys.stdout.close()
