@@ -46,88 +46,6 @@ In the project path Unet_AFM, run:
 python dev/apps/0_run_scripts.py
 ```
 
-> If any dependency is not installed, the list below has the commands to install the uninstalled libraries manually
-                 <!DOCTYPE html>
-                        <html>
-                        <head>
-                        </head>
-                        <body>
-                          <table>
-                            <thead>
-                              <tr>
-                                <th>Import</th>
-                                <th>Version</th>
-                                <th>Installation command</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              </tr>
-                                 <tr>
-                                <td>matplotlib</td>
-                                <td>3.7.2</td>
-                                <td>pip install matplotlib==3.5.2</td>
-                              </tr>
-                                 <tr>
-                                <td>numpy</td>
-                                <td>1.24.3</td>
-                                <td>pip install numpy==1.24.3</td>
-                              </tr>
-                                 <tr>
-                                <td>opencv_python</td>
-                                <td>4.9.0.80</td>
-                                <td>pip install opencv_python==4.9.0.80</td>
-                              </tr>
-                              <tr>
-                                <td>pandas</td>
-                                <td>2.0.3</td>
-                                <td>pip install pandas==2.0.3</td>
-                              </tr>
-                              <tr>
-                                <td>plotly</td>
-                                <td>5.9.0</td>
-                                <td>pip install plotly==5.9.0</td>
-                              </tr>
-                               <tr>
-                                <td>scikit_image</td>
-                                <td></td>
-                                <td>pip install scikit-image</td>
-                              </tr>
-                               <tr>
-                                <td>scikit-learn</td>
-                                <td>1.4.0</td>
-                                <td>pip install scikit-learn==1.4.0</td>
-                              </tr>
-                               <tr>
-                                <td>scipy</td>
-                                <td>1.7.3</td>
-                                <td>pip install scipy==1.7.3</td>
-                              </tr>
-                              <tr>
-                                <td>Tensorflow</td>
-                                <td>2.15.0</td>
-                                <td>pip install tensorflow==2.15.0</td>
-                              </tr>
-                              <tr>
-                                <td>Torch</td>
-                                <td>2.2.1</td>
-                                <td>pip install torch==2.2.1</td>
-                              </tr>
-                              <tr>
-                                <td>tqdm</td>
-                                <td>4.65.0</td>
-                                <td>pip install tqdm==4.65.0</td>
-                              </tr>
-                              <tr>
-                                <td>xgboost</td>
-                                <td>2.0.3</td>
-                                <td>pip install xgboost==1.6.2</td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </body>
-                        </html>
-
-
 ### :file_folder: DATA
 
 The data is available at the [Drive link](https://drive.google.com/drive/folders/15N1tuNQ12LPO_nU7bUBwtT78i2IcD40k?usp=drive_link) 
@@ -242,6 +160,91 @@ The data is available at the [Drive link](https://drive.google.com/drive/folders
 
 **OUTPUT:**
 > * Metrics per cell `data/output/<SELECTED_MODEL>/metrics_per_cell`
+
+:books: Libraries
+
+> If any dependency is not installed, the list below has the commands to install the uninstalled libraries manually
+                 <!DOCTYPE html>
+                        <html>
+                        <head>
+                        </head>
+                        <body>
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Import</th>
+                                <th>Version</th>
+                                <th>Installation command</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              </tr>
+                                 <tr>
+                                <td>matplotlib</td>
+                                <td>3.7.2</td>
+                                <td>pip install matplotlib==3.5.2</td>
+                              </tr>
+                                 <tr>
+                                <td>numpy</td>
+                                <td>1.24.3</td>
+                                <td>pip install numpy==1.24.3</td>
+                              </tr>
+                                 <tr>
+                                <td>opencv_python</td>
+                                <td>4.9.0.80</td>
+                                <td>pip install opencv_python==4.9.0.80</td>
+                              </tr>
+                              <tr>
+                                <td>pandas</td>
+                                <td>2.0.3</td>
+                                <td>pip install pandas==2.0.3</td>
+                              </tr>
+                              <tr>
+                                <td>plotly</td>
+                                <td>5.9.0</td>
+                                <td>pip install plotly==5.9.0</td>
+                              </tr>
+                               <tr>
+                                <td>scikit_image</td>
+                                <td></td>
+                                <td>pip install scikit-image</td>
+                              </tr>
+                               <tr>
+                                <td>scikit-learn</td>
+                                <td>1.4.0</td>
+                                <td>pip install scikit-learn==1.4.0</td>
+                              </tr>
+                               <tr>
+                                <td>scipy</td>
+                                <td>1.7.3</td>
+                                <td>pip install scipy==1.7.3</td>
+                              </tr>
+                              <tr>
+                                <td>Tensorflow</td>
+                                <td>2.15.0</td>
+                                <td>pip install tensorflow==2.15.0</td>
+                              </tr>
+                              <tr>
+                                <td>Torch</td>
+                                <td>2.2.1</td>
+                                <td>pip install torch==2.2.1</td>
+                              </tr>
+                              <tr>
+                                <td>tqdm</td>
+                                <td>4.65.0</td>
+                                <td>pip install tqdm==4.65.0</td>
+                              </tr>
+                              <tr>
+                                <td>xgboost</td>
+                                <td>2.0.3</td>
+                                <td>pip install xgboost==1.6.2</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </body>
+                        </html>
+
+
 
 ## 🛠️ Build with
 
