@@ -55,6 +55,40 @@ The data is available at the [Drive link](https://drive.google.com/drive/folders
 * Download the file `data.zip` and the folder `models`;
 * Copy the folders to the project's root directory.
 * Now you are ready to run the project.
+
+### :file_folder: TREE
+
+├── data
+│
+├── dev
+│   │
+│   ├── apps
+│   │   ├── 0_run_scripts.py
+│   │   ├── 1_cropping_opt_images.py
+│   │   ├── 2_preprocess_unet.py
+│   │   ├── 3_preprocess_pixel.py
+│   │   ├── 4_vUnet_AFM_predictions.py
+│   │   ├── 5_unet_AFM_predict.py
+│   │   ├── 6_pixel_predict.py
+│   │   ├── 7_eval_model.py
+│   │   ├── 8_eval_model_per_cell.py
+│   │   ├── env_activate.py
+│   │   ├── env_create.py
+│   │   └── metrics.py
+│   │
+│   └── scripts
+│       ├── colors_to_pcr.py
+│       ├── dataframe_treatment.py
+│       ├── image_treatment.py
+│       ├── models.py
+│       └── unet_model.py
+│
+├── models
+│   
+├── README.md
+├── requirements_linux.txt
+├── requirements_win.txt
+└── setup.py
   
 ### :arrow_forward: Run project
 
@@ -248,7 +282,7 @@ The data is available at the [Drive link](https://drive.google.com/drive/folders
 
 
 :heavy_check_mark: Solve some problems
-(https://gist.github.com/zrruziev/b93e1292bf2ee39284f834ec7397ee9f)
+> (https://gist.github.com/zrruziev/b93e1292bf2ee39284f834ec7397ee9f)
 
 ## 🛠️ Build with
 
