@@ -54,7 +54,7 @@ The data is available at the [Drive link](https://drive.google.com/drive/folders
 * Copy the folders to the project's root directory.
 * Now you are ready to run the project.
   
-### 💻 Run project
+### :arrow_forward: Run project
 
 :robot: 0_run_scripts.py
 > This script runs the entire project according to the option selected by the user:
