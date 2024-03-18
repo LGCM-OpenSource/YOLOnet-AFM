@@ -57,7 +57,7 @@ The data is available at the [Drive link](https://drive.google.com/drive/folders
 * Now you are ready to run the project.
 
 ### :file_folder: TREE
-
+```
 ├── data
 │
 ├── dev
@@ -89,7 +89,8 @@ The data is available at the [Drive link](https://drive.google.com/drive/folders
 ├── requirements_linux.txt
 ├── requirements_win.txt
 └── setup.py
-  
+```
+
 ### :arrow_forward: Run project
 
 :robot: 0_run_scripts.py
