@@ -247,6 +247,8 @@ The data is available at the [Drive link](https://drive.google.com/drive/folders
                         </html>
 
 
+:heavy_check_mark: Solve some problems
+(https://gist.github.com/zrruziev/b93e1292bf2ee39284f834ec7397ee9f)
 
 ## 🛠️ Build with
 
