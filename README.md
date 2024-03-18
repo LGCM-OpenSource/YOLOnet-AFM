@@ -7,48 +7,108 @@ These instructions will allow you to obtain a copy of the project up and running
 
 `git clone <GIT_URL>”`
 
-### 📋 Prerequisites
-
-# 💻 Requirements
-Before you begin, make sure you've met the following requirements:
-<!---Estes são apenas requisitos de exemplo. Adicionar, duplicar ou remover conforme necessário--->
-* PYTHON: You have installed version  `python == 3.11.8 `
+## 📋 Hardware Prerequisites
+Before you begin, make sure you've met the following prerequisites:
 * RAM: At least 8 GB recommended to ensure adequate performance during the model segmentation and evaluation process.
 * PROCESSOR: A 64-bit multicore processor capable of executing SSE2 instructions or higher is recommended. An Intel® Core™ i5-10400 processor or equivalent is sufficient for most tasks.
 * GRAPHICS: A dedicated graphics card with CUDA support is recommended if using deep learning techniques that make use of GPU acceleration. However, the code provided in this repository should run smoothly on an integrated graphics card such as Intel® UHD Graphics 630.
 
-### 🔧 Install
+## 💻 Requirements
+* You have installed  `python >= 3.11.5 `
+### 🔧 Install dependences
 
-> **WINDOWS**
-```
-pip install -r requirements_win.txt
+To install all projects dependences run:
 
-```
-if fail try: 
-```
-pip install --force-reinstall -r requirements_win.txt
-```
+```python setup.py install```
+### :books: Libraries
 
-> **LINUX**
+> If any dependency is not installed, the list below has the commands to install the uninstalled libraries manually
+                 <!DOCTYPE html>
+                        <html>
+                        <head>
+                        </head>
+                        <body>
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Lib</th>
+                                <th>Version</th>
+                                <th>Installation command</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              </tr>
+                                 <tr>
+                                <td>matplotlib</td>
+                                <td>3.7.2</td>
+                                <td>pip install matplotlib==3.5.2</td>
+                              </tr>
+                                 <tr>
+                                <td>numpy</td>
+                                <td>1.24.3</td>
+                                <td>pip install numpy==1.24.3</td>
+                              </tr>
+                                 <tr>
+                                <td>opencv_python</td>
+                                <td>4.9.0.80</td>
+                                <td>pip install opencv_python==4.9.0.80</td>
+                              </tr>
+                              <tr>
+                                <td>pandas</td>
+                                <td>2.0.3</td>
+                                <td>pip install pandas==2.0.3</td>
+                              </tr>
+                              <tr>
+                                <td>plotly</td>
+                                <td>5.9.0</td>
+                                <td>pip install plotly==5.9.0</td>
+                              </tr>
+                               <tr>
+                                <td>kaleido</td>
+                                <td>0.2.1</td>
+                                <td>pip install ==0.2.1</td>
+                              </tr>
+                               <tr>
+                                <td>scikit_image</td>
+                                <td></td>
+                                <td>pip install scikit-image</td>
+                              </tr>
+                               <tr>
+                                <td>scikit-learn</td>
+                                <td>1.4.0</td>
+                                <td>pip install scikit-learn==1.4.0</td>
+                              </tr>
+                               <tr>
+                                <td>scipy</td>
+                                <td>1.7.3</td>
+                                <td>pip install scipy==1.7.3</td>
+                              </tr>
+                              <tr>
+                                <td>Tensorflow</td>
+                                <td>2.15.0</td>
+                                <td>pip install tensorflow==2.15.0</td>
+                              </tr>
+                              <tr>
+                                <td>Torch</td>
+                                <td>2.2.1</td>
+                                <td>pip install torch==2.2.1</td>
+                              </tr>
+                              <tr>
+                                <td>tqdm</td>
+                                <td>4.65.0</td>
+                                <td>pip install tqdm==4.65.0</td>
+                              </tr>
+                              <tr>
+                                <td>xgboost</td>
+                                <td>1.6.2</td>
+                                <td>pip install xgboost==1.6.2</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </body>
+                        </html>
 
-```
-pip install -r requirements_linux.txt
-
-```
-if fail try: 
-```
-pip install --force-reinstall -r requirements_linux.txt
-```
-
-### 🔧 RUN
-
-In the project path Unet_AFM, run:
-
-```
-python dev/apps/0_run_scripts.py
-```
-
-### :file_folder: DATA
+## :file_folder: DATA
 
 The data is available at the [Drive link](https://drive.google.com/drive/folders/15N1tuNQ12LPO_nU7bUBwtT78i2IcD40k?usp=drive_link) 
 
@@ -56,33 +116,59 @@ The data is available at the [Drive link](https://drive.google.com/drive/folders
 * Copy the folders to the project's root directory.
 * Now you are ready to run the project.
 
-### :file_folder: TREE
+### :file_folder: FOLDER ARCHITECTURE
 ```
 ├── data
-│
+│   │
+├───input
+│    ├───optical_images_resized
+│    ├───original_images
+│    ├───original_manually_segmented
+│    └───Usefull_data
+├───intermediate
+│   ├───pre_processing_only_afm
+│   └───pre_processing_optico_and_afm
+│       ├───image
+│       └───mask
+├───output
+│   ├───only_afm_predictions
+│   │   ├───metrics_per_cell
+│   │   ├───predicts        
+│   │   └───predict_sheets  
+│   ├───unet_AFM_predictions
+│   │   ├───metrics_per_cell
+│   │   ├───predicts
+│   │   └───predict_sheets
+│   └───vunet_AFM_predictions
+│       ├───metrics_per_cell
+│       ├───predicts
+│       └───predict_sheets
+└───raw
+    ├───bw_images
+    ├───optical_images
+    └───txt_files
 ├── dev
 │   │
-│   ├── apps
-│   │   ├── 0_run_scripts.py
-│   │   ├── 1_cropping_opt_images.py
-│   │   ├── 2_preprocess_unet.py
-│   │   ├── 3_preprocess_pixel.py
-│   │   ├── 4_vUnet_AFM_predictions.py
-│   │   ├── 5_unet_AFM_predict.py
-│   │   ├── 6_pixel_predict.py
-│   │   ├── 7_eval_model.py
-│   │   ├── 8_eval_model_per_cell.py
-│   │   ├── env_activate.py
-│   │   ├── env_create.py
-│   │   └── metrics.py
-│   │
-│   └── scripts
-│       ├── colors_to_pcr.py
-│       ├── dataframe_treatment.py
-│       ├── image_treatment.py
-│       ├── models.py
-│       └── unet_model.py
-│
+└───apps
+    │   1_cropping_opt_images.py
+    │   2_preprocess_unet.py
+    │   3_preprocess_pixel.py
+    │   4_vUnet_AFM_predictions.py
+    │   5_unet_AFM_predict.py
+    │   6_pixel_predict.py
+    │   7_eval_model.py
+    │   8_eval_model_per_cell.py
+    │   main.py
+    │   metrics.py
+    │   __init__.py
+    │
+    ├───utils
+    │   │   colors_to_pcr.py
+    │   │   dataframe_treatment.py
+    │   │   image_treatment.py
+    │   │   models.py
+    │   │   unet_model.py
+    │   │   __init__.py
 ├── models
 │   
 ├── README.md
@@ -91,9 +177,14 @@ The data is available at the [Drive link](https://drive.google.com/drive/folders
 └── setup.py
 ```
 
-### :arrow_forward: Run project
+## :arrow_forward: Run project
+In the root path run:
 
-:robot: 0_run_scripts.py
+```
+python dev/apps/main.py
+```
+
+:robot: main.py
 > This script runs the entire project according to the option selected by the user:
 > * Option 0: Runs all models and returns their respective general and specific metrics.
 > * Option 1: Runs the vUnet_AFM model and returns its general and specific metrics.
@@ -197,89 +288,6 @@ The data is available at the [Drive link](https://drive.google.com/drive/folders
 
 **OUTPUT:**
 > * Metrics per cell `data/output/<SELECTED_MODEL>/metrics_per_cell`
-
-:books: Libraries
-
-> If any dependency is not installed, the list below has the commands to install the uninstalled libraries manually
-                 <!DOCTYPE html>
-                        <html>
-                        <head>
-                        </head>
-                        <body>
-                          <table>
-                            <thead>
-                              <tr>
-                                <th>Import</th>
-                                <th>Version</th>
-                                <th>Installation command</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              </tr>
-                                 <tr>
-                                <td>matplotlib</td>
-                                <td>3.7.2</td>
-                                <td>pip install matplotlib==3.5.2</td>
-                              </tr>
-                                 <tr>
-                                <td>numpy</td>
-                                <td>1.24.3</td>
-                                <td>pip install numpy==1.24.3</td>
-                              </tr>
-                                 <tr>
-                                <td>opencv_python</td>
-                                <td>4.9.0.80</td>
-                                <td>pip install opencv_python==4.9.0.80</td>
-                              </tr>
-                              <tr>
-                                <td>pandas</td>
-                                <td>2.0.3</td>
-                                <td>pip install pandas==2.0.3</td>
-                              </tr>
-                              <tr>
-                                <td>plotly</td>
-                                <td>5.9.0</td>
-                                <td>pip install plotly==5.9.0</td>
-                              </tr>
-                               <tr>
-                                <td>scikit_image</td>
-                                <td></td>
-                                <td>pip install scikit-image</td>
-                              </tr>
-                               <tr>
-                                <td>scikit-learn</td>
-                                <td>1.4.0</td>
-                                <td>pip install scikit-learn==1.4.0</td>
-                              </tr>
-                               <tr>
-                                <td>scipy</td>
-                                <td>1.7.3</td>
-                                <td>pip install scipy==1.7.3</td>
-                              </tr>
-                              <tr>
-                                <td>Tensorflow</td>
-                                <td>2.15.0</td>
-                                <td>pip install tensorflow==2.15.0</td>
-                              </tr>
-                              <tr>
-                                <td>Torch</td>
-                                <td>2.2.1</td>
-                                <td>pip install torch==2.2.1</td>
-                              </tr>
-                              <tr>
-                                <td>tqdm</td>
-                                <td>4.65.0</td>
-                                <td>pip install tqdm==4.65.0</td>
-                              </tr>
-                              <tr>
-                                <td>xgboost</td>
-                                <td>2.0.3</td>
-                                <td>pip install xgboost==1.6.2</td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </body>
-                        </html>
 
 
 :heavy_check_mark: Solve some problems
