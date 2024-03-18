@@ -12,8 +12,10 @@ These instructions will allow you to obtain a copy of the project up and running
 # 💻 Requirements
 Before you begin, make sure you've met the following requirements:
 <!---Estes são apenas requisitos de exemplo. Adicionar, duplicar ou remover conforme necessário--->
-* You have installed version  `python == 3.11.8 `
-
+* PYTHON: You have installed version  `python == 3.11.8 `
+* RAM: At least 8 GB recommended to ensure adequate performance during the model segmentation and evaluation process.
+* PROCESSOR: A 64-bit multicore processor capable of executing SSE2 instructions or higher is recommended. An Intel® Core™ i5-10400 processor or equivalent is sufficient for most tasks.
+* GRAPHICS: A dedicated graphics card with CUDA support is recommended if using deep learning techniques that make use of GPU acceleration. However, the code provided in this repository should run smoothly on an integrated graphics card such as Intel® UHD Graphics 630.
 
 ### 🔧 Install
 
