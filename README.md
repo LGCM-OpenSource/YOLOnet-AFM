@@ -1,4 +1,4 @@
-# Unet_AFM
+# vUNet_AFM
  In this repository, the project for segmenting cellular structures through atomic force microscopy (AFM) and its respective models will be stored.
 ## 🚀 Start
 
@@ -144,6 +144,8 @@ The data is available at the [Drive link](https://drive.google.com/drive/folders
 > * Option 1: Runs the vUnet_AFM model and returns its general and specific metrics.
 > * Option 2: Runs the Unet_AFM model and returns its general and specific metrics.
 > * Option 3: Runs the AFM_only model (per pixel) and returns its general and specific metrics.
+
+### 💻 Scripts Details
 
 :scissors: 1_cropping_opt_images.py
 
