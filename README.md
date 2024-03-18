@@ -290,7 +290,7 @@ python dev/apps/main.py
 > * Metrics per cell `data/output/<SELECTED_MODEL>/metrics_per_cell`
 
 
-:heavy_check_mark: Solve some problems
+:heavy_check_mark: Solve NUMA (Non-Uniformed Memory Access)
 > (https://gist.github.com/zrruziev/b93e1292bf2ee39284f834ec7397ee9f)
 
 ## 🛠️ Build with
