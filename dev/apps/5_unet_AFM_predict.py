@@ -1,7 +1,6 @@
 import os
 import sys
-sys.path.append(f'dev{os.sep}scripts')
-from models import UnetProcess 
+from utils import UnetProcess 
 from tqdm import tqdm
 
 preprocess_image = f'data{os.sep}intermediate{os.sep}pre_processing_optico_and_afm{os.sep}image{os.sep}'

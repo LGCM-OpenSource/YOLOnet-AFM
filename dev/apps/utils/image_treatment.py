@@ -3,7 +3,7 @@ import cv2
 import traceback
 import os
 import matplotlib.pyplot as plt   
-from dataframe_treatment import DataFrameTrat
+from .dataframe_treatment import DataFrameTrat
 
 '''
 CLASS               LINE

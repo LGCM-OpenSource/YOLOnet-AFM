@@ -1,8 +1,6 @@
 import os 
 import sys
-sys.path.append(f'dev{os.sep}scripts')
-from dataframe_treatment import PreProcessDataframe 
-from models import UnetProcess, PixelProcess
+from utils import PreProcessDataframe, UnetProcess, PixelProcess
 from tqdm import tqdm
 
 preprocess_image = f'data{os.sep}intermediate{os.sep}pre_processing_optico_and_afm{os.sep}image{os.sep}'
