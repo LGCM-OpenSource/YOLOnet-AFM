@@ -1,8 +1,7 @@
 import os 
 import sys
-sys.path.append(f'dev{os.sep}scripts')
-from dataframe_treatment import DataFrameTrat
-from models import EvalModel
+from utils import DataFrameTrat
+from utils import EvalModel
 import pandas as pd
 from tqdm import tqdm
 import argparse

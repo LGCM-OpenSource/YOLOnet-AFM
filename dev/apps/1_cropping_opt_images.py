@@ -1,17 +1,15 @@
 import os
-import sys
-sys.path.append(f'dev{os.sep}scripts')
-from image_treatment import CropImages
+from utils import CropImages
 from tqdm import tqdm
 
 
 thisDir = os.path.dirname(os.path.realpath('__file__'))+os.sep
 
 '''get images (bw and optical) dirs'''
-dirOptImg = thisDir+"data"+os.sep+"raw"+os.sep+"optical_images"+os.sep
-dirBwImg = thisDir+"data"+os.sep+"raw"+os.sep+"bw_images"+os.sep
-destDir = thisDir+"data"+os.sep+"input"+os.sep+"optical_images_resized"+os.sep
-txt_file = thisDir+"data"+os.sep+"raw"+os.sep+"txt_files"+os.sep
+dirOptImg = f'data{os.sep}raw{os.sep}optical_images{os.sep}'
+dirBwImg = f'data{os.sep}raw{os.sep}bw_images{os.sep}'
+destDir = f'data{os.sep}input{os.sep}optical_images_resized{os.sep}'
+txt_file = f'data{os.sep}raw{os.sep}txt_files{os.sep}'
 
 #listing dirs
 dir = os.listdir(dirOptImg)

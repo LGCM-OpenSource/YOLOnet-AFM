@@ -12,9 +12,7 @@ import argparse
 import traceback
 from tqdm import tqdm
 
-sys.path.append(f'dev{os.sep}scripts')
-from colors_to_pcr import COLOR_METRICS_STYLE
-from dataframe_treatment import DataFrameTrat
+from utils import DataFrameTrat, COLOR_METRICS_STYLE
 
 
 def open_image(path):

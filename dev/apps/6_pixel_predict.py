@@ -1,7 +1,6 @@
 import os
 import sys 
-sys.path.append(f'dev{os.sep}scripts')
-from models import PixelProcess
+from utils import PixelProcess
 from tqdm import tqdm
 
 usefull_data_original_dir = f'data{os.sep}input{os.sep}Usefull_data{os.sep}'

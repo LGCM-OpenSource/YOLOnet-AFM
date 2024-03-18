@@ -17,8 +17,8 @@ import numpy as np
 from sklearn.metrics import f1_score, jaccard_score, precision_score, recall_score
 import cv2 
 
-from image_treatment import ImageTrat
-from dataframe_treatment import DataFrameTrat
+from .image_treatment import ImageTrat
+from .dataframe_treatment import DataFrameTrat
 import traceback
 
 #centroid
