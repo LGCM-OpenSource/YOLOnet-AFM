@@ -19,7 +19,7 @@ Before you begin, make sure you've met the following prerequisites:
 
 To install all projects dependences run:
 
-```python setup.py install```
+```python setup.py```
 ### :books: Libraries
 
 > If any dependency is not installed, the list below has the commands to install the uninstalled libraries manually
