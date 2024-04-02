@@ -14,7 +14,7 @@ def create_virtual_environment():
         subprocess.run([sys.executable, '-m', 'venv', 'segmentenv'])
     else:
         # Em sistemas baseados em Unix, usamos virtualenv
-        subprocess.run(['python3.11', '-m', 'venv', 'segmentenv'])
+        subprocess.run(['python', '-m', 'venv', 'segmentenv'])
 
 def install_dependencies():
     # Ativar o ambiente virtual
@@ -34,7 +34,7 @@ def install_dependencies():
         raise RuntimeError("Operacional System not supported!")
 
     # Instalar as dependências do arquivo de requisitos no ambiente virtual
-    subprocess.run(['pip', 'install', '-r', requirements_file])
+    subprocess.run(['pip', 'install', '--upgrade', '--force-reinstall', '-r', requirements_file])
 
 def main():
     create_virtual_environment()
