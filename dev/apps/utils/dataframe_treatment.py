@@ -77,7 +77,7 @@ class DataFrameTrat:
         df[ self.target] = df[ self.target].replace(segment)
         return df
 
-    def normalize_columns(self, df, column_name):
+    def min_max_scale(self, df, column_name, substrate=True):
         """
         Normalizes the values in the specified column.
 
@@ -93,9 +93,31 @@ class DataFrameTrat:
         pandas.DataFrame
             The DataFrame with normalized values in the specified column.
         """
-        df[column_name] = ((df[column_name] - min(df[column_name])) / (max(df[column_name]) - min(df[column_name])))
+        df_without_substrate = df.loc[df['Segment']!= 'Substrate']
+        min_col = min(df_without_substrate[column_name])
+        max_col = max(df_without_substrate[column_name])
+        
+        if substrate:
+            min_col = min(df[column_name])
+            max_col = max(df[column_name])
+         
+        df[column_name] = ((df[column_name] - min_col) / (max_col - min_col))
         return df
 
+    def zscore(self, df, column_name, substrate=True):
+        
+        df_without_substrate = df.loc[df['Segment']!= 'Substrate']
+        mean_col = df_without_substrate[column_name].mean()
+        std_col = df_without_substrate[column_name].std()
+        
+        if substrate:
+            mean_col = df[column_name].mean()
+            std_col = df[column_name].std()
+        
+        df[column_name] = (df[column_name] - mean_col) / std_col
+        return df
+    
+    
     def create_channel_by_df(self, df, column, dimension):
         """
         Creates a NumPy array from a DataFrame column and reshapes it to the specified dimension.
