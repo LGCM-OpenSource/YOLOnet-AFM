@@ -1,6 +1,5 @@
-import os 
-import sys
 from utils import GenerateAFMOptico 
+import os 
 from tqdm import tqdm 
 
 
@@ -12,7 +11,7 @@ dire = os.listdir(opt_image_dir)
 
 for img in tqdm(dire, colour='#0000FF'):
     usefull_name = img.replace('_optico_crop_resized.png','_UsefullData.tsv')
-    processed_name = img.replace('_optico_crop_resized.png','_channels_added.png')
+    processed_name = img.replace('_optico_crop_resized.png','_channels_added.npy')
 
     optical_path = opt_image_dir+img 
     usefull_path = usefull_data_dir+usefull_name

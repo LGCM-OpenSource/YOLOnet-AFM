@@ -2,7 +2,6 @@ import numpy as np
 import cv2
 import traceback
 import os
-import matplotlib.pyplot as plt   
 from .dataframe_treatment import DataFrameTrat
 
 '''
@@ -231,6 +230,8 @@ class ImageTrat:
         # flipped = cv2.flip(new_images, 0)
         return  cv2.imwrite(save_path, new_images)
     
+    
+                 
 
 class CropImages:
     """
@@ -432,13 +433,14 @@ class GenerateAFMOptico:
         numpy.ndarray
             The image with added channels.
         """
-        new_img = np.zeros((np.array(img).shape[0], np.array(img).shape[1], 4))
-        new_img[:,:,0] = channels[0] 
-        new_img[:,:,1] = channels[1]
-        new_img[:,:,2] = channels[2]
-        new_img[:,:,3] = channels[3]
-        return new_img.astype(np.uint8)
-    
+        num_channels = len(channels)
+        new_img = np.zeros((img.shape[0], img.shape[1], num_channels))
+        
+        for i in range(num_channels):
+            new_img[:,:,i] = channels[i]
+        
+        return new_img.astype(np.float32)
+        
     
     
     def read_transparent_png(self, image_4channel):
@@ -486,26 +488,53 @@ class GenerateAFMOptico:
             equlized_image = self.opt_image.equalize_img(optical_image)
             
             afm_info = self.df_afm.df
+            features = [self.process_date, self.flatten_height, 'YM_Fmax1500pN', 'YM_Fmax0300pN', 'MaxPosition_F1500pN','Segment', self.target]
             
-            afm_info = afm_info[[self.process_date, self.flatten_height, self.target]]
+            afm_info = afm_info[features]
             afm_info = self.df_afm.clean_target(afm_info)
             
-            
-            afm_info = self.df_afm.normalize_columns(afm_info, self.flatten_height)
+            for feat in features[1:-2]:
+                
+                #Remove null or inf values
+                mean_without_substrate = afm_info[feat].loc[afm_info['Segment'] != 'Substrate'].mean()
+                afm_info[feat].replace([np.inf, - np.inf, np.nan], mean_without_substrate, inplace=True)
+                
+                #Calc Zscore by mean and std without substrate
+                afm_info = self.df_afm.zscore(afm_info, feat, substrate=False)
+                if feat == 'Planned Height':
+                    #Calc Zscore by mean and std with substrate
+                    afm_info = self.df_afm.zscore(afm_info, feat)
+                    
             
             planned = self.df_afm.create_channel_by_df(afm_info,  self.flatten_height, dimensions)
+            ym_1500 = self.df_afm.create_channel_by_df(afm_info,  'YM_Fmax1500pN', dimensions)
+            ym_0300 = self.df_afm.create_channel_by_df(afm_info,  'YM_Fmax0300pN', dimensions)
+            maxpos_1500 = self.df_afm.create_channel_by_df(afm_info,  'MaxPosition_F1500pN', dimensions)
             
-            channels = [blue, planned*255, equlized_image, planned*255]
+            
+            #apply threshold
+            ym_1500[ym_1500 > 3] = 3
+            ym_1500[ym_1500 < -3] = -3
+            
+            ym_0300[ym_0300 > 3] = 3
+            ym_0300[ym_0300 < -3] = -3
+            
+            maxpos_1500[maxpos_1500 > 3] = 3
+            maxpos_1500[maxpos_1500 < -3] = -3
+            
+                        
+            channels = [blue, planned, equlized_image, maxpos_1500, ym_1500, ym_0300]
             new_img = self.add_new_channels(optical_image, channels)
-            new_img = self.read_transparent_png(new_img)
-
-            self.opt_image.save_image(save_path, new_img)
+            new_img = new_img.astype(np.float32)
+            # new_img = self.read_transparent_png(new_img)
             
-            if "Generic Segmentation" in afm_info.columns:
+            #Create mask
+            mask = self.df_afm.create_channel_by_df(afm_info,  self.target, dimensions)
+            mask = mask.astype(np.float32)
             
-                mask = self.df_afm.create_channel_by_df(afm_info, self.target, dimensions)*255
-                mask_path = save_path.replace('image' ,'mask')
-                plt.imsave(mask_path, mask, cmap='gray')
             
+            np.save(save_path, new_img)
+            mask_save_path = save_path.replace(f'image', 'mask')
+            np.save(mask_save_path, mask)
         except Exception:
             print(traceback.format_exc())
