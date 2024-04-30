@@ -282,6 +282,10 @@ class Models:
         """
         return jaccard_score(y_true, y_pred, average="binary",zero_division=0) 
     
+    def dice( self, y_true, y_pred):
+        intersection = np.logical_and(y_true, y_pred)
+        return 2.0 * intersection.sum() / (y_true.sum() + y_pred.sum())
+    
     def predict(self, x):
         """
         Makes predictions using the model.
@@ -361,14 +365,15 @@ class EvalModel:
     def get_metrics(self):
         f1_value = self.model.f1_score(self.y_true, self.y_pred)
         jac_value = self.model.jaccard(self.y_true, self.y_pred)
+        dice_value = self.model.dice(self.y_true, self.y_pred)
         recall_value = self.model.recall(self.y_true, self.y_pred)
         precision_value = self.model.precision(self.y_true, self.y_pred)
-        self.SCORE.append([self.model.model_name, precision_value, recall_value, f1_value, jac_value])
+        self.SCORE.append([self.model.model_name, precision_value, recall_value, f1_value, jac_value, dice_value])
         return self.SCORE
     
     
     def metrics_to_df(self, process_date, score):
-        df = pd.DataFrame(score, columns=['Model', 'Precision', 'Recall', 'F1', 'Jaccard'])
+        df = pd.DataFrame(score, columns=['Model', 'Precision', 'Recall', 'F1', 'Jaccard', 'Dice'])
         df['Process Date'] = process_date
         return df 
     
@@ -603,9 +608,9 @@ class UnetProcess:
 
             #     fig.savefig(save_path)
                 
-            if verify_count < 177*0.2 or verify_objects > 1:   
-                '''to run pixel segmentation '''   
-                return y, y_proba, True
+            # if verify_count < 177*0.2 or verify_objects > 1:   
+            #     '''to run pixel segmentation '''   
+            #     return y, y_proba, True
             
             df_afm.to_csv(usefull_path, sep='\t', index=False)
             self.preprocess_image.save_image(save_path, y_pred)

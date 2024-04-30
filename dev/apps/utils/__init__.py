@@ -8,3 +8,4 @@ from .models import UnetProcess, PixelProcess
 from .models import EvalModel
 
 from .colors_to_pcr import COLOR_METRICS_STYLE
+from .chart_class import DataChart
