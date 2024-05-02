@@ -467,8 +467,8 @@ class UnetProcess:
         x = image
         x = self.preprocess_image.resize(x, (self.W, self.H))
         ori_x = x
-        x = x/255.0
-        x = x.astype(np.float32)
+        # x = x/255.0
+        # x = x.astype(np.float32)
         x = np.expand_dims(x, axis=0)   ## (1, 256, 256, 3)
         return ori_x, x
     
@@ -490,9 +490,10 @@ class UnetProcess:
         x = image
         x = self.preprocess_image.resize(x, (self.W, self.H))
         ori_x = x
-        x = x/255.0
+        # x = x/255.0
+        # x = x.astype(np.int32)
         x = x > 0.5
-        x = x.astype(np.int32)
+
         return ori_x, x
 
 
@@ -512,15 +513,15 @@ class UnetProcess:
         kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(5,5))
         y_pred = np.expand_dims(y_pred, axis=-1) * 255.0
 
-        x_dim,y_dim = self.preprocess_image.dimensions()
+        x_dim,y_dim = self.preprocess_image.dimensions(matrix=True)
         
         # Removing external outliers
-        y_pred = cv2.morphologyEx(y_pred, cv2.MORPH_OPEN, kernel)
+        # y_pred = cv2.morphologyEx(y_pred, cv2.MORPH_OPEN, kernel)
 
-        # y_pred = cv2.dilate(y_pred,kernel,iterations = 1)
+        # # y_pred = cv2.dilate(y_pred,kernel,iterations = 1)
 
-        # Filling empty spaces inside the nucleus
-        y_pred = cv2.morphologyEx(y_pred, cv2.MORPH_CLOSE, kernel)
+        # # Filling empty spaces inside the nucleus
+        # y_pred = cv2.morphologyEx(y_pred, cv2.MORPH_CLOSE, kernel)
         y_pred  = cv2.resize(y_pred, (y_dim, x_dim))
         
         y_pred[y_pred>0] = 1
@@ -566,9 +567,9 @@ class UnetProcess:
             None
         '''
         try:
-            optical_image = self.opt_image.image
-            ori_x, x = self.read_image(self.preprocess_image.image)
-            ori_y, y = self.read_mask(self.mask.image)
+            optical_image = self.opt_image.image()
+            ori_x, x = self.read_image(self.preprocess_image.image(matrix=True))
+            ori_y, y = self.read_mask(self.mask.image(matrix=True))
 
             
             '''prediction'''
@@ -587,8 +588,8 @@ class UnetProcess:
                 
                 df_afm['unet_prediction'] = y_pred_flatten
                 
-                verify_count = self.get_count(df_afm)
-                verify_objects = self.count_objects(df_afm)
+                # verify_count = self.get_count(df_afm)
+                # verify_objects = self.count_objects(df_afm)
                 
                 
             '''transpose prediction to optical image'''
