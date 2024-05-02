@@ -56,8 +56,8 @@ class ImageTrat:
         """
         self.img_path = img_path
 
-    @property
-    def image(self):
+    
+    def image(self, matrix=False):
         """
         Returns the loaded image using OpenCV.
 
@@ -66,10 +66,12 @@ class ImageTrat:
         numpy.ndarray
             The loaded image.
         """
+        if matrix:
+            return np.load(self.img_path).astype(np.float32)
         return cv2.imread(self.img_path)
     
     @property
-    def mask(self):
+    def mask(self, matrix=False):
         """
         Returns the loaded mask using OpenCV.
 
@@ -81,7 +83,7 @@ class ImageTrat:
         return cv2.imread(self.img_path, 0)
     
     
-    def dimensions(self, txt_path=False):
+    def dimensions(self, txt_path=False, matrix=False):
         """
         Retrieves the dimensions of the image.
 
@@ -112,7 +114,7 @@ class ImageTrat:
                     y_dim = int(y_dim[2])
             return (y_dim, x_dim)
         else:
-            x_dim, y_dim, _ = self.image.shape
+            x_dim, y_dim, _ = self.image(matrix=matrix).shape
             return (x_dim, y_dim)
     
     def image_channels(self, image):
