@@ -469,7 +469,7 @@ class UnetProcess:
         ori_x = x
         # x = x/255.0
         # x = x.astype(np.float32)
-        x = np.expand_dims(x, axis=0)   ## (1, 256, 256, 3)
+        x = np.expand_dims(x, axis=0)   ## (1, 256, 256, 6)
         return ori_x, x
     
     def read_mask(self, image):
@@ -513,7 +513,7 @@ class UnetProcess:
         kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(5,5))
         y_pred = np.expand_dims(y_pred, axis=-1) * 255.0
 
-        x_dim,y_dim = self.preprocess_image.dimensions(matrix=True)
+        x_dim,y_dim = self.opt_image.dimensions()
         
         # Removing external outliers
         # y_pred = cv2.morphologyEx(y_pred, cv2.MORPH_OPEN, kernel)

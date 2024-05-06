@@ -484,7 +484,7 @@ class GenerateAFMOptico:
             The function doesn't return a value but saves the image.
         """
         try:
-            optical_image = self.opt_image.image
+            optical_image = self.opt_image.image()
             dimensions = self.opt_image.dimensions()
             blue, _,__ = self.opt_image.image_channels(optical_image)
             equlized_image = self.opt_image.equalize_img(optical_image)
@@ -515,6 +515,10 @@ class GenerateAFMOptico:
             
             
             #apply threshold
+            planned = -planned
+            planned[planned > 3] = 3
+            planned[planned < -3] = -3
+            
             ym_1500[ym_1500 > 3] = 3
             ym_1500[ym_1500 < -3] = -3
             
