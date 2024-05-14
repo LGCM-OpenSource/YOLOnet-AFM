@@ -2,14 +2,17 @@ from utils import GenerateAFMOptico
 import os 
 from tqdm import tqdm 
 
+#Teste blur
+# data_folder = 'data'
+data_folder = 'data'
 
-opt_image_dir = f'data{os.sep}input{os.sep}optical_images_resized{os.sep}'
-usefull_data_dir = f'data{os.sep}input{os.sep}Usefull_data{os.sep}'
-save_dir = f'data{os.sep}intermediate{os.sep}pre_processing_optico_and_afm{os.sep}image{os.sep}'
+opt_image_dir = f'{data_folder}{os.sep}input{os.sep}optical_images_resized{os.sep}'
+usefull_data_dir = f'{data_folder}{os.sep}input{os.sep}Usefull_data{os.sep}'
+save_dir = f'{data_folder}{os.sep}intermediate{os.sep}pre_processing_optico_and_afm{os.sep}image{os.sep}'
 
 dire = os.listdir(opt_image_dir)
 
-for img in tqdm(dire, colour='#0000FF'):
+for img in tqdm(dire):
     usefull_name = img.replace('_optico_crop_resized.png','_UsefullData.tsv')
     processed_name = img.replace('_optico_crop_resized.png','_channels_added.npy')
 
