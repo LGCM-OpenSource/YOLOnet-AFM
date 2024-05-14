@@ -3,7 +3,7 @@ import cv2
 import traceback
 import os
 from .dataframe_treatment import DataFrameTrat
-
+import matplotlib.pyplot as plt
 '''
 CLASS               LINE
 
@@ -56,7 +56,6 @@ class ImageTrat:
         """
         self.img_path = img_path
 
-    
     def image(self, matrix=False):
         """
         Returns the loaded image using OpenCV.
@@ -71,7 +70,7 @@ class ImageTrat:
         return cv2.imread(self.img_path)
     
     @property
-    def mask(self, matrix=False):
+    def mask(self):
         """
         Returns the loaded mask using OpenCV.
 
@@ -168,7 +167,7 @@ class ImageTrat:
         numpy.ndarray
             The resized image.
         """
-        return cv2.resize(image, dimension, interpolation=cv2.INTER_CUBIC)  
+        return cv2.resize(image, dimension, interpolation=cv2.INTER_LINEAR)  
     
     
     def equalize_img(self, image):
@@ -442,8 +441,51 @@ class GenerateAFMOptico:
             new_img[:,:,i] = channels[i]
         
         return new_img.astype(np.float32)
-        
     
+    
+    def treat_planned_height_by_viridis_map(self, planned_image, dimensions):
+            plt.imshow(planned_image)
+            plt.axis('off')  # Desativar os eixos para uma visualização mais limpa
+            plt.savefig('planned_virids.png', bbox_inches='tight', pad_inches=0)
+            planned_viridis = cv2.imread('planned_virids.png')
+            planned_viridis = cv2.resize(planned_viridis, (dimensions[1], dimensions[0]), cv2.INTER_AREA)
+            # test = cv2.cvtColor(test, cv2.COLOR_BGR2RGB)
+            
+            colors_list = []
+            for chan in self.opt_image.image_channels(planned_viridis):
+                color_normalized = (chan - np.mean(chan)) / np.std(chan)
+                colors_list.append(color_normalized)
+                
+            # Return list in sequence, blue, green, red
+            return colors_list
+
+    def show_rgb_virids(self, blue, green, red, new_img, optical_image):
+
+            plt.subplot(1,5,1)
+            plt.imshow(blue, cmap='gray')
+            plt.title("Planned BLUE")
+            plt.axis('off')
+            
+            plt.subplot(1,5,2)
+            plt.imshow(green, cmap='gray')
+            plt.title("Planned GREEN")
+            plt.axis('off')
+            
+            plt.subplot(1,5,3)
+            plt.imshow(red, cmap='gray')
+            plt.title("Planned RED")
+            plt.axis('off')
+            
+            plt.subplot(1,5,4)
+            plt.imshow(new_img[:,:,0], cmap='gray')
+            plt.title("Planned Height")
+            plt.axis('off')
+            
+            plt.subplot(1,5,5)
+            plt.imshow(optical_image)
+            plt.title("Optical Image")
+            plt.axis('off')
+            plt.show()
     
     def read_transparent_png(self, image_4channel):
         """
@@ -487,52 +529,61 @@ class GenerateAFMOptico:
             optical_image = self.opt_image.image()
             dimensions = self.opt_image.dimensions()
             blue, _,__ = self.opt_image.image_channels(optical_image)
-            equlized_image = self.opt_image.equalize_img(optical_image)
+            equalized_image = self.opt_image.equalize_img(optical_image)
+            
+            #Flatten blue and equalized_image
+            blue_flatten = blue.flatten()
+            equalized_image_flatten = equalized_image.flatten()
             
             afm_info = self.df_afm.df
-            features = [self.process_date, self.flatten_height, 'YM_Fmax1500pN', 'YM_Fmax0300pN', 'MaxPosition_F1500pN','Segment', self.target]
+            afm_info['blue'] = blue_flatten 
+            afm_info['hist_equalized'] = equalized_image_flatten
+            
+            features = [self.process_date, self.flatten_height,'blue','hist_equalized', 'YM_Fmax1500pN', 'YM_Fmax0300pN', 'MaxPosition_F1500pN','Segment', self.target]
             
             afm_info = afm_info[features]
             afm_info = self.df_afm.clean_target(afm_info)
-            
+            features_that_no_require_substrate = ['Planned Height', 'blue', 'hist_equalized']
             for feat in features[1:-2]:
-                
+                substrate = False
                 #Remove null or inf values
                 mean_without_substrate = afm_info[feat].loc[afm_info['Segment'] != 'Substrate'].mean()
                 afm_info[feat].replace([np.inf, - np.inf, np.nan], mean_without_substrate, inplace=True)
                 
-                #Calc Zscore by mean and std without substrate
-                afm_info = self.df_afm.zscore(afm_info, feat, substrate=False)
-                if feat == 'Planned Height':
+                if feat in features_that_no_require_substrate:
                     #Calc Zscore by mean and std with substrate
-                    afm_info = self.df_afm.zscore(afm_info, feat)
+                    substrate = True
+                    
+                #Calc Zscore by mean and std without substrate
+                afm_info = self.df_afm.zscore(afm_info, feat, substrate=substrate)
                     
             
-            planned = self.df_afm.create_channel_by_df(afm_info,  self.flatten_height, dimensions)
-            ym_1500 = self.df_afm.create_channel_by_df(afm_info,  'YM_Fmax1500pN', dimensions)
-            ym_0300 = self.df_afm.create_channel_by_df(afm_info,  'YM_Fmax0300pN', dimensions)
-            maxpos_1500 = self.df_afm.create_channel_by_df(afm_info,  'MaxPosition_F1500pN', dimensions)
+            channels = []
+            for feat in features[1:-2]:
+                feature_image = self.df_afm.create_channel_by_df(afm_info,  feat, dimensions) 
+                if feat == 'Planned Height':
+                    feature_image = - feature_image
+                if feat not in features_that_no_require_substrate:
+                    #apply threshold
+                    feature_image[feature_image > 3] = 3
+                    feature_image[feature_image < -3] = -3
+                channels.append(feature_image)
             
+            blue, green, red = self.treat_planned_height_by_viridis_map(channels[0], dimensions)
+            channels[0] = blue
             
-            #apply threshold
-            planned = -planned
-            planned[planned > 3] = 3
-            planned[planned < -3] = -3
-            
-            ym_1500[ym_1500 > 3] = 3
-            ym_1500[ym_1500 < -3] = -3
-            
-            ym_0300[ym_0300 > 3] = 3
-            ym_0300[ym_0300 < -3] = -3
-            
-            maxpos_1500[maxpos_1500 > 3] = 3
-            maxpos_1500[maxpos_1500 < -3] = -3
-            
-                        
-            channels = [blue, planned, equlized_image, maxpos_1500, ym_1500, ym_0300]
             new_img = self.add_new_channels(optical_image, channels)
             new_img = new_img.astype(np.float32)
+            
+            #BLUR 
+            ksize = (3,3)
+            new_img_blur = cv2.blur(new_img, ksize)
             # new_img = self.read_transparent_png(new_img)
+
+            # self.show_rgb_virids(blue, green, red, new_img, optical_image)
+            # plt.close()
+            
+            
             
             #Create mask
             mask = self.df_afm.create_channel_by_df(afm_info,  self.target, dimensions)
