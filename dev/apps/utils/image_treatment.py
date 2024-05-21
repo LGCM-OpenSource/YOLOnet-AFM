@@ -511,7 +511,7 @@ class GenerateAFMOptico:
         final_image = base + white
         return final_image.astype(np.uint8)
     
-    def run_generate_afm_optico_images(self, save_path):
+    def run_generate_afm_optico_images(self, save_path, filter=''):
         """
         Generates AFM optical images and saves the results.
 
@@ -568,16 +568,19 @@ class GenerateAFMOptico:
                     feature_image[feature_image > 3] = 3
                     feature_image[feature_image < -3] = -3
                 channels.append(feature_image)
-            
-            blue, green, red = self.treat_planned_height_by_viridis_map(channels[0], dimensions)
-            channels[0] = blue
+                
+            #viridis by planneh height
+            if filter == 'viridis':
+                blue, green, red = self.treat_planned_height_by_viridis_map(channels[0], dimensions)
+                channels[0] = blue
             
             new_img = self.add_new_channels(optical_image, channels)
             new_img = new_img.astype(np.float32)
             
             #BLUR 
             ksize = (3,3)
-            new_img_blur = cv2.blur(new_img, ksize)
+            if filter == 'blur':
+                new_img = cv2.blur(new_img, ksize)
             # new_img = self.read_transparent_png(new_img)
 
             # self.show_rgb_virids(blue, green, red, new_img, optical_image)
