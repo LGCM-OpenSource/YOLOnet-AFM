@@ -32,6 +32,50 @@ class DataChart:
         df[column] = df[column].astype('string') 
         return df 
     
+    
+    def line_plot(self, data, x ,y, title, color, width=600, height = 400):
+        fig = px.line(data, 
+                      x=x, y=y,
+                      title=title,
+                      width=width, height=height,
+                      color = color
+                      )
+        
+        fig.update_layout(  
+                          
+                                barmode='group',yaxis_range = [0,1],
+                                plot_bgcolor='white',
+                                font_family="Arial",
+                                font = dict(size=10),
+                                title_font_family="Arial",
+                                #xaxis={'categoryorder':'category ascending'}#, 'showticklabels': False, 'title': None},
+                                # yaxis={'showticklabels': False, 'title':None},
+                                #discomment to run unet_AFM_vs_vUnet_AFM
+                                # showlegend = False,
+                                # boxgroupgap=0.2, boxgap=0.7
+                                
+                        )
+
+        fig.update_yaxes(
+            mirror=True,
+            ticks='outside',
+            showline=True,
+            linecolor='black',
+            gridcolor='lightgrey'
+        )
+        
+        fig.update_xaxes(
+            mirror=True,
+            ticks='outside',
+            showline=True,
+            linecolor='black',
+            gridcolor='lightgrey'
+        )
+        
+        fig.show()
+        return fig 
+    
+    
     def box_plot(self, data, x, y, color, title, width=600, height = 400):
         
         fig = px.box(   
