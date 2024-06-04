@@ -21,7 +21,7 @@ for fold in range(1,11):
 
     list_df_validation_metrics = [('loss_X_val_loss',df_melt_loss), ('dice_coef_X_val_dice_coef',df_melt_dice), ('precision_X_val_precision',df_melt_precision), ('recall_X_val_recall',df_melt_recall)]
     for title, dfs in list_df_validation_metrics:
-        fig = chart.line_plot(dfs, x='epoch', y='scores', color = 'metrics', title=f'Unet_AFM_6_channels_{fold}_fold_training_metrics_cross_validation: {title}')
+        fig = chart.line_plot(dfs, x='epoch', y='scores', color = 'metrics', title=f'Unet_AFM_6_channels_{fold}_training_metrics_cross_validation: {title}')
 
 
         fig.write_image(f'Unet_AFM_6_channels_training_metrics_cross_validation.png')
