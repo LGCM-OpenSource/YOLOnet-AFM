@@ -15,11 +15,12 @@ Before you begin, make sure you've met the following prerequisites:
 
 ## 💻 Requirements
 * You have installed  `python >= 3.11.5 `
+* You have instaled Docker
+
 ### 🔧 Install dependences
 
-To install all projects dependences run:
+All projects dependencies will be installed on docker build comand.
 
-```python setup.py```
 ### :books: Libraries
 
 > If any dependency is not installed, the list below has the commands to install the uninstalled libraries manually
@@ -108,7 +109,7 @@ To install all projects dependences run:
                         </body>
                         </html>
 
-## :file_folder: DATA
+## :file_folder: DATA / MODELS
 
 The data is available at the [Drive link](https://drive.google.com/drive/folders/15N1tuNQ12LPO_nU7bUBwtT78i2IcD40k?usp=drive_link) 
 
@@ -177,11 +178,24 @@ The data is available at the [Drive link](https://drive.google.com/drive/folders
 └── setup.py
 ```
 
+
 ## :arrow_forward: Run project
 In the root path run:
 
 ```
-python dev/apps/main.py
+# Create the data and models directories
+mkdir data
+mkdir models
+```
+
+```
+# Build and run containers
+sudo docker compose up -d --build
+```
+
+```
+# Run a segmentation script
+sudo docker exec -it unet_afm_container python /app/dev/apps/main.py
 ```
 
 :robot: main.py
