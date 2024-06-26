@@ -1,20 +1,37 @@
-# instalar docker (Windows: DockerHUB, linux: docker.io)
-debian: sudo apt update | apt install docker.io
+# instalar docker 
+Windows: DockerHUB, 
+linux: docker.io
+Debian: sudo apt update | apt install docker.io
 
 # pasta data e pasta models
+Posicionado na pasta do projeto , criar os diretórios data e models
 
 # editar docker-compose.yml e inserir pasta de data no volume data
 
-
-
-# construir
+# construir o comando a seguir de build vai criar a imagem no container e instalar as dependências
+Posicionado na pasta do projeto 
+cd pasta do projeto
 sudo docker compose up -d --build
+
+# com o comando é possível iniciar os contêineres sem reconstruir a imagem
+docker-compose up
 
 # logs
 docker compose logs
+
+# parar container 
+docker-compose stop
+
+# start no container
+docker-compose start
+
+# verificar os containers em execussão
+docker ps
 
 # acessar cpntainer
 docker compose exec unet_afm_container /bin/bash
 
 # rodar script
+Posicionado na pasta do projeto 
 sudo docker exec -it unet_afm_container python /app/dev/apps/main.py
+
