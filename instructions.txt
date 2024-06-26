@@ -1,0 +1,20 @@
+# instalar docker (Windows: DockerHUB, linux: docker.io)
+debian: sudo apt update | apt install docker.io
+
+# pasta data e pasta models
+
+# editar docker-compose.yml e inserir pasta de data no volume data
+
+
+
+# construir
+sudo docker compose up -d --build
+
+# logs
+docker compose logs
+
+# acessar cpntainer
+docker compose exec unet_afm_container /bin/bash
+
+# rodar script
+sudo docker exec -it unet_afm_container python /app/dev/apps/main.py

@@ -1,0 +1,26 @@
+version: '0.1'
+
+services:
+  unet_afm:
+    build: .
+    stdin_open: true
+    container_name: unet_afm_container
+    volumes:
+      - data:/app/data
+      - models:/app/models
+    environment:
+      - PYTHONUNBUFFERED=1
+volumes:
+  data:
+    driver: local # Define the driver and options under the volume name
+    driver_opts:
+      type: none
+      device: ./data
+      o: bind
+  models:
+    driver: local # Define the driver and options under the volume name
+    driver_opts:
+      type: none
+      device: ./models
+      o: bind
+
