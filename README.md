@@ -14,9 +14,28 @@ Before you begin, make sure you've met the following prerequisites:
 * GRAPHICS: A dedicated graphics card with CUDA support is recommended if using deep learning techniques that make use of GPU acceleration. However, the code provided in this repository should run smoothly on an integrated graphics card such as Intel® UHD Graphics 630.
 
 ## 💻 Requirements
-* You have installed  `python >= 3.11.5 `
-* You have instaled Docker
+* You have installed  `python >= 3.9.19 `
+* You have installed Docker
 
+### For installing Docker on Windows, please follow these steps and documentation:
+
+1. **Install WSL (Windows Subsystem for Linux)**
+   - [WSL Installation Guide](https://docs.microsoft.com/windows/wsl/install)
+   - WSL will ensure an environment where Docker will function properly.
+
+2. **Install Docker Desktop for Windows**
+   - [Docker Desktop Download](https://www.docker.com/products/docker-desktop)
+   - After installation, create a free account on Docker Hub and make sure you are logged into Docker Desktop with it.
+   - In some cases, the Docker Desktop installation process will include registration and login.
+
+### For installing Docker on Linux:
+1. **Docker Ubuntu**
+   - [Docker Ubuntu Download](https://docs.docker.com/engine/install/ubuntu/)
+   - If you are using a different Linux distribution, you can consult the menu on the left side of the page for other possible distributions for Docker installation.
+
+2. **Post-Installation Steps**
+
+   - After installation, remember to run the command `sudo usermod -aG docker $USER` and restart your session to use Docker without needing to use `sudo`.
 ### 🔧 Install dependences
 
 All projects dependencies will be installed on docker build comand.
