@@ -58,70 +58,110 @@ Before you begin, make sure you've met the following prerequisites:
                             </thead>
                             <tbody>
                               </tr>
+                               <tr>
+                                <td>h5py</td>
+                                <td>3.11.0</td>
+                                <td>pip install h5py==3.11.0</td>
+                              </tr>
+                               <tr>
+                                <td>kaleido</td>
+                                <td>0.2.1</td>
+                                <td>pip install kaleido==0.2.1</td>
+                              </tr>
+                               <tr>
+                                <td>keras</td>
+                                <td>2.14.0</td>
+                                <td>pip install keras==2.14.0</td>
+                              </tr>
+                               <tr>
+                                <td>Keras-Preprocessing</td>
+                                <td>1.1.2</td>
+                                <td>pip install Keras-Preprocessing==1.1.2</td>
+                              </tr>
                                  <tr>
                                 <td>matplotlib</td>
-                                <td>3.7.2</td>
-                                <td>pip install matplotlib==3.5.2</td>
+                                <td>3.7.0</td>
+                                <td>pip install matplotlib==3.7.0</td>
                               </tr>
                                  <tr>
                                 <td>numpy</td>
-                                <td>1.24.3</td>
-                                <td>pip install numpy==1.24.3</td>
+                                <td>1.26.4</td>
+                                <td>pip install numpy==1.26.4</td>
                               </tr>
                                  <tr>
                                 <td>opencv_python</td>
-                                <td>4.9.0.80</td>
-                                <td>pip install opencv_python==4.9.0.80</td>
+                                <td>4.5.5.64</td>
+                                <td>pip install opencv_python==4.5.5.64</td>
+                              </tr>
+                                 <tr>
+                                <td>opencv-python-headless</td>
+                                <td>4.5.4.60</td>
+                                <td>pip install opencv-python-headless==4.5.4.60</td>
+                              </tr>
+                              <tr>
+                                <td>opt-einsum</td>
+                                <td>3.3.0</td>
+                                <td>pip install opt-einsum==3.3.0</td>
                               </tr>
                               <tr>
                                 <td>pandas</td>
-                                <td>2.0.3</td>
-                                <td>pip install pandas==2.0.3</td>
+                                <td>1.5.3</td>
+                                <td>pip install pandas==1.5.3</td>
                               </tr>
                               <tr>
+                                <td>plotly</td>
+                                <td>10.1.0</td>
+                                <td>pip install plotly==10.1.0</td>
+                              </tr>
+                           <tr>
                                 <td>plotly</td>
                                 <td>5.9.0</td>
                                 <td>pip install plotly==5.9.0</td>
                               </tr>
                                <tr>
-                                <td>kaleido</td>
-                                <td>0.2.1</td>
-                                <td>pip install ==0.2.1</td>
-                              </tr>
-                               <tr>
                                 <td>scikit_image</td>
-                                <td></td>
-                                <td>pip install scikit-image</td>
+                                <td>0.19.3</td>
+                                <td>pip install scikit-image==0.19.3</td>
                               </tr>
                                <tr>
                                 <td>scikit-learn</td>
-                                <td>1.4.0</td>
-                                <td>pip install scikit-learn==1.4.0</td>
+                                <td>1.2.1</td>
+                                <td>pip install scikit-learn==1.2.1</td>
                               </tr>
                                <tr>
                                 <td>scipy</td>
-                                <td>1.7.3</td>
-                                <td>pip install scipy==1.7.3</td>
+                                <td>1.10.0</td>
+                                <td>pip install scipy==1.10.0</td>
+                              </tr>
+                               <tr>
+                                <td>setuptools</td>
+                                <td>69.5.1</td>
+                                <td>pip install setuptools==69.5.1</td>
+                              </tr>
+                               <tr>
+                                <td>six</td>
+                                <td>1.16.0</td>
+                                <td>pip install six==1.16.0</td>
                               </tr>
                               <tr>
                                 <td>Tensorflow</td>
-                                <td>2.15.0</td>
-                                <td>pip install tensorflow==2.15.0</td>
+                                <td>2.14.0</td>
+                                <td>pip install tensorflow==2.14.0</td>
                               </tr>
                               <tr>
                                 <td>Torch</td>
-                                <td>2.2.1</td>
-                                <td>pip install torch==2.2.1</td>
+                                <td>2.3.0</td>
+                                <td>pip install torch==2.3.0</td>
                               </tr>
                               <tr>
                                 <td>tqdm</td>
-                                <td>4.65.0</td>
-                                <td>pip install tqdm==4.65.0</td>
+                                <td>4.64.1</td>
+                                <td>pip install tqdm==4.64.1</td>
                               </tr>
                               <tr>
                                 <td>xgboost</td>
-                                <td>1.6.2</td>
-                                <td>pip install xgboost==1.6.2</td>
+                                <td>1.7.3</td>
+                                <td>pip install xgboost==1.7.3</td>
                               </tr>
                             </tbody>
                           </table>
