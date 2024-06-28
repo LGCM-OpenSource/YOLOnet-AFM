@@ -1,11 +1,5 @@
-# vUNet_AFM
+# UNet_AFM
  In this repository, the project for segmenting cellular structures through atomic force microscopy (AFM) and its respective models will be stored.
-## 🚀 Start
-
-
-These instructions will allow you to obtain a copy of the project up and running on your local machine for development and testing purposes.
-
-`git clone <GIT_URL>”`
 
 ## 📋 Hardware Prerequisites
 Before you begin, make sure you've met the following prerequisites:
@@ -14,10 +8,15 @@ Before you begin, make sure you've met the following prerequisites:
 * GRAPHICS: A dedicated graphics card with CUDA support is recommended if using deep learning techniques that make use of GPU acceleration. However, the code provided in this repository should run smoothly on an integrated graphics card such as Intel® UHD Graphics 630.
 
 ## 💻 Requirements
-* You have installed  `python >= 3.9.19 `
-* You have installed Docker
+* `python >= 3.9.19 `
+* `Docker`
 
-### For installing Docker on Windows, please follow these steps and documentation:
+<details>
+<summary>
+ Click here for the Docker installation guide
+</summary>
+
+ ### For installing Docker on Windows, please follow these steps and documentation:
 
 1. **Install WSL (Windows Subsystem for Linux)**
    - [WSL Installation Guide](https://docs.microsoft.com/windows/wsl/install)
@@ -33,16 +32,17 @@ Before you begin, make sure you've met the following prerequisites:
    - [Docker Ubuntu Download](https://docs.docker.com/engine/install/ubuntu/)
    - If you are using a different Linux distribution, you can consult the menu on the left side of the page for other possible distributions for Docker installation.
 
-2. **Post-Installation Steps**
+</details>
 
-   - After installation, remember to run the command `sudo usermod -aG docker $USER` and restart your session to use Docker without needing to use `sudo`.
-### 🔧 Install dependences
-
-All projects dependencies will be installed on docker build comand.
+> [!TIP]
+> After installation, remember to run the command `sudo usermod -aG docker $USER` and restart your session to use Docker without needing to use `sudo`.
 
 ### :books: Libraries
 
-> If any dependency is not installed, the list below has the commands to install the uninstalled libraries manually
+<details>
+
+<summary> Click Here to see project libraries </summary>
+> Here is the table with the libraries used and their respective versions.
                  <!DOCTYPE html>
                         <html>
                         <head>
@@ -128,26 +128,48 @@ All projects dependencies will be installed on docker build comand.
                         </body>
                         </html>
 
-## :file_folder: DATA / MODELS
 
-The data is available at the [Drive link](https://drive.google.com/drive/folders/15N1tuNQ12LPO_nU7bUBwtT78i2IcD40k?usp=drive_link) 
+</details>
 
-* Download the file `data.zip` and the folder `models`;
-* Copy the folders to the project's root directory.
-* Now you are ready to run the project.
+> [!NOTE]
+> All projects libraries will be installed on docker build comand.
+
+
+## 🚀 Start
+These instructions will allow you to obtain a copy of the project up and running on your local machine for development and testing purposes.
+
+1. Clone project
+   ```
+   git clone <GIT_URL>
+   ```
+3. Access the [Drive link](https://drive.google.com/drive/folders/15N1tuNQ12LPO_nU7bUBwtT78i2IcD40k?usp=drive_link)
+   * Download the file `data.zip` and the folder `models`;
+   * Extract `data.zip` folder to root directory;
+   * Set the `models` folders to the project's root directory.
+4. To build docker container and install all dependences run:
+   ```
+   sudo docker compose up -d --build
+   ```
+5. Run project:
+   ```
+   sudo docker exec -it unet_afm_container python /app/dev/apps/main.py
+   ```
 
 ### :file_folder: FOLDER ARCHITECTURE
+<details>
+
+ <summary>See folder architecture</summary>
+ 
 ```
 ├── data
 │   │
 ├───input
 │    ├───optical_images_resized
 │    ├───original_images
-│    ├───original_manually_segmented
-│    └───Usefull_data
+│    ├───Usefull_data
+│    
 ├───intermediate
-│   ├───pre_processing_only_afm
-│   └───pre_processing_optico_and_afm
+│   ├─── pre_processing_optico_and_afm
 │       ├───image
 │       └───mask
 ├───output
@@ -197,25 +219,12 @@ The data is available at the [Drive link](https://drive.google.com/drive/folders
 └── setup.py
 ```
 
+ 
+</details>
 
-## :arrow_forward: Run project
-In the root path run:
 
-```
-# Create the data and models directories
-mkdir data
-mkdir models
-```
+## :arrow_forward: Project scripts
 
-```
-# Build and run containers
-sudo docker compose up -d --build
-```
-
-```
-# Run a segmentation script
-sudo docker exec -it unet_afm_container python /app/dev/apps/main.py
-```
 
 :robot: main.py
 > This script runs the entire project according to the option selected by the user:
