@@ -4,9 +4,12 @@ import os
 chart = DataChart()
 
 # Plot das métricas obtidas no conjunto de teste
-df_path = f'data/output/unet_AFM_predictions1/Unet_AFM_6_channels_metrics.csv'
+df_path = f'validation_metrics_UNet_AFM_6_channels_5_layers.csv'
 df = pd.read_csv(df_path, index_col=0)
-final_df_melt_general = pd.melt(df, id_vars=['Process Date','Model'], value_vars=['Precision', 'Recall', 'F1', 'Dice'], var_name = 'metrics', value_name = 'scores')    
+# final_df_melt_general = pd.melt(df, id_vars=['Process Date','Model'], value_vars=['Precision', 'Recall', 'F1', 'Dice'], var_name = 'metrics', value_name = 'scores')    
     
-fig = chart.box_plot(final_df_melt_general, x='Model', y='scores', color = 'metrics', title='Unet_6_channels_final_model')
-fig.write_image(f'unet_AFM_6_channels_final_metrics.png')
+fig = chart.box_plot(df, x='Model', y='scores', color = 'metrics', title='UNet_AFM_5_channels_3_layers')
+fig.write_image(f'UNet_AFM_6_channels_5_layers.png')
+
+fig2 = chart.box_plot(df, x='Model', y='scores', color = 'metrics', title='', x_label=False, y_label=False)
+fig2.write_image(f'UNet_AFM_6_channels_5_layers.svg')
