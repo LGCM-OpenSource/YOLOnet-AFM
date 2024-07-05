@@ -76,7 +76,7 @@ class DataChart:
         return fig 
     
     
-    def box_plot(self, data, x, y, color, title, width=600, height = 400):
+    def box_plot(self, data, x, y, color, title, width=600, height = 400, x_label=True, y_label=True):
         
         fig = px.box(   
                         
@@ -88,21 +88,36 @@ class DataChart:
                         
                     )
 
-
-        fig.update_layout(  
-                          
-                                barmode='group',yaxis_range = [0,1],
-                                plot_bgcolor='white',
-                                font_family="Arial",
-                                font = dict(size=10),
-                                title_font_family="Arial",
-                                #xaxis={'categoryorder':'category ascending'}#, 'showticklabels': False, 'title': None},
-                                # yaxis={'showticklabels': False, 'title':None},
-                                #discomment to run unet_AFM_vs_vUnet_AFM
-                                # showlegend = False,
-                                # boxgroupgap=0.2, boxgap=0.7
-                                
-                        )
+        if x_label and y_label:
+            fig.update_layout(  
+                            
+                                    barmode='group',yaxis_range = [0,1],
+                                    plot_bgcolor='white',
+                                    font_family="Arial",
+                                    font = dict(size=10),
+                                    title_font_family="Arial",
+                                    #xaxis={'categoryorder':'category ascending'}#, 'showticklabels': False, 'title': None},
+                                    # yaxis={'showticklabels': False, 'title':None},
+                                    #discomment to run unet_AFM_vs_vUnet_AFM
+                                    # showlegend = False,
+                                    # boxgroupgap=0.2, boxgap=0.7
+                                    
+                            )
+        else:
+                        fig.update_layout(  
+                            
+                                    barmode='group',yaxis_range = [0,1],
+                                    plot_bgcolor='white',
+                                    font_family="Arial",
+                                    font = dict(size=10),
+                                    title_font_family="Arial",
+                                    xaxis={'showticklabels': False, 'title': None},#{'categoryorder':'category ascending'}
+                                    yaxis={'showticklabels': False, 'title':None},
+                                    #discomment to run unet_AFM_vs_vUnet_AFM
+                                    # showlegend = False,
+                                    # boxgroupgap=0.2, boxgap=0.7
+                                    
+                            )
 
         fig.update_yaxes(
             mirror=True,
