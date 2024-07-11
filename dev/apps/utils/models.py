@@ -1,8 +1,10 @@
 #unet
 import os
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 import tensorflow as tf
 from tensorflow.keras.utils import CustomObjectScope
+
 
 #Voted System
 import xgboost as xgb
@@ -105,8 +107,9 @@ class Models:
         """
         self.model_name = model_name.lower()
         if model_name == 'unet':
-            with CustomObjectScope({'iou': self.iou, 'dice_coef': self.dice_coef}): 
-                self.model = tf.keras.models.load_model(self.unet_path)
+            with CustomObjectScope({'iou': self.iou, 'dice_coef': self.dice_coef}):
+                if os.path.exists(self.unet_path): 
+                    self.model = tf.keras.models.load_model(self.unet_path)
             if model_path:
              with CustomObjectScope({'iou': self.iou, 'dice_coef': self.dice_coef}): 
                 self.model = tf.keras.models.load_model(model_path)
@@ -184,10 +187,11 @@ class Models:
         """
 
 
-        y_true = tf.keras.layers.Flatten()(y_true)
-        y_pred = tf.keras.layers.Flatten()(y_pred)
+        y_true = tf.convert_to_tensor(y_true, dtype=tf.float32)
+        y_pred = tf.convert_to_tensor(y_pred, dtype=tf.float32)
         intersection = tf.reduce_sum(y_true * y_pred)
-        return (2. * intersection + self.smooth) / (tf.reduce_sum(y_true) + tf.reduce_sum(y_pred) + self.smooth)
+        dice_score = (2. * intersection + self.smooth) / (tf.reduce_sum(y_true) + tf.reduce_sum(y_pred) + self.smooth)
+        return dice_score.numpy()
 
     def dice_loss(self, y_true, y_pred):
 
@@ -225,7 +229,7 @@ class Models:
         float
             Precision score.
         """
-        return precision_score(y_true, y_pred, average="binary",zero_division=0)
+        return precision_score(y_true, y_pred, average="binary",zero_division=0, pos_label=True)
     
     def recall(self, y_true, y_pred):
         """
@@ -243,9 +247,9 @@ class Models:
         float
             Recall score.
         """
-        return  recall_score(y_true, y_pred, average="binary",zero_division=0)
+        return  recall_score(y_true, y_pred, average="binary",zero_division=0, pos_label=True)
     
-    def f1_score(self, y_true, y_pred):
+    def f1(self, y_true, y_pred):
         """
         Calculates the F1 score.
 
@@ -261,7 +265,7 @@ class Models:
         float
             F1 score.
         """
-        return f1_score(y_true, y_pred, average="binary",zero_division=0)
+        return f1_score(y_true, y_pred, average="binary",zero_division=0, pos_label=True)
     
     def jaccard(self, y_true, y_pred):
         """
@@ -279,11 +283,7 @@ class Models:
         float
             Jaccard score.
         """
-        return jaccard_score(y_true, y_pred, average="binary",zero_division=0) 
-    
-    def dice( self, y_true, y_pred):
-        intersection = np.logical_and(y_true, y_pred)
-        return 2.0 * intersection.sum() / (y_true.sum() + y_pred.sum())
+        return jaccard_score(y_true, y_pred, average="binary",zero_division=0, pos_label=True) 
     
     def predict(self, x):
         """
@@ -354,30 +354,28 @@ class Models:
 
 
 class EvalModel:
-    def __init__(self, model_name, y_true, y_pred):
+    def __init__(self, model_name, process_date, y_true, y_pred):
         self.model = Models(model_name)
+        self.process_date = process_date
         self.y_true = y_true
         self.y_pred = y_pred
         self.SCORE = []
         
     
     def get_metrics(self):
-        f1_value = self.model.f1_score(self.y_true, self.y_pred)
-        jac_value = self.model.jaccard(self.y_true, self.y_pred)
-        dice_value = self.model.dice(self.y_true, self.y_pred)
+        f1_value = self.model.f1(self.y_true, self.y_pred)
+        dice_value = self.model.dice_coef(self.y_true, self.y_pred)
         recall_value = self.model.recall(self.y_true, self.y_pred)
         precision_value = self.model.precision(self.y_true, self.y_pred)
-        self.SCORE.append([self.model.model_name, precision_value, recall_value, f1_value, jac_value, dice_value])
+        self.SCORE.append([self.model.model_name, self.process_date, precision_value, recall_value, f1_value, dice_value])
         return self.SCORE
     
     
-    def metrics_to_df(self, process_date, score):
-        df = pd.DataFrame(score, columns=['Model', 'Precision', 'Recall', 'F1', 'Jaccard', 'Dice'])
-        df['Process Date'] = process_date
+    def metrics_to_df(self, score):
+        df = pd.DataFrame(score, columns=['Model','Process Date', 'Precision', 'Recall', 'F1', 'Dice'])
         return df 
     
-    def save_metrics(self, df, save_path='metrics.csv'):
-        return df.to_csv(save_path)
+    
     
 
 class UnetProcess:
@@ -490,9 +488,8 @@ class UnetProcess:
         x = self.preprocess_image.resize(x, (self.W, self.H))
         ori_x = x
         # x = x/255.0
-        # x = x.astype(np.int32)
         x = x > 0.5
-
+        # x = x.astype(np.int32)
         return ori_x, x
 
 
@@ -512,15 +509,15 @@ class UnetProcess:
         kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(5,5))
         y_pred = np.expand_dims(y_pred, axis=-1) * 255.0
 
-        x_dim,y_dim = self.preprocess_image.dimensions(matrix=True)
+        x_dim,y_dim = self.preprocess_image.dimensions()
         
         # Removing external outliers
-        # y_pred = cv2.morphologyEx(y_pred, cv2.MORPH_OPEN, kernel)
+        y_pred = cv2.morphologyEx(y_pred, cv2.MORPH_OPEN, kernel)
 
-        # # y_pred = cv2.dilate(y_pred,kernel,iterations = 1)
+        # y_pred = cv2.dilate(y_pred,kernel,iterations = 1)
 
-        # # Filling empty spaces inside the nucleus
-        # y_pred = cv2.morphologyEx(y_pred, cv2.MORPH_CLOSE, kernel)
+        # Filling empty spaces inside the nucleus
+        y_pred = cv2.morphologyEx(y_pred, cv2.MORPH_CLOSE, kernel)
         y_pred  = cv2.resize(y_pred, (y_dim, x_dim))
         
         y_pred[y_pred>0] = 1
@@ -550,7 +547,7 @@ class UnetProcess:
 
 
 
-    def unet_predict(self, save_path, usefull_path=False, save_unet_path=False):
+    def unet_predict(self, save_path='', usefull_path=False, save_unet_path=False):
         '''
         Performs the UNet prediction and saves the results.
 
@@ -569,30 +566,30 @@ class UnetProcess:
             optical_image = self.opt_image.image()
             ori_x, x = self.read_image(self.preprocess_image.image(matrix=True))
             ori_y, y = self.read_mask(self.mask.image(matrix=True))
-
             
             '''prediction'''
             y_proba = self.model.predict(x) 
             y_pred = y_proba[0] > 0.5
             y_proba = np.squeeze(y_proba)
             y_pred = np.squeeze(y_pred)
-            y_pred = y_pred.astype(np.int32)
+            y_pred = y_pred > 0.5
             
-            '''Resize prediction from 256x256 to original image size'''
-            y_pred_resized, y_pred_flatten = self.resize_prediction_to_original_size(y_pred)
+            #Resize prediction from 256x256 to original image size
+            # y_pred_resized, y_pred_flatten = self.resize_prediction_to_original_size(y_pred)
             
-            if usefull_path:
+            # if usefull_path:
+            #     save_usefulll_path = usefull_path.replace(f'data{os.sep}input{os.sep}Usefull_data{os.sep}',f'data{os.sep}output{os.sep}predict_sheets{os.sep}') 
+            #     df = DataFrameTrat(usefull_path)
+            #     df_afm = df.df
                 
-                df_afm = self.df_afm.df
+            #     df_afm['unet_prediction'] = y_pred_flatten
                 
-                df_afm['unet_prediction'] = y_pred_flatten
-                
-                # verify_count = self.get_count(df_afm)
-                # verify_objects = self.count_objects(df_afm)
+            #     verify_count = self.get_count(df_afm)
+            #     verify_objects = self.count_objects(df_afm)
                 
                 
             '''transpose prediction to optical image'''
-            y_pred = self.preprocess_image.predicted_nucleus_to_image(optical_image, y_pred_resized)
+            # y_pred = self.preprocess_image.predicted_nucleus_to_image(optical_image, y_pred_resized)
 
             '''Save results'''
             # if save_unet_path:
@@ -608,14 +605,15 @@ class UnetProcess:
 
             #     fig.savefig(save_path)
                 
-            # if verify_count < 177*0.2 or verify_objects > 1:   
-            #     '''to run pixel segmentation '''   
-            #     return y, y_proba, True
+            # if not verify_count < 177*0.2 or verify_objects > 1:   
+                
+            #     df_afm.to_csv(save_usefulll_path, sep='\t', index=False)
+            #     self.preprocess_image.save_image(save_path, y_pred)
+                
+            #     return y, y_proba, False
             
-            df_afm.to_csv(usefull_path, sep='\t', index=False)
-            self.preprocess_image.save_image(save_path, y_pred)
-            return y, y_proba, False
-        
+            # to run pixel segmentation    
+            return y, y_pred, True
         except Exception:
             print(traceback.format_exc())
 
@@ -676,7 +674,7 @@ class PixelProcess:
                 'YM_Fmax0500pN',
                 'Generic Segmentation']
     
-    def __init__(self, usefull_path, optical_image_path):
+    def __init__(self, usefull_data_path, optical_image_path):
         '''
         Initializes the PixelProcess object.
 
@@ -693,7 +691,7 @@ class PixelProcess:
                             'logisticRegression': Models('logreg'), 
                             'logisticRegression_proba': Models('logreg')
                            }
-        self.df_afm = DataFrameTrat(usefull_path)
+        self.df_afm_normalized = DataFrameTrat(usefull_data_path)
         self.optical_image = ImageTrat(optical_image_path)
 
     def vector_to_image(self, vector, dimensions):
@@ -951,7 +949,7 @@ class PixelProcess:
         predict_df = predict_df.drop([distance_from_centroid], axis=1)
         return predict_df      
     
-    def pixel_predict(self, save_path, usefull_path, usefull_path_to_save=False):
+    def pixel_predict(self, save_path, usefull_path, save_pixel_path=False):
         '''
         Performs pixel-based prediction and saves the results.
 
@@ -969,7 +967,7 @@ class PixelProcess:
         
         original_df = pd.read_csv(usefull_path, index_col=0, sep='\t')
         
-        df_afm = self.df_afm.df
+        df_afm = self.df_afm_normalized.df
         df_afm = df_afm[self.features]
                 
         opt_image = self.optical_image.image
@@ -984,9 +982,9 @@ class PixelProcess:
             check_proba = model_name.split('_')
             
             x = df_afm.drop(['Process Date'], axis=1)
-            if self.df_afm.target:
-                y = df_afm[self.df_afm.target]
-                x = x.drop([self.df_afm.target], axis=1)
+            if self.df_afm_normalized.target:
+                y = df_afm[self.df_afm_normalized.target]
+                x = x.drop([self.df_afm_normalized.target], axis=1)
             
             #drop null, inf, -inf values
             x = x.apply(lambda col: col.replace((np.inf, -np.inf, np.nan), col.mean()).reset_index(drop=True))
@@ -1007,10 +1005,10 @@ class PixelProcess:
             nucleus_predict, predict_count = self.check_prediction(nucleus_predict)
             
             predict_centroid = self.centroid_calc(nucleus_predict)
-            # predict_eccentricity = self.eccentricity_calc(nucleus_predict)
+            predict_eccentricity = self.eccentricity_calc(nucleus_predict)
             
             #transpose nucleus to image
-            # nucleus_img = self.optical_image.predicted_nucleus_to_image(opt_image, nucleus_predict)
+            nucleus_img = self.optical_image.predicted_nucleus_to_image(opt_image, nucleus_predict)
             
             
             #remove outliers
@@ -1040,21 +1038,22 @@ class PixelProcess:
 
         # Save results
         save_path = save_path.replace('.png', f'_{best_model_name}.png')
+        save_usefull_path = usefull_path.replace(f'data{os.sep}input{os.sep}Usefull_data{os.sep}', f'data{os.sep}output{os.sep}predict_sheets{os.sep}')
         
         self.optical_image.save_image(save_path, best_img)
-        best_segment.to_csv(usefull_path_to_save, index=False, sep='\t')
+        best_segment.to_csv(save_usefull_path, index=False, sep='\t')
 
-        # if save_pixel_path:
-        #     save_pixel_path = save_pixel_path.replace(".png", "")
-        #     fig = plt.figure(figsize=(15,7))
-        #     fig.patch.set_facecolor('white')
+        if save_pixel_path:
+            save_pixel_path = save_pixel_path.replace(".png", "")
+            fig = plt.figure(figsize=(15,7))
+            fig.patch.set_facecolor('white')
 
-        #     best_img = cv2.cvtColor(best_img, cv2.COLOR_BGR2RGB)
-        #     opt_image = cv2.cvtColor(opt_image, cv2.COLOR_BGR2RGB)
+            best_img = cv2.cvtColor(best_img, cv2.COLOR_BGR2RGB)
+            opt_image = cv2.cvtColor(opt_image, cv2.COLOR_BGR2RGB)
 
-        #     self.plot_segmentation(fig, [1,2,1], 'Original optico',opt_image)
-        #     self.plot_segmentation(fig, [1,2,2], best_model_name, best_img)
+            self.plot_segmentation(fig, [1,2,1], 'Original optico',opt_image)
+            self.plot_segmentation(fig, [1,2,2], best_model_name, best_img)
 
-        #     fig.savefig(f'{save_pixel_path}_{best_model_name}_voted.png')
-        #     plt.close(fig)
+            fig.savefig(f'{save_pixel_path}_{best_model_name}_voted.png')
+            plt.close(fig)
  
