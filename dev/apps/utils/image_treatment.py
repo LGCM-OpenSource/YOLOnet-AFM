@@ -511,7 +511,7 @@ class GenerateAFMOptico:
         final_image = base + white
         return final_image.astype(np.uint8)
     
-    def run_generate_afm_optico_images(self, save_path, filter=''):
+    def run_generate_afm_optico_images(self, save_path):
         """
         Generates AFM optical images and saves the results.
 
@@ -539,18 +539,26 @@ class GenerateAFMOptico:
             afm_info['blue'] = blue_flatten 
             afm_info['hist_equalized'] = equalized_image_flatten
             
-            features = [self.process_date, self.flatten_height,'blue','hist_equalized', 'YM_Fmax1500pN', 'YM_Fmax0300pN', 'MaxPosition_F1500pN','Segment', self.target]
+            
+            '''2 channels (only optico)'''
+            features = [self.process_date, 'blue','hist_equalized','Segment', self.target]
+            
+            '''4 channels (only AFM)'''
+            # features = [self.process_date, self.flatten_height,'YM_Fmax1500pN', 'YM_Fmax0300pN', 'MaxPosition_F1500pN','Segment', self.target]
+            
+            '''6_channels (optico + AFM)'''
+            # features = [self.process_date, self.flatten_height, 'blue', 'hist_equalized', 'YM_Fmax1500pN', 'YM_Fmax0300pN', 'MaxPosition_F1500pN','Segment', self.target]
             
             afm_info = afm_info[features]
             afm_info = self.df_afm.clean_target(afm_info)
-            features_that_no_require_substrate = ['Planned Height', 'blue', 'hist_equalized']
+            features_that_no_need_remove_substrate = ['Planned Height', 'blue', 'hist_equalized']
             for feat in features[1:-2]:
                 substrate = False
                 #Remove null or inf values
                 mean_without_substrate = afm_info[feat].loc[afm_info['Segment'] != 'Substrate'].mean()
                 afm_info[feat].replace([np.inf, - np.inf, np.nan], mean_without_substrate, inplace=True)
                 
-                if feat in features_that_no_require_substrate:
+                if feat in features_that_no_need_remove_substrate:
                     #Calc Zscore by mean and std with substrate
                     substrate = True
                     
@@ -563,7 +571,7 @@ class GenerateAFMOptico:
                 feature_image = self.df_afm.create_channel_by_df(afm_info,  feat, dimensions) 
                 if feat == 'Planned Height':
                     feature_image = - feature_image
-                if feat not in features_that_no_require_substrate:
+                if feat not in features_that_no_need_remove_substrate:
                     #apply threshold
                     feature_image[feature_image > 3] = 3
                     feature_image[feature_image < -3] = -3
@@ -572,15 +580,16 @@ class GenerateAFMOptico:
             new_img = self.add_new_channels(optical_image, channels)
             new_img = new_img.astype(np.float32)
             
+
             # new_img = self.read_transparent_png(new_img)
 
             #Create mask
             mask = self.df_afm.create_channel_by_df(afm_info,  self.target, dimensions)
-            mask = mask.astype(np.float32)
+            mask = mask.astype(np.uint8)
             
             
             np.save(save_path, new_img)
-            mask_save_path = save_path.replace(f'image', 'mask')
+            mask_save_path = save_path.replace(f'pre_processing_only_optico{os.sep}image', f'pre_processing_only_optico{os.sep}mask')
             np.save(mask_save_path, mask)
         except Exception:
             print(traceback.format_exc())
