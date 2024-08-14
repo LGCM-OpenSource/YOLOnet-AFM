@@ -8,7 +8,7 @@ data_folder = 'data'
 
 opt_image_dir = f'{data_folder}{os.sep}input{os.sep}optical_images_resized{os.sep}'
 usefull_data_dir = f'{data_folder}{os.sep}input{os.sep}Usefull_data{os.sep}'
-save_dir = f'{data_folder}{os.sep}intermediate{os.sep}pre_processing_optico_and_afm{os.sep}image{os.sep}'
+save_dir = f'{data_folder}{os.sep}intermediate{os.sep}pre_processing_only_optico{os.sep}image{os.sep}'
 
 dire = os.listdir(opt_image_dir)
 

@@ -84,7 +84,8 @@ class DataChart:
                         x=x, y=y, 
                         color=color, 
                         title=title,
-                        width=width, height=height
+                        width=width, height=height,
+                        # points="all"
                         
                     )
 
