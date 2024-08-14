@@ -190,8 +190,11 @@ class Models:
         y_true = tf.convert_to_tensor(y_true, dtype=tf.float32)
         y_pred = tf.convert_to_tensor(y_pred, dtype=tf.float32)
         intersection = tf.reduce_sum(y_true * y_pred)
-        dice_score = (2. * intersection + self.smooth) / (tf.reduce_sum(y_true) + tf.reduce_sum(y_pred) + self.smooth)
-        return dice_score.numpy()
+        union = (tf.reduce_sum(y_true) + tf.reduce_sum(y_pred))
+        if union == 0:
+            return 0
+        dice_score = (2. * intersection) / union
+        return round(dice_score.numpy(), 7)
 
     def dice_loss(self, y_true, y_pred):
 
@@ -229,7 +232,7 @@ class Models:
         float
             Precision score.
         """
-        return precision_score(y_true, y_pred, average="binary",zero_division=0, pos_label=True)
+        return round(precision_score(y_true, y_pred, average="binary",zero_division=0, pos_label=True), 7)
     
     def recall(self, y_true, y_pred):
         """
@@ -247,7 +250,7 @@ class Models:
         float
             Recall score.
         """
-        return  recall_score(y_true, y_pred, average="binary",zero_division=0, pos_label=True)
+        return  round(recall_score(y_true, y_pred, average="binary",zero_division=0, pos_label=True), 7)
     
     def f1(self, y_true, y_pred):
         """
@@ -265,7 +268,7 @@ class Models:
         float
             F1 score.
         """
-        return f1_score(y_true, y_pred, average="binary",zero_division=0, pos_label=True)
+        return round(f1_score(y_true, y_pred, average="binary",zero_division=0, pos_label=True),7)
     
     def jaccard(self, y_true, y_pred):
         """
@@ -283,7 +286,7 @@ class Models:
         float
             Jaccard score.
         """
-        return jaccard_score(y_true, y_pred, average="binary",zero_division=0, pos_label=True) 
+        return round(jaccard_score(y_true, y_pred, average="binary",zero_division=0, pos_label=True), 7) 
     
     def predict(self, x):
         """
@@ -509,7 +512,7 @@ class UnetProcess:
         kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(5,5))
         y_pred = np.expand_dims(y_pred, axis=-1) * 255.0
 
-        x_dim,y_dim = self.preprocess_image.dimensions()
+        x_dim,y_dim = self.preprocess_image.dimensions(matrix=True)
         
         # Removing external outliers
         y_pred = cv2.morphologyEx(y_pred, cv2.MORPH_OPEN, kernel)
@@ -575,21 +578,21 @@ class UnetProcess:
             y_pred = y_pred > 0.5
             
             #Resize prediction from 256x256 to original image size
-            # y_pred_resized, y_pred_flatten = self.resize_prediction_to_original_size(y_pred)
+            y_pred_resized, y_pred_flatten = self.resize_prediction_to_original_size(y_pred)
             
-            # if usefull_path:
-            #     save_usefulll_path = usefull_path.replace(f'data{os.sep}input{os.sep}Usefull_data{os.sep}',f'data{os.sep}output{os.sep}predict_sheets{os.sep}') 
-            #     df = DataFrameTrat(usefull_path)
-            #     df_afm = df.df
+            if usefull_path:
+                save_usefulll_path = usefull_path.replace(f'data_complete{os.sep}input{os.sep}Usefull_data{os.sep}',f'data_complete{os.sep}output{os.sep}predict_sheets{os.sep}') 
+                df = DataFrameTrat(usefull_path)
+                df_afm = df.df
                 
-            #     df_afm['unet_prediction'] = y_pred_flatten
+                df_afm['unet_prediction'] = y_pred_flatten
                 
-            #     verify_count = self.get_count(df_afm)
-            #     verify_objects = self.count_objects(df_afm)
+                verify_count = self.get_count(df_afm)
+                verify_objects = self.count_objects(df_afm)
                 
                 
             '''transpose prediction to optical image'''
-            # y_pred = self.preprocess_image.predicted_nucleus_to_image(optical_image, y_pred_resized)
+            y_pred = self.preprocess_image.predicted_nucleus_to_image(optical_image, y_pred_resized)
 
             '''Save results'''
             # if save_unet_path:
@@ -607,8 +610,8 @@ class UnetProcess:
                 
             # if not verify_count < 177*0.2 or verify_objects > 1:   
                 
-            #     df_afm.to_csv(save_usefulll_path, sep='\t', index=False)
-            #     self.preprocess_image.save_image(save_path, y_pred)
+            df_afm.to_csv(save_usefulll_path, sep='\t', index=False)
+            self.preprocess_image.save_image(save_path, y_pred)
                 
             #     return y, y_proba, False
             
