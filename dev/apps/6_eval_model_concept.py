@@ -7,41 +7,48 @@ import matplotlib.pyplot as plt
 import pandas as pd 
 
 
-model_list = [
-        ('UNet_AFM_2_channels_only_optico.h5', 'pre_processing_only_optico'),
-        ('UNet_AFM_4_channels_only_afm.h5', 'pre_processing_only_afm')
-              
-              ]
+model_dict = {
+    'half_unet_afm_1_channels_only_AFM_CosHeightSum': {
+        'model': 'half_unet_afm_1_channels_only_AFM_CosHeightSum_NN_data_without_artifacts.h5',
+        'test_path': f'{os.sep}home{os.sep}arthur{os.sep}lgcm{os.sep}projects{os.sep}Segmentation_union_projects{os.sep}data_complete{os.sep}intermediate{os.sep}pre_processing_afm{os.sep}image',
+        'mask_path':f'{os.sep}home{os.sep}arthur{os.sep}lgcm{os.sep}projects{os.sep}Segmentation_union_projects{os.sep}data_complete{os.sep}intermediate{os.sep}pre_processing_afm{os.sep}mask',
+            
+    },
+    'half_unet_afm_2_channels_like_yolo_opt_afm':{
+            'model':'half_unet_afm_2_channels_like_yolo_opt_afm_NN_data_without_artifacts.h5',
+            'test_path':f'{os.sep}home{os.sep}arthur{os.sep}lgcm{os.sep}projects{os.sep}Segmentation_union_projects{os.sep}data_complete{os.sep}intermediate{os.sep}pre_processing_optico_and_afm{os.sep}image',
+            'mask_path':f'{os.sep}home{os.sep}arthur{os.sep}lgcm{os.sep}projects{os.sep}Segmentation_union_projects{os.sep}data_complete{os.sep}intermediate{os.sep}pre_processing_optico_and_afm{os.sep}mask',
+            
+    },
+    'half_unet_afm_2_channels_only_optical_data_without_artifacts':{
+            'model': 'half_unet_afm_2_channels_only_optical_NN_data_without_artifacts_zscore.h5',
+            'test_path': f'{os.sep}home{os.sep}arthur{os.sep}lgcm{os.sep}projects{os.sep}Segmentation_union_projects{os.sep}data_complete{os.sep}intermediate{os.sep}pre_processing_optico{os.sep}image',
+            'mask_path': f'{os.sep}home{os.sep}arthur{os.sep}lgcm{os.sep}projects{os.sep}Segmentation_union_projects{os.sep}data_complete{os.sep}intermediate{os.sep}pre_processing_optico{os.sep}mask'
+    }
+}
+
+opt_image = f'{os.sep}home{os.sep}arthur{os.sep}lgcm{os.sep}projects{os.sep}Segmentation_union_projects{os.sep}data_complete{os.sep}input{os.sep}optical_images_resized'
+predict_path = f'{os.sep}home{os.sep}arthur{os.sep}lgcm{os.sep}projects{os.sep}Segmentation_union_projects{os.sep}data_complete{os.sep}input{os.sep}Usefull_data'
 
 
+test_files_path = f'{os.sep}home{os.sep}arthur{os.sep}lgcm{os.sep}projects{os.sep}Segmentation_union_projects{os.sep}data_complete{os.sep}datasets{os.sep}Test_86_Images.tsv'
+df_test_files = pd.read_csv(test_files_path, sep='\t')
 
-for model, test_folder in model_list:
-        # if model != 'unet_afm_6_channels_150_images.h5':
-        #         continue
-        print(f'get {model} validation... ')
-        model_name = model
+
+# dataset_size = [15,30,60,120,240]
+for model in model_dict.keys():
+        if model != 'half_unet_afm_2_channels_only_optical_data_without_artifacts': 
+                continue
+        # for i in dataset_size:
+                
+        model_info = model_dict[model]
+        model_name = model_info['model'].replace('NN', '240')
+        print(f'get {model_name} validation... ')
         
-        if model == 'unet_afm_6_channels_226_images.h5':
-                model_name = 'UNet_AFM_6_channels_cv_100_epoch2.h5'
-                
-                
-        preprocess_image = f'data{os.sep}intermediate{os.sep}{test_folder}{os.sep}image{os.sep}'
-        mask = f'data{os.sep}intermediate{os.sep}{test_folder}{os.sep}mask{os.sep}'
-        opt_image = f'data{os.sep}input{os.sep}optical_images_resized{os.sep}'
-        # save_path = f'data{os.sep}output{os.sep}{unet_afm_fold}{os.sep}predicts{os.sep}'
-        predict_path = f'data{os.sep}input{os.sep}Usefull_data{os.sep}'
-
-
-
-        
-                
-        dire = os.listdir(preprocess_image)
-
-        opt_image_path = [opt_image + file.replace('_channels_added.npy', '_optico_crop_resized.png') for file in dire]
-        preprocess_image_path = [preprocess_image+file for file in dire]
-        usefull_path = [predict_path+file.replace('_channels_added.npy', '_UsefullData.tsv') for file in dire]
-        mask_path = [mask+file for file in dire]
-        # save_path = [save_path+file.replace('_channels_added.npy', '_unet.png') for file in dire]
+        preprocess_image_path = [os.path.join(model_info['test_path'], file+'_channels_added.npy') for file in df_test_files['Process.Date'].values]
+        mask_path = [os.path.join(model_info['mask_path'], file+'_channels_added.npy') for file in df_test_files['Process.Date'].values]
+        opt_image_path = [os.path.join(opt_image, file+'_optico_crop_resized.png') for file in df_test_files['Process.Date'].values]
+        usefull_path = [os.path.join(predict_path, file+'_UsefullData.tsv') for file in df_test_files['Process.Date'].values]
 
         df_list = []
 
@@ -61,41 +68,4 @@ for model, test_folder in model_list:
                 df_list.append(metric_df)
         final_metric_df = pd.concat(df_list, axis=0)
         final_metrics_melt = pd.melt(final_metric_df, id_vars=['Process Date','Model'], value_vars=['Precision', 'Recall', 'F1', 'Dice'], var_name = 'metrics', value_name = 'scores')
-        final_metrics_melt.to_csv(f'test_metrics_{model_name.split(".")[0]}.csv')        
-        
-        
-        
-## manually metrics calc
-        # f1_score = f1(y_pred_flatten, y_flatten)
-        # dice_score = dice(y_pred_flatten, y_flatten)
-        # precision_score = precision(y_pred_flatten, y_flatten)
-        # recall_score = recall(y_pred_flatten, y_flatten)
-        
-        # fig, axs = plt.subplots(1, 2)
-        # axs[0].imshow(y, cmap='gray')
-        # axs[0].axis('off')  # Desativar os eixos
-        # axs[0].set_title(f'Manually calc:\nPrecision: {precision_score}\nRecall: {recall_score}\nF1: 0.86\nDice: {dice_score}', fontsize=10, loc='left')
-
-        # axs[1].imshow(y_pred, cmap='gray')
-        # axs[1].axis('off')  # Desativar os eixos
-        # axs[1].set_title(f'{metric_df}', fontsize=10, loc='left')
-        # plt.show()
-        # plt.close()
-        #         # Definir os cabeçalhos das colunas
-        # header = "Model  Precision    Recall        F1   Dice"
-
-        # separator = "-" * len(header)
-
-        # data_row = f"{'unet':<6}  {precision_score:<10}  {recall_score:<10}  {f1_score:<10}  {dice_score:<10}\n"
-
-        # # print table
-        # print('Manually metrics calc')
-        # print(header)
-        # print(separator)
-        # print(data_row)
-        
-        
-        
-        # # print(F"IMAGEM: {process_data}\nPRECISION:  {precision_score}\nRECALL: {recall_score}\nF1: {f1_score}\nDICE: {dice_score}\n")
-        # print('Lib metrics calc')
-        # print(metric_df)
+        final_metrics_melt.to_csv(f'test_metrics_{model_name.split(".")[0]}_original_size.csv')        

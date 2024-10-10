@@ -68,24 +68,24 @@ layers_list = [
                 # 'test_metrics_half_unet_afm_2_channels_like_yolo_opt_afm_100_images_2.csv',
                 # 'test_metrics_half_unet_afm_2_channels_like_yolo_opt_afm_200_images_2.csv'
                 
+
                 
+                'test_metrics_half_unet_afm_1_channels_only_AFM_CosHeightSum_15_data_without_artifacts.csv',
+                'test_metrics_half_unet_afm_1_channels_only_AFM_CosHeightSum_30_data_without_artifacts.csv',
+                'test_metrics_half_unet_afm_1_channels_only_AFM_CosHeightSum_60_data_without_artifacts.csv',
+                'test_metrics_half_unet_afm_1_channels_only_AFM_CosHeightSum_120_data_without_artifacts.csv',
+                'test_metrics_half_unet_afm_1_channels_only_AFM_CosHeightSum_240_data_without_artifacts.csv', #o modelo já havia sido treinado antes
                 
-                # 'test_metrics_half_unet_afm_1_channels_only_AFM_CosHeightSum_15_data_without_artifacts.csv',
-                # 'test_metrics_half_unet_afm_1_channels_only_AFM_CosHeightSum_30_data_without_artifacts.csv',
-                # 'test_metrics_half_unet_afm_1_channels_only_AFM_CosHeightSum_60_data_without_artifacts.csv',
-                # 'test_metrics_half_unet_afm_1_channels_only_AFM_CosHeightSum_120_data_without_artifacts.csv',
-                # 'test_metrics_half_unet_afm_1_channels_only_AFM_CosHeightSum_240_data_without_artifacts.csv',
-                 
-                # 'test_metrics_half_unet_afm_2_channels_like_yolo_opt_afm_15_data_without_artifacts.csv',
-                # 'test_metrics_half_unet_afm_2_channels_like_yolo_opt_afm_30_data_without_artifacts.csv',
-                # 'test_metrics_half_unet_afm_2_channels_like_yolo_opt_afm_60_data_without_artifacts.csv',
-                # 'test_metrics_half_unet_afm_2_channels_like_yolo_opt_afm_120_data_without_artifacts.csv',
-                # 'test_metrics_half_unet_afm_2_channels_like_yolo_opt_afm_240_data_without_artifacts.csv',
+                'test_metrics_half_unet_afm_2_channels_like_yolo_opt_afm_15_data_without_artifacts.csv',
+                'test_metrics_half_unet_afm_2_channels_like_yolo_opt_afm_30_data_without_artifacts.csv',
+                'test_metrics_half_unet_afm_2_channels_like_yolo_opt_afm_60_data_without_artifacts.csv',
+                'test_metrics_half_unet_afm_2_channels_like_yolo_opt_afm_120_data_without_artifacts.csv',
+                'test_metrics_half_unet_afm_2_channels_like_yolo_opt_afm_240_data_without_artifacts.csv', #o modelo já havia sido treinado antes
                 
-                'test_metrics_half_unet_afm_2_channels_only_optical_15_data_without_artifacts.csv',
-                'test_metrics_half_unet_afm_2_channels_only_optical_30_data_without_artifacts.csv',
-                'test_metrics_half_unet_afm_2_channels_only_optical_60_data_without_artifacts.csv',
-                'test_metrics_half_unet_afm_2_channels_only_optical_120_data_without_artifacts.csv',
+                # 'test_metrics_half_unet_afm_2_channels_only_optical_15_data_without_artifacts.csv',
+                # 'test_metrics_half_unet_afm_2_channels_only_optical_30_data_without_artifacts.csv',
+                # 'test_metrics_half_unet_afm_2_channels_only_optical_60_data_without_artifacts.csv',
+                # 'test_metrics_half_unet_afm_2_channels_only_optical_120_data_without_artifacts.csv',
                 'test_metrics_half_unet_afm_2_channels_only_optical_240_data_without_artifacts.csv',
                 'test_metrics_half_unet_afm_2_channels_only_optical_240_data_without_artifacts_zscore_original_size.csv'
                 
@@ -94,54 +94,59 @@ layers_list = [
 
 # layers_list = [f'validation_cv_metrics_fold_{i+1}_unet_afm_crossval_1_channels_only_afm_cosHeightSum_thresh_erode_CORRECTED.csv' for i in range(10)]
 
-title_chart = 'Half-unet Optico + AFM: AFM like YOLO (learning curve) balanced (15 - 240)_zscore_vs_minmax' # unet_AFM_6_channels_diff_layers
-# title_chart = 'Half-unet Only AFM: CHS feature (learning curve) (15 - 240)'
-# title_chart = 'Half-unet Only Optico: Blue and Hist Equalize features (learning curve)(15 - 240)'
+title_chart = 'Half-unet: learning curve for differents models (15 - 240 images)' # unet_AFM_6_channels_diff_layers
+# title_chart = 'Half-unet Only AFM: CHS feature (learning curve)'
+# title_chart = 'Half-unet Only Optico: Blue and Hist Equalize features (learning curve)'
 for fold in layers_list:
+    info_dict = {
+        
+        'Model': [],
+        'N_images': [],
+        'metrics': [],
+        'Dice': []
+    }
+    
     df_path = fold
     df = pd.read_csv(df_path, index_col=0)
     # df_metrics_general_validation.append(df)
-
     df = df.replace({'Model':'unet'},fold[13:-4])
-    if fold == 'test_metrics_half_unet_afm_1_channels_only_AFM_CosHeightSum_50_images.csv':
-        df = df.replace({'Model':fold[13:-4]},f'half_unet_afm_1_channels_only_AFM_CosHeightSum_400_selected_images')
+    
+    if fold.split('_')[8] == 'AFM':
+        info_dict['N_images'].append(fold.split('_')[10])
+        info_dict['Model'].append('Only AFM')
+        # df = df.replace({'Model':fold[13:-4]},'Only AFM')
         
-    # if fold == 'test_metrics_unet_afm_pp_1_channels_only_afm_cosHeightSum_thresh_erode.csv':
-    #     df = df.replace({'Model':'unet'},f'Unet++_AFM')
+    if fold.split('_')[8] == 'optical':
+        info_dict['N_images'].append(fold.split('_')[9])
+        info_dict['Model'].append('Only Optical')
+        # df = df.replace({'Model':fold[13:-4]},'Only Optical')
         
-    # if fold == 'test_metrics_half_unet_afm_batch_normalization_1_channels_cosHeightSum_thresh_erode.csv':
-    #     df = df.replace({'Model':'unet'},f'Half_Unet_AFM')
+    if fold.split('_')[8] == 'yolo':
+        info_dict['N_images'].append(fold.split('_')[11])
+        info_dict['Model'].append('AFM like YOLO (Optico + AFM)')
+        # df = df.replace({'Model':fold[13:-4]},'AFM like YOLO (Optico + AFM)')
+    info_dict['metrics'].append('Dice')
+    
+    df = df.query("metrics == 'Dice'")
+    info_dict['Dice'].append(df['scores'].mean())
+    df_new = pd.DataFrame.from_dict(info_dict)
+    df_metrics_list.append(df_new)
         
-    df_metrics_list.append(df)
-        
-# final_df_general_validation = pd.concat(df_metrics_general_validation, axis=0)
-# df_cosHeightSum_final = pd.read_csv('test_metrics_UNet_AFM_1_channels_cosHeightSum_thresh_erode.csv', index_col=0)
-# df_cosHeightSum_final = df_cosHeightSum_final.replace({'Model':'unet'},'Final Model')
-# df_metrics_list.append(df_cosHeightSum_final)
 final_df = pd.concat(df_metrics_list, axis=0)
 
-
-# final_df_melt_general = pd.melt(df, id_vars=['Process Date','Model'], value_vars=['Precision', 'Recall', 'F1', 'Dice'], var_name = 'metrics', value_name = 'scores')    
-# final_df_melt = pd.melt(final_df, id_vars=['Process Date','Model'], value_vars=['Precision', 'Recall', 'F1', 'Dice'], var_name = 'metrics', value_name = 'scores')
     
-fig = chart.box_plot(final_df, x='Model', y='scores', color = 'metrics',
+fig = chart.line_plot(final_df, x='N_images', y='Dice',title='', color = 'Model',symbol='Model',
                      width=800, height = 500,
-                     title='', 
                      x_label=False, y_label=False)
 
-fig2 = chart.box_plot(final_df, x='Model', y='scores', color = 'metrics',
+fig2 = chart.line_plot(final_df, x='Model', y='Dice',title=title_chart,
+                       color = 'metrics',
                       width=800, height = 600,
-                      title=title_chart)
+                      )
 
 # fig3 = chart.violin_plot(final_df, x='Model', y='scores', color = 'metrics',
 #                       width=800, height = 600,
 #                       title=title_chart)
 
-fig.write_image(f'{title_chart}.svg')
-fig2.write_image(f'{title_chart}.png')
-
-
-
-
-
-
+fig.write_image(f'{title_chart}_line_test.svg')
+fig2.write_image(f'{title_chart}_line_test.png')

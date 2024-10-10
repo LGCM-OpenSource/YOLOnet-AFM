@@ -567,6 +567,7 @@ class UnetProcess:
         '''
         try:
             optical_image = self.opt_image.image()
+            optical_image_res = cv2.resize(optical_image, (256,256))
             ori_x, x = self.read_image(self.preprocess_image.image(matrix=True))
             ori_y, y = self.read_mask(self.mask.image(matrix=True))
             
@@ -578,21 +579,22 @@ class UnetProcess:
             y_pred = y_pred > 0.5
             
             #Resize prediction from 256x256 to original image size
-            y_pred_resized, y_pred_flatten = self.resize_prediction_to_original_size(y_pred)
-            
+            # y_pred_resized, y_pred_flatten = self.resize_prediction_to_original_size(y_pred)
+            # y_resized, y_flatten = self.resize_prediction_to_original_size(y)            
             if usefull_path:
                 save_usefulll_path = usefull_path.replace(f'data_complete{os.sep}input{os.sep}Usefull_data{os.sep}',f'data_complete{os.sep}output{os.sep}predict_sheets{os.sep}') 
                 df = DataFrameTrat(usefull_path)
                 df_afm = df.df
                 
-                df_afm['unet_prediction'] = y_pred_flatten
+                # df_afm['unet_prediction'] = y_pred_flatten
                 
                 verify_count = self.get_count(df_afm)
                 verify_objects = self.count_objects(df_afm)
                 
                 
             '''transpose prediction to optical image'''
-            y_pred = self.preprocess_image.predicted_nucleus_to_image(optical_image, y_pred_resized)
+            # y = self.preprocess_image.predicted_nucleus_to_image(optical_image, y_resized)
+            # y_pred = self.preprocess_image.predicted_nucleus_to_image(optical_image, y_pred_resized)
 
             '''Save results'''
             # if save_unet_path:
@@ -610,12 +612,26 @@ class UnetProcess:
                 
             # if not verify_count < 177*0.2 or verify_objects > 1:   
                 
-            df_afm.to_csv(save_usefulll_path, sep='\t', index=False)
-            self.preprocess_image.save_image(save_path, y_pred)
+            # df_afm.to_csv(save_usefulll_path, sep='\t', index=False)
+            # self.preprocess_image.save_image(save_path, y_pred)
                 
             #     return y, y_proba, False
             
-            # to run pixel segmentation    
+            # to run pixel segmentation  
+            # plt.subplot(231); plt.imshow(optical_image);
+            # plt.subplot(232); plt.imshow(y_resized);
+            # plt.subplot(233); plt.imshow(y_pred_resized);
+
+            plt.subplot(141); plt.imshow(optical_image_res);
+            plt.subplot(142); plt.imshow(y);
+            plt.subplot(142); plt.imshow(optical_image_res, alpha = 0.5);
+            plt.subplot(143); plt.imshow(y_pred);  
+            plt.subplot(143); plt.imshow(optical_image_res, alpha = 0.5);
+            plt.subplot(144); plt.imshow(y_pred);
+            plt.subplot(144); plt.imshow(y, alpha = 0.5);
+            plt.subplot(144); plt.imshow(optical_image_res, alpha = 0.5);
+            
+            plt.show()
             return y, y_pred, True
         except Exception:
             print(traceback.format_exc())
