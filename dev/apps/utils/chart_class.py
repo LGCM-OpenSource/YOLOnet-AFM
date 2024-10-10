@@ -33,17 +33,21 @@ class DataChart:
         return df 
     
     
-    def line_plot(self, data, x ,y, title, color, width=600, height = 400):
+    def line_plot(self, data, x ,y, title, color, symbol, width=600, height = 400, x_label=True, y_label=True, markers= True):
+        
+         
         fig = px.line(data, 
                       x=x, y=y,
                       title=title,
                       width=width, height=height,
-                      color = color
+                      color = color,
+                      symbol=symbol,
+                      markers= markers
                       )
         
         fig.update_layout(  
                           
-                                barmode='group',yaxis_range = [0,1],
+                                yaxis_range = [0,1],
                                 plot_bgcolor='white',
                                 font_family="Arial",
                                 font = dict(size=10),
@@ -61,7 +65,9 @@ class DataChart:
             ticks='outside',
             showline=True,
             linecolor='black',
-            gridcolor='lightgrey'
+            gridcolor='lightgrey',
+            tick0=0, 
+            dtick=0.1
         )
         
         fig.update_xaxes(
@@ -125,7 +131,9 @@ class DataChart:
             ticks='outside',
             showline=True,
             linecolor='black',
-            gridcolor='lightgrey'
+            gridcolor='lightgrey',
+            tick0=0, 
+            dtick=0.1
         )
         
         fig.update_xaxes(
@@ -137,8 +145,76 @@ class DataChart:
         )
 
 
-        fig.update_traces(marker = dict(opacity = 0))
+        # fig.update_traces(marker = dict(opacity = 0))
         fig.show()
         return fig
+    
+    
+    
+    def violin_plot(self, data, x, y, color, title, width=600, height = 400, x_label=True, y_label=True):
             
+            fig = px.violin(   
+                            
+                            data,
+                            x=x, y=y, 
+                            color=color, 
+                            title=title,
+                            width=width, height=height,
+                            box=True
+                            
+                        )
+
+            if x_label and y_label:
+                fig.update_layout(  
+                                
+                                        barmode='group',yaxis_range = [0,1],
+                                        plot_bgcolor='white',
+                                        font_family="Arial",
+                                        font = dict(size=10),
+                                        title_font_family="Arial",
+                                        #xaxis={'categoryorder':'category ascending'}#, 'showticklabels': False, 'title': None},
+                                        # yaxis={'showticklabels': False, 'title':None},
+                                        #discomment to run unet_AFM_vs_vUnet_AFM
+                                        # showlegend = False,
+                                        # boxgroupgap=0.2, boxgap=0.7
+                                        
+                                )
+            else:
+                            fig.update_layout(  
+                                
+                                        barmode='group',yaxis_range = [0,1],
+                                        plot_bgcolor='white',
+                                        font_family="Arial",
+                                        font = dict(size=10),
+                                        title_font_family="Arial",
+                                        xaxis={'showticklabels': False, 'title': None},#{'categoryorder':'category ascending'}
+                                        yaxis={'showticklabels': False, 'title':None},
+                                        #discomment to run unet_AFM_vs_vUnet_AFM
+                                        # showlegend = False,
+                                        # boxgroupgap=0.2, boxgap=0.7
+                                        violingap=3
+                                        
+                                )
+
+            fig.update_yaxes(
+                mirror=True,
+                ticks='outside',
+                showline=True,
+                linecolor='black',
+                gridcolor='lightgrey'
+            )
+            
+            fig.update_xaxes(
+                mirror=True,
+                ticks='outside',
+                showline=True,
+                linecolor='black',
+                gridcolor='lightgrey'
+            )
+
+
+            # fig.update_traces(marker = dict(opacity = 0))
+            fig.show()
+            return fig
+                
 

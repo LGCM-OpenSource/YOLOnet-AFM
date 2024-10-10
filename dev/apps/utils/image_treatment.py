@@ -113,8 +113,8 @@ class ImageTrat:
                     y_dim = int(y_dim[2])
             return (y_dim, x_dim)
         else:
-            x_dim, y_dim, _ = self.image(matrix=matrix).shape
-            return (x_dim, y_dim)
+            x_dim, y_dim, chan = self.image(matrix=matrix).shape
+            return x_dim, y_dim
     
     def image_channels(self, image):
         """

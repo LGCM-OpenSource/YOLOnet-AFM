@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np 
 import os 
 import cv2 
+import shutil 
+from tqdm import tqdm
 
 '''
 Exemplos positivos:
@@ -17,6 +19,7 @@ Exemplos negativos:
 * 2023.03.23-10.43.28
 
 '''
+pd.set_option('future.no_silent_downcasting', True)
 
 
 def apply_sobel_filter(image):
@@ -152,74 +155,112 @@ def define_nucleus_region_by_afm(cos_height_sum, kernel_size = (3,3)):
 
         return cos_heigh_erode_threshold_245_255_k5
 
+def resegment_files(*file_paths):
+    """Copy files to resegmentation directories."""
+    for file_path in file_paths:
+        dest_path = file_path.replace('data_complete', 'good_afm')
+        if file_path.split(f'{os.sep}')[2]=='predict_sheets':
+            dest_path = file_path.replace('data_complete/output/predict_sheets', 'good_afm/input/Usefull_data')
+        
+        shutil.copy(file_path, dest_path)
 
+
+# File paths setup
+def build_file_paths(base_path, file_list, suffixes=None):
+    """Build file paths with optional suffixes."""
+    if suffixes:
+        return [os.path.join(base_path, f + suffix) for f in file_list for suffix in suffixes if os.path.isfile(os.path.join(base_path, f + suffix))]
+    return [os.path.join(base_path, f) for f in file_list]
+
+
+usefull_predicted_files = build_file_paths(f'data_complete{os.sep}input{os.sep}Usefull_data', os.listdir(f'data_complete{os.sep}input{os.sep}Usefull_data'))
+process_date = [os.path.basename(file).split('_')[0] for file in usefull_predicted_files]
+
+opt_images_resized = build_file_paths(f'data_complete{os.sep}input{os.sep}optical_images_resized{os.sep}', process_date, ['_optico_crop_resized.png'])
+bw_images = build_file_paths(f'data_complete{os.sep}raw{os.sep}bw_images', process_date, ['_OpticalImg-BW.png'])
+txt_files = build_file_paths(f'data_complete{os.sep}raw{os.sep}txt_files', process_date, ['_2-reference-force-height-extend.txt', '_3-reference-force-height-extend.txt', '_2-reference-force-height-extend.jpk-qi-image.txt'])
+opt_images = build_file_paths(f'data_complete{os.sep}raw{os.sep}optical_images{os.sep}', process_date, ['_OpticalImg.png'])
 
 
 image_list = ['2023.03.26-06.52.31', '2022.04.07-22.01.27', '2023.06.03-11.34.09','2023.03.29-22.09.46', '2021.07.28-15.07.56','2023.03.23-10.43.28']
+count = 0 
+for i, id in enumerate(process_date):
 
-optical_image_path = 'data_complete/input/optical_images_resized/2023.03.29-22.09.46_optico_crop_resized.png' 
-usefull_data_path = 'data_complete/input/Usefull_data/2023.03.29-22.09.46_UsefullData.tsv'
-
-
-optical_image = cv2.imread(optical_image_path )
-x, y, z = optical_image.shape
-blue = optical_image[:,:,0]
-optical_image_equalized = equalize_img(optical_image)
-
-blue_flatten = blue.flatten()
-optical_image_equalized_flatten = optical_image_equalized.flatten()
-
-df_afm = pd.read_csv(usefull_data_path, sep='\t')
-df_afm = clean_target(df_afm)
-df_afm['blue'] = blue_flatten
-df_afm['hist_equalized'] = optical_image_equalized_flatten
+    try:     
+        optical_image_path =f'data_complete/input/optical_images_resized/{id}_optico_crop_resized.png' 
+        usefull_data_path = f'data_complete/input/Usefull_data/{id}_UsefullData.tsv'
 
 
-nucleus_size = len(df_afm.loc[df_afm['Generic Segmentation']==1])
+        optical_image = cv2.imread(optical_image_path )
+        x, y, z = optical_image.shape
+        blue = optical_image[:,:,0]
+        optical_image_equalized = equalize_img(optical_image)
 
-features = ['Optico', 'Planned Height', 'blue', 'hist_equalized', 'Generic Segmentation']
+        blue_flatten = blue.flatten()
+        optical_image_equalized_flatten = optical_image_equalized.flatten()
 
-features_that_no_need_remove_substrate = ['Planned Height']
-for feature in features[1:]:
-    substrate = False
-    #Remove null or inf values
-    mean_without_substrate = df_afm[feature].loc[df_afm['Segment'] != 'Substrate'].mean()
-    df_afm[feature].replace([np.inf, - np.inf, np.nan], mean_without_substrate, inplace=True)
-    
-    if feature in features_that_no_need_remove_substrate:
-        #Calc Zscore by mean and std with substrate
-        substrate = True
+        df_afm = pd.read_csv(usefull_data_path, sep='\t', low_memory=False)
+        df_afm = clean_target(df_afm)
+        df_afm['blue'] = blue_flatten
+        df_afm['hist_equalized'] = optical_image_equalized_flatten
+
+
+        nucleus_size = len(df_afm.loc[df_afm['Generic Segmentation']==1])
+
+        features = ['Optico', 'Planned Height', 'blue', 'hist_equalized', 'Generic Segmentation']
+
+        features_that_no_need_remove_substrate = ['Planned Height']
+        for feature in features[1:]:
+            substrate = False
+            #Remove null or inf values
+            mean_without_substrate = df_afm[feature].loc[df_afm['Segment'] != 'Substrate'].mean()
+            df_afm[feature] = df_afm[feature].replace([np.inf, - np.inf, np.nan], mean_without_substrate)
+            
+            if feature in features_that_no_need_remove_substrate:
+                #Calc Zscore by mean and std with substrate
+                substrate = True
+                
+            #Calc Zscore by mean and std without substrate
+            afm_info = minMax_Scaler(df_afm, feature, substrate=substrate)
+            
+            
+        channels = []
+        for feat in features:
+            if feat == 'Optico':
+                channels.append(optical_image)
+                continue
+            
+            feature_image = create_channel_by_df(afm_info,  feat, [x,y]) 
+
+            if feat == 'Planned Height':
+                #create cosHeightSum
+                feature_image =  (np.cos(feature_image) + feature_image) 
+
+            if feat not in features_that_no_need_remove_substrate:
+                #apply threshold
+                feature_image[feature_image > 3] = 3
+                feature_image[feature_image < -3] = -3
+            channels.append(feature_image)
+
+
+        mask = channels[-1]*2
+
+        afm_region_nucleus = define_nucleus_region_by_afm(channels[1], kernel_size=(10,10))
+
+        new_optical_img = add_new_channels(optical_image, channels[2:-1])
+
+        nucleus_region = mask*afm_region_nucleus
+
+        nucleu_size_in_afm = len(nucleus_region[nucleus_region>0])/nucleus_size
+        # print(f"O Núcleo está {nucleu_size_in_afm*100:.2f}% dentro do AFM")
         
-    #Calc Zscore by mean and std without substrate
-    afm_info = minMax_Scaler(df_afm, feature, substrate=substrate)
-    
-    
-channels = []
-for feat in features:
-    if feat == 'Optico':
-        channels.append(optical_image)
-        continue
-    
-    feature_image = create_channel_by_df(afm_info,  feat, [x,y]) 
-
-    if feat == 'Planned Height':
-        #create cosHeightSum
-        feature_image =  (np.cos(feature_image) + feature_image) 
-
-    if feat not in features_that_no_need_remove_substrate:
-        #apply threshold
-        feature_image[feature_image > 3] = 3
-        feature_image[feature_image < -3] = -3
-    channels.append(feature_image)
+        if nucleu_size_in_afm>0.99:
+            count+=1
+            print(count)
+            resegment_files(opt_images_resized[i], bw_images[i], txt_files[i], opt_images[i])
+    except Exception as e:
+        print(e)
+        
+print(f'{count} imagens possuiam acima de 99% do núcleo dentro do AFM')
 
 
-mask = channels[-1]*2
-
-afm_region_nucleus = define_nucleus_region_by_afm(channels[1], kernel_size=(10,10))
-
-new_optical_img = add_new_channels(optical_image, channels[2:-1])
-
-nucleus_region = mask*afm_region_nucleus
-
-nucleu_size_in_afm = len(nucleus_region[nucleus_region>0])/nucleus_size
-print(f"O Núcleo está {nucleu_size_in_afm*100:.2f}% dentro do AFM")

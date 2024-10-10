@@ -14,10 +14,10 @@ import pandas as pd
 # for folder in images_to_compare:
 
 
-afm_info_path = f'data_complete/intermediate/pre_processing_optico_and_afm/image/'
-masks_path =  f'data_complete/intermediate/pre_processing_optico_and_afm/mask/'
+afm_info_path = f'good_afm_by_dice/teste/intermediate/only_afm_cosHeightSum_thresh_erode/image/'
+masks_path =  f'good_afm_by_dice/teste/intermediate/only_afm_cosHeightSum_thresh_erode/mask/'
 
-model_name = afm_info_path.split('/')[1]
+model_name = afm_info_path.split('/')[-3]
 dire = os.listdir(afm_info_path)
 
 process_data = [file.split('_')[0] for file in dire]
@@ -43,7 +43,7 @@ for i in tqdm(range(len(preprocess_image)), colour='#0000FF'):
         df_list.append(metric_df)
 final_metric_df = pd.concat(df_list, axis=0)
 final_metrics_melt = pd.melt(final_metric_df, id_vars=['Process Date','Model'], value_vars=['Precision', 'Recall', 'F1', 'Dice'], var_name = 'metrics', value_name = 'scores')
-final_metrics_melt.to_csv(f'AFM_mask_validation_corrected_{model_name.split(".")[0]}.csv')        
+final_metrics_melt.to_csv(f'AFM_mask_validation_from_test_dataset_{model_name.split(".")[0]}.csv')        
 
 
         
