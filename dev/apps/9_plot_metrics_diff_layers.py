@@ -70,33 +70,32 @@ layers_list = [
                 
                 
                 
-                # 'test_metrics_half_unet_afm_1_channels_only_AFM_CosHeightSum_15_data_without_artifacts.csv',
-                # 'test_metrics_half_unet_afm_1_channels_only_AFM_CosHeightSum_30_data_without_artifacts.csv',
-                # 'test_metrics_half_unet_afm_1_channels_only_AFM_CosHeightSum_60_data_without_artifacts.csv',
-                # 'test_metrics_half_unet_afm_1_channels_only_AFM_CosHeightSum_120_data_without_artifacts.csv',
-                # 'test_metrics_half_unet_afm_1_channels_only_AFM_CosHeightSum_240_data_without_artifacts.csv',
+                # 'test_metrics_unet_afm_1_channels_only_AFM_CosHeightSum_15_samples_stardist_mask_stardist_mask.csv',
+                # 'test_metrics_unet_afm_1_channels_only_AFM_CosHeightSum_30_samples_stardist_mask_stardist_mask.csv',
+                # 'test_metrics_unet_afm_1_channels_only_AFM_CosHeightSum_60_samples_stardist_mask_stardist_mask.csv',
+                # 'test_metrics_unet_afm_1_channels_only_AFM_CosHeightSum_120_samples_stardist_mask_stardist_mask.csv',
+                # 'test_metrics_unet_afm_1_channels_only_AFM_CosHeightSum_234_samples_stardist_mask_stardist_mask.csv'
                  
-                # 'test_metrics_half_unet_afm_2_channels_like_yolo_opt_afm_15_data_without_artifacts.csv',
-                # 'test_metrics_half_unet_afm_2_channels_like_yolo_opt_afm_30_data_without_artifacts.csv',
-                # 'test_metrics_half_unet_afm_2_channels_like_yolo_opt_afm_60_data_without_artifacts.csv',
-                # 'test_metrics_half_unet_afm_2_channels_like_yolo_opt_afm_120_data_without_artifacts.csv',
-                # 'test_metrics_half_unet_afm_2_channels_like_yolo_opt_afm_240_data_without_artifacts.csv',
+                # 'test_metrics_unet_afm_2_channels_like_yolo_opt_afm_15_samples_stardist_mask_stardist_mask.csv',
+                # 'test_metrics_unet_afm_2_channels_like_yolo_opt_afm_30_samples_stardist_mask_stardist_mask.csv',
+                # 'test_metrics_unet_afm_2_channels_like_yolo_opt_afm_60_samples_stardist_mask_stardist_mask.csv',
+                # 'test_metrics_unet_afm_2_channels_like_yolo_opt_afm_120_samples_stardist_mask_stardist_mask.csv',
+                # 'test_metrics_unet_afm_2_channels_like_yolo_opt_afm_234_samples_stardist_mask_stardist_mask.csv'
                 
-                'test_metrics_half_unet_afm_2_channels_only_optical_15_data_without_artifacts.csv',
-                'test_metrics_half_unet_afm_2_channels_only_optical_30_data_without_artifacts.csv',
-                'test_metrics_half_unet_afm_2_channels_only_optical_60_data_without_artifacts.csv',
-                'test_metrics_half_unet_afm_2_channels_only_optical_120_data_without_artifacts.csv',
-                'test_metrics_half_unet_afm_2_channels_only_optical_240_data_without_artifacts.csv',
-                'test_metrics_half_unet_afm_2_channels_only_optical_240_data_without_artifacts_zscore_original_size.csv'
+                'test_metrics_unet_afm_2_channels_only_optical_15_samples_stardist_mask_stardist_mask.csv',
+                'test_metrics_unet_afm_2_channels_only_optical_30_samples_stardist_mask_stardist_mask.csv',
+                'test_metrics_unet_afm_2_channels_only_optical_60_samples_stardist_mask_stardist_mask.csv',
+                'test_metrics_unet_afm_2_channels_only_optical_120_samples_stardist_mask_stardist_mask.csv',
+                'test_metrics_unet_afm_2_channels_only_optical_234_samples_stardist_mask_stardist_mask.csv'
                 
                ]
 
 
 # layers_list = [f'validation_cv_metrics_fold_{i+1}_unet_afm_crossval_1_channels_only_afm_cosHeightSum_thresh_erode_CORRECTED.csv' for i in range(10)]
 
-title_chart = 'Half-unet Optico + AFM: AFM like YOLO (learning curve) balanced (15 - 240)_zscore_vs_minmax' # unet_AFM_6_channels_diff_layers
-# title_chart = 'Half-unet Only AFM: CHS feature (learning curve) (15 - 240)'
-# title_chart = 'Half-unet Only Optico: Blue and Hist Equalize features (learning curve)(15 - 240)'
+# title_chart = 'Unet Optico + AFM: AFM like YOLO (learning curve) balanced (15 - 240)' # unet_AFM_6_channels_diff_layers
+# title_chart = 'Unet Only AFM: CHS feature (learning curve) (15 - 234)'
+title_chart = 'Unet Only Optico: Blue and Hist Equalize features (learning curve)(15 - 240)'
 for fold in layers_list:
     df_path = fold
     df = pd.read_csv(df_path, index_col=0)

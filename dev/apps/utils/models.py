@@ -512,7 +512,7 @@ class UnetProcess:
         kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(5,5))
         y_pred = np.expand_dims(y_pred, axis=-1) * 255.0
 
-        x_dim,y_dim = self.preprocess_image.dimensions(matrix=True)
+        x_dim,y_dim = self.opt_image.dimensions(matrix=False)
         
         # Removing external outliers
         y_pred = cv2.morphologyEx(y_pred, cv2.MORPH_OPEN, kernel)
@@ -548,7 +548,55 @@ class UnetProcess:
         # Retorna o número de objetos detectados
         return len(set(labeled_image.flatten())) - 1 # -1 para remover o fundo
 
+    
+    
+    def show_predict(self, process_date, y, y_pred, topography, save_path, metrics):
+        precision = metrics['Precision'][0]
+        recall = metrics['Recall'][0]
+        dice = metrics['Dice'][0]
+        
+        
+        optical_image = self.opt_image.image()
+        optical_image = cv2.cvtColor(optical_image, cv2.COLOR_BGR2RGB)
+        
+        plt.figure(figsize=(15, 6))
 
+        plt.subplot(2, 3, 1)
+        plt.imshow(optical_image)
+        plt.title(process_date)
+
+        plt.subplot(2, 3, 2)
+        plt.imshow(optical_image, alpha=0.7)  
+        plt.imshow(y, alpha=0.2, cmap='jet')  
+        plt.title("Stardist with Optical Overlay")
+
+        plt.subplot(2, 3, 3)
+        plt.imshow(optical_image, alpha=0.7)  
+        plt.imshow(y_pred, alpha=0.2, cmap='jet')  
+        plt.title("Y_pred with Optical Overlay")
+
+        plt.subplot(2, 3, 4)
+        plt.imshow(topography)
+        plt.title("Norm Height")
+
+        plt.subplot(2, 3, 5)
+        plt.imshow(optical_image, alpha=0.7)  
+        plt.imshow(y_pred, alpha=0.2, cmap='jet')  
+        plt.imshow(y, alpha=0.2, cmap='gray')  
+        plt.title("Y_pred, Y & Optical Overlay")
+
+        plt.subplot(2, 3, 6)
+        plt.axis('off')
+        plt.text(0.95, 0.05, f'Precision: {precision:.2f}\nRecall: {recall:.2f}\nDice: {dice:.2f}', 
+         verticalalignment='bottom', horizontalalignment='right', 
+         transform=plt.gca().transAxes, 
+         color='white', fontsize=10, bbox=dict(facecolor='black', alpha=0.5))
+        
+        
+        
+        plt.savefig(save_path)
+        plt.close()
+        
 
     def unet_predict(self, save_path='', usefull_path=False, save_unet_path=False):
         '''
@@ -579,8 +627,8 @@ class UnetProcess:
             y_pred = y_pred > 0.5
             
             #Resize prediction from 256x256 to original image size
-            # y_pred_resized, y_pred_flatten = self.resize_prediction_to_original_size(y_pred)
-            # y_resized, y_flatten = self.resize_prediction_to_original_size(y)            
+            y_pred_resized, y_pred_flatten = self.resize_prediction_to_original_size(y_pred)
+            y_resized, y_flatten = self.resize_prediction_to_original_size(y)            
             if usefull_path:
                 save_usefulll_path = usefull_path.replace(f'data_complete{os.sep}input{os.sep}Usefull_data{os.sep}',f'data_complete{os.sep}output{os.sep}predict_sheets{os.sep}') 
                 df = DataFrameTrat(usefull_path)
@@ -608,7 +656,7 @@ class UnetProcess:
             #     ax2.set_title('unet predict')
             #     plt.imshow(y_pred, cmap='gray')
 
-            #     fig.savefig(save_path)
+             #     fig.savefig(save_path)
                 
             # if not verify_count < 177*0.2 or verify_objects > 1:   
                 
@@ -622,17 +670,10 @@ class UnetProcess:
             # plt.subplot(232); plt.imshow(y_resized);
             # plt.subplot(233); plt.imshow(y_pred_resized);
 
-            plt.subplot(141); plt.imshow(optical_image_res);
-            plt.subplot(142); plt.imshow(y);
-            plt.subplot(142); plt.imshow(optical_image_res, alpha = 0.5);
-            plt.subplot(143); plt.imshow(y_pred);  
-            plt.subplot(143); plt.imshow(optical_image_res, alpha = 0.5);
-            plt.subplot(144); plt.imshow(y_pred);
-            plt.subplot(144); plt.imshow(y, alpha = 0.5);
-            plt.subplot(144); plt.imshow(optical_image_res, alpha = 0.5);
+
             
-            plt.show()
-            return y, y_pred, True
+            # plt.show()
+            return y_resized, y_pred_resized, True
         except Exception:
             print(traceback.format_exc())
 
