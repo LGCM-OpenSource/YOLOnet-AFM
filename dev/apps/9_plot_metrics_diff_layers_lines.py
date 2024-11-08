@@ -1,4 +1,3 @@
-from ydata_profiling import ProfileReport
 import pandas as pd 
 from utils import DataChart
 import os 
