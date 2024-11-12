@@ -82,7 +82,7 @@ class DataChart:
         return fig 
     
     
-    def box_plot(self, data, x, y, color, title, width=600, height = 400, x_label=True, y_label=True):
+    def box_plot(self, data, x, y, color, title, width=600, height = 400, x_label=True, y_label=True, color_discrete_sequence = px.colors.qualitative.Plotly):
         
         fig = px.box(   
                         
@@ -91,6 +91,7 @@ class DataChart:
                         color=color, 
                         title=title,
                         width=width, height=height,
+                        color_discrete_sequence= color_discrete_sequence,
                         # points="all"
                         
                     )
