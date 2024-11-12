@@ -559,31 +559,36 @@ class UnetProcess:
         optical_image = self.opt_image.image()
         optical_image = cv2.cvtColor(optical_image, cv2.COLOR_BGR2RGB)
         
-        plt.figure(figsize=(15, 6))
+        plt.figure(figsize=(10, 6))
 
         plt.subplot(2, 3, 1)
         plt.imshow(optical_image)
         plt.title(process_date)
+        plt.axis('off')
 
         plt.subplot(2, 3, 2)
         plt.imshow(optical_image, alpha=0.7)  
-        plt.imshow(y, alpha=0.2, cmap='jet')  
+        plt.imshow(y, alpha=0.4, cmap='jet')  
         plt.title("Stardist with Optical Overlay")
+        plt.axis('off')
 
         plt.subplot(2, 3, 3)
         plt.imshow(optical_image, alpha=0.7)  
-        plt.imshow(y_pred, alpha=0.2, cmap='jet')  
+        plt.imshow(y_pred, alpha=0.4, cmap='jet')  
         plt.title("Y_pred with Optical Overlay")
+        plt.axis('off')
 
         plt.subplot(2, 3, 4)
         plt.imshow(topography)
         plt.title("Norm Height")
+        plt.axis('off')
 
         plt.subplot(2, 3, 5)
         plt.imshow(optical_image, alpha=0.7)  
-        plt.imshow(y_pred, alpha=0.2, cmap='jet')  
-        plt.imshow(y, alpha=0.2, cmap='gray')  
+        plt.imshow(y_pred, alpha=0.4, cmap='jet')  
+        plt.imshow(y, alpha=0.4, cmap='gray')  
         plt.title("Y_pred, Y & Optical Overlay")
+        plt.axis('off')
 
         plt.subplot(2, 3, 6)
         plt.axis('off')
@@ -594,7 +599,7 @@ class UnetProcess:
         
         
         
-        plt.savefig(save_path)
+        plt.savefig(save_path, format="svg")
         plt.close()
         
 
