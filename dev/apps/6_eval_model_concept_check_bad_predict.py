@@ -6,6 +6,20 @@ from glob import glob
 import matplotlib.pyplot as plt 
 import pandas as pd 
 
+def create_topography_map(unetTrat, matrix = False):
+        if matrix:
+                matrix = True
+        opt_image_dimension = unetTrat.opt_image
+        opt_image_dimension = opt_image_dimension.dimensions(matrix=False)
+        
+        topography = np.array(unetTrat.df_afm.df['Planned Height']).reshape(opt_image_dimension)
+        return topography
+
+
+def create_dir(path):
+    if not os.path.isdir(path):
+        os.makedirs(path)
+
 
 model_dict = {
     'unet_afm_1_channels_only_AFM_CosHeightSum': {
@@ -35,14 +49,15 @@ test_files_path = f'{os.sep}home{os.sep}arthur{os.sep}lgcm{os.sep}projects{os.se
 df_test_files = pd.read_csv(test_files_path)
 
 
-dataset_size = [15,30,60,120,234]
+dataset_size = [234]
 for model in model_dict.keys():
-        # if model != 'half_unet_afm_2_channels_only_optical_data_without_artifacts': 
-        #         continue
+        if model == 'unet_afm_1_channels_only_AFM_CosHeightSum': 
+                continue
         for i in dataset_size:
-                
+        
                 model_info = model_dict[model]
                 model_name = model_info['model'].replace('NN', str(i))
+                model_path = f'models{os.sep}{model_name}'
                 
                 print(f'get {model_name} validation... ')
                 
@@ -55,7 +70,7 @@ for model in model_dict.keys():
 
                 for i in tqdm(range(len(opt_image_path)), colour='#0000FF'):
                         process_data = opt_image_path[i].split(f'{os.sep}')[-1].split('_')[0]
-                        unetTrat =   UnetProcess(opt_image_path[i], preprocess_image_path[i], usefull_path[i], mask_path[i], model_path=f'models{os.sep}{model_name}') 
+                        unetTrat =   UnetProcess(opt_image_path[i], preprocess_image_path[i], usefull_path[i], mask_path[i], model_path=model_path) 
                         
                         # usefull_path_unet = usefull_path[i].replace(f'data{os.sep}input{os.sep}Usefull_data{os.sep}',f'data{os.sep}output{os.sep}{unet_afm_fold}{os.sep}predict_sheets{os.sep}')
                         y,y_pred, _t = unetTrat.unet_predict()
@@ -66,7 +81,13 @@ for model in model_dict.keys():
                         eval = EvalModel('unet',process_data, y_flatten, y_pred_flatten) 
                         scores = eval.get_metrics()
                         metric_df = eval.metrics_to_df(scores)
-                        df_list.append(metric_df)
-                # final_metric_df = pd.concat(df_list, axis=0)
-                # final_metrics_melt = pd.melt(final_metric_df, id_vars=['Process Date','Model'], value_vars=['Precision', 'Recall', 'F1', 'Dice'], var_name = 'metrics', value_name = 'scores')
-                # final_metrics_melt.to_csv(f'test_metrics_{model_name.split(".")[0]}_stardist_mask.csv')        
+                        if metric_df['Dice'][0] <=0.7:
+                                
+                                dice_file_name = f'{metric_df["Dice"][0]:.2f}'
+                                save_path = f'bad_predictions_by_model2{os.sep}{model_name.split(".")[0]}{os.sep}'
+                                create_dir(save_path)
+                                save_path = save_path + f'{process_data}_dice_{dice_file_name}.svg'
+                                
+                                print(metric_df)
+                                topography = create_topography_map(unetTrat)
+                                unetTrat.show_predict(process_date = process_data, y=y, y_pred = y_pred, topography=topography, save_path=save_path, metrics=metric_df)
