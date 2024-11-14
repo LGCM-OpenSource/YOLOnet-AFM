@@ -568,13 +568,13 @@ class UnetProcess:
 
         plt.subplot(2, 3, 2)
         plt.imshow(optical_image, alpha=0.7)  
-        plt.imshow(y, alpha=0.4, cmap='jet')  
+        plt.imshow(y, alpha=0.5)  
         plt.title("Stardist with Optical Overlay")
         plt.axis('off')
 
         plt.subplot(2, 3, 3)
         plt.imshow(optical_image, alpha=0.7)  
-        plt.imshow(y_pred, alpha=0.4, cmap='jet')  
+        plt.imshow(y_pred, alpha=0.5, cmap='jet')  
         plt.title("Y_pred with Optical Overlay")
         plt.axis('off')
 
@@ -585,8 +585,8 @@ class UnetProcess:
 
         plt.subplot(2, 3, 5)
         plt.imshow(optical_image, alpha=0.7)  
-        plt.imshow(y_pred, alpha=0.4, cmap='jet')  
-        plt.imshow(y, alpha=0.4, cmap='gray')  
+        plt.imshow(y_pred, alpha=0.5, cmap='jet')  
+        plt.imshow(y, alpha=0.5)  
         plt.title("Y_pred, Y & Optical Overlay")
         plt.axis('off')
 
