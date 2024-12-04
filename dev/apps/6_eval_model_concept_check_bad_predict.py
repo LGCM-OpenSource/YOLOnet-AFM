@@ -1,6 +1,6 @@
 import os
 import numpy as np
-from utils import UnetProcess, EvalModel
+from utils import UnetProcess, EvalModel, Models
 from tqdm import tqdm
 from glob import glob
 import matplotlib.pyplot as plt 
@@ -67,13 +67,13 @@ for model in model_dict.keys():
                 usefull_path = [os.path.join(predict_path, file+'_UsefullData.tsv') for file in df_test_files['Process.Date'].values]
 
                 df_list = []
-
+                model = Models('unet', model_path)
                 for i in tqdm(range(len(opt_image_path)), colour='#0000FF'):
                         process_data = opt_image_path[i].split(f'{os.sep}')[-1].split('_')[0]
-                        unetTrat =   UnetProcess(opt_image_path[i], preprocess_image_path[i], usefull_path[i], mask_path[i], model_path=model_path) 
+                        unetTrat =   UnetProcess(opt_image_path[i], preprocess_image_path[i], usefull_path[i], mask_path[i]) 
                         
                         # usefull_path_unet = usefull_path[i].replace(f'data{os.sep}input{os.sep}Usefull_data{os.sep}',f'data{os.sep}output{os.sep}{unet_afm_fold}{os.sep}predict_sheets{os.sep}')
-                        y,y_pred, _t = unetTrat.unet_predict()
+                        y,y_pred, _t = unetTrat.unet_predict(model)
                         y_flatten = y.flatten()
                         y_pred_flatten = y_pred.flatten()
 
