@@ -1,26 +1,18 @@
-from utils import GenerateAFMOptico 
+from utils import GenerateAFMOptico, UNET_MODELS_PATH, CROP_PATH, build_file_path
 import os 
 from tqdm import tqdm 
 
-#Teste blur
-# data_folder = 'data'
-data_folder = 'data'
+model = 'unet_afm_2_channels_like_yolo_opt_afm'
+pre_process = UNET_MODELS_PATH[model]['pre_process']
 
-opt_image_dir = f'{data_folder}{os.sep}input{os.sep}optical_images_resized{os.sep}'
-usefull_data_dir = f'{data_folder}{os.sep}input{os.sep}Usefull_data{os.sep}'
-save_dir = f'{data_folder}{os.sep}intermediate{os.sep}pre_processing_only_optico{os.sep}image{os.sep}'
-
-dire = os.listdir(opt_image_dir)
+dire = os.listdir(CROP_PATH['optical_crop_resized'])
+last_process = '_optico_crop_resized.png'
 
 for img in tqdm(dire):
-    usefull_name = img.replace('_optico_crop_resized.png','_UsefullData.tsv')
-    processed_name = img.replace('_optico_crop_resized.png','_channels_added.npy')
+    
+    opt_crop_resized_path = os.path.join(CROP_PATH['optical_crop_resized'], img)
+    usefull_path = build_file_path(CROP_PATH['usefull_data'], img, actual_process=last_process, new_process = '_UsefullData.tsv')
+    save_path  = build_file_path(pre_process, img, actual_process=last_process, new_process='_channels_added.npy')
 
-    optical_path = opt_image_dir+img 
-    usefull_path = usefull_data_dir+usefull_name
-    save_path = save_dir+processed_name
-    
-    
-    afm_optico_process = GenerateAFMOptico(optical_path, usefull_path)
-    
+    afm_optico_process = GenerateAFMOptico(opt_crop_resized_path, usefull_path)
     afm_optico_process.run_generate_afm_optico_images(save_path)
