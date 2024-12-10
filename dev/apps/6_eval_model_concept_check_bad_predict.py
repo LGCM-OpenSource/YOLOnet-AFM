@@ -1,6 +1,6 @@
 import os
 import numpy as np
-from utils import UnetProcess, EvalModel, Models
+from utils import UnetProcess, EvalModel, Models, UNET_MODELS_PATH, CROP_PATH
 from tqdm import tqdm
 from glob import glob
 import matplotlib.pyplot as plt 
@@ -21,41 +21,22 @@ def create_dir(path):
         os.makedirs(path)
 
 
-model_dict = {
-    'unet_afm_1_channels_only_AFM_CosHeightSum': {
-        'model': 'unet_afm_1_channels_only_AFM_CosHeightSum_NN_samples_stardist_mask.h5',
-        'test_path': f'{os.sep}home{os.sep}arthur{os.sep}lgcm{os.sep}projects{os.sep}Segmentation_union_projects{os.sep}data_complete{os.sep}input{os.sep}train{os.sep}train_1_channels_only_AFM_CosHeightSum{os.sep}opt_img_training',
-        'mask_path': f'{os.sep}home{os.sep}arthur{os.sep}lgcm{os.sep}projects{os.sep}Segmentation_union_projects{os.sep}data_complete{os.sep}input{os.sep}train{os.sep}train_1_channels_only_AFM_CosHeightSum{os.sep}msk_img_training',
-            
-    },
-    'unet_afm_2_channels_like_yolo_opt_afm':{
-            'model':'unet_afm_2_channels_like_yolo_opt_afm_NN_samples_stardist_mask.h5',
-            'test_path':f'{os.sep}home{os.sep}arthur{os.sep}lgcm{os.sep}projects{os.sep}Segmentation_union_projects{os.sep}data_complete{os.sep}input{os.sep}train{os.sep}train_2_channels_like_yolo_opt_afm{os.sep}opt_img_training',
-            'mask_path':f'{os.sep}home{os.sep}arthur{os.sep}lgcm{os.sep}projects{os.sep}Segmentation_union_projects{os.sep}data_complete{os.sep}input{os.sep}train{os.sep}train_2_channels_like_yolo_opt_afm{os.sep}msk_img_training',
-            
-    },
-    'unet_afm_2_channels_only_optical_data_without_artifacts':{
-            'model': 'unet_afm_2_channels_only_optical_NN_samples_stardist_mask.h5',
-            'test_path': f'{os.sep}home{os.sep}arthur{os.sep}lgcm{os.sep}projects{os.sep}Segmentation_union_projects{os.sep}data_complete{os.sep}input{os.sep}train{os.sep}train_2_channels_only_optical{os.sep}opt_img_training',
-            'mask_path': f'{os.sep}home{os.sep}arthur{os.sep}lgcm{os.sep}projects{os.sep}Segmentation_union_projects{os.sep}data_complete{os.sep}input{os.sep}train{os.sep}train_2_channels_only_optical{os.sep}msk_img_training'
-    }
-}
 
-opt_image = f'{os.sep}home{os.sep}arthur{os.sep}lgcm{os.sep}projects{os.sep}Segmentation_union_projects{os.sep}data_complete{os.sep}input{os.sep}optical_images_resized'
-predict_path = f'{os.sep}home{os.sep}arthur{os.sep}lgcm{os.sep}projects{os.sep}Segmentation_union_projects{os.sep}data_complete{os.sep}input{os.sep}Usefull_data'
+opt_image =CROP_PATH['optical_crop_resized']
+predict_path = CROP_PATH['usefull_data']
 
 
-test_files_path = f'{os.sep}home{os.sep}arthur{os.sep}lgcm{os.sep}projects{os.sep}Segmentation_union_projects{os.sep}data_complete{os.sep}datasets{os.sep}selected_with_good_optico{os.sep}Test_83_Images.tsv'
+test_files_path = f'data{os.sep}datasets{os.sep}selected_with_good_optico{os.sep}Test_83_Images.tsv'
 df_test_files = pd.read_csv(test_files_path)
 
 
 dataset_size = [234]
-for model in model_dict.keys():
+for model in UNET_MODELS_PATH.keys():
         if model == 'unet_afm_1_channels_only_AFM_CosHeightSum': 
                 continue
         for i in dataset_size:
         
-                model_info = model_dict[model]
+                model_info = UNET_MODELS_PATH[model]
                 model_name = model_info['model'].replace('NN', str(i))
                 model_path = f'models{os.sep}{model_name}'
                 
