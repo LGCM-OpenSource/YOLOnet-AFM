@@ -22,18 +22,13 @@ def create_dir(path):
 
 
 
-opt_image =CROP_PATH['optical_crop_resized']
-predict_path = CROP_PATH['usefull_data']
-
-
 test_files_path = f'data{os.sep}datasets{os.sep}selected_with_good_optico{os.sep}Test_83_Images.tsv'
 df_test_files = pd.read_csv(test_files_path)
 
 
 dataset_size = [234]
 for model in UNET_MODELS_PATH.keys():
-        if model == 'unet_afm_1_channels_only_AFM_CosHeightSum': 
-                continue
+
         for i in dataset_size:
         
                 model_info = UNET_MODELS_PATH[model]
@@ -44,8 +39,8 @@ for model in UNET_MODELS_PATH.keys():
                 
                 preprocess_image_path = [os.path.join(model_info['test_path'], file+'_channels_added.npy') for file in df_test_files['Process.Date'].values]
                 mask_path = [os.path.join(model_info['mask_path'], file+'_channels_added.npy') for file in df_test_files['Process.Date'].values]
-                opt_image_path = [os.path.join(opt_image, file+'_optico_crop_resized.png') for file in df_test_files['Process.Date'].values]
-                usefull_path = [os.path.join(predict_path, file+'_UsefullData.tsv') for file in df_test_files['Process.Date'].values]
+                opt_image_path = [os.path.join(CROP_PATH['optical_crop_resized'], file+'_optico_crop_resized.png') for file in df_test_files['Process.Date'].values]
+                usefull_path = [os.path.join(CROP_PATH['usefull_data'], file+'_UsefullData.tsv') for file in df_test_files['Process.Date'].values]
 
                 df_list = []
                 model = Models('unet', model_path)
