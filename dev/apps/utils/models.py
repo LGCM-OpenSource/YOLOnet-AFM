@@ -93,8 +93,7 @@ class Models:
     """
 
     unet_path = f'models{os.sep}unet_afm_optico_more_images.h5'
-    xgb_path = f'models{os.sep}xgb_model.pkl'
-    logreg_path = f'models{os.sep}logisticRegression_model.pkl'
+
     
     def __init__(self, model_name, model_path=False):
         """
@@ -106,19 +105,13 @@ class Models:
             The name of the model.
         """
         self.model_name = model_name.lower()
-        if model_name == 'unet':
-            with CustomObjectScope({'iou': self.iou, 'dice_coef': self.dice_coef}):
-                if os.path.exists(self.unet_path): 
+        with CustomObjectScope({'iou': self.iou, 'dice_coef': self.dice_coef}):
+            if os.path.exists(self.unet_path): 
                     self.model = tf.keras.models.load_model(self.unet_path)
-            if model_path:
+        if model_path:
              with CustomObjectScope({'iou': self.iou, 'dice_coef': self.dice_coef}): 
                 self.model = tf.keras.models.load_model(model_path)
 
-        elif model_name =='xgb': 
-            self.model = pickle.load(open(self.xgb_path, 'rb')) 
-            
-        elif model_name == 'logreg':
-            self.model = pickle.load(open(self.logreg_path, 'rb')) 
             
     def iou(self, y_true, y_pred):
     
@@ -320,44 +313,11 @@ class Models:
         """
         return self.model.predict_proba(x)
     
-    def predict_proba_result(self, y):
-        """
-        Processes predicted probabilities to obtain class predictions.
-
-        Parameters
-        ----------
-        y : (array-like)
-            Predicted class probabilities.
-
-        Returns
-        -------
-        (array-like)
-            Predicted class labels after processing.
-        """
-        # final_df = pd.DataFrame(y,columns = ['Cytoplasm', 'Nucleus', 'Pericellular', 'Substrate'])
-        
-        final_df = pd.DataFrame(y,columns = ['Cytoplasm', 'Nucleus'])
-        
-        # df_condition = [(((final_df['Substrate']>final_df['Nucleus']) & (final_df['Substrate']>final_df['Cytoplasm']) & (final_df['Substrate']>final_df['Pericellular']))),
-        #                     ((final_df['Nucleus']>0.78) & (final_df['Cytoplasm']<0.22)),
-        #                     ((final_df['Cytoplasm']>0.78) & (final_df['Nucleus']<0.22)),
-        #                     (((final_df['Pericellular']>final_df['Substrate']) & (final_df['Pericellular']>final_df['Cytoplasm']) & (final_df['Pericellular']>final_df['Nucleus'])))]
-
-        df_condition = [
-                        ((final_df['Nucleus']>0.78) & (final_df['Cytoplasm']<0.22)),
-                        ((final_df['Cytoplasm']>0.78) & (final_df['Nucleus']<0.22)),
-                        ]
-        
-        
-        # df_choices  = [3,1,0,2]
-        df_choices  = [0,1]  
-        final_df['predict'] = np.select(df_condition,df_choices,default=0)
-        return np.array(final_df['predict'])
 
 
 
 class EvalModel:
-    def __init__(self, model_name, process_date, y_true, y_pred):
+    def __init__(self, model_name, y_true, y_pred, process_date=''):
         self.model = Models(model_name)
         self.process_date = process_date
         self.y_true = y_true
@@ -440,9 +400,6 @@ class UnetProcess:
         mask_path: (str, optional )
             Path to the mask image file. Defaults to False.
         """
-        self.model = Models('unet')
-        if model_path:
-            self.model = Models('unet', model_path)
 
         self.df_afm = DataFrameTrat(usefull_path)
         self.preprocess_image = ImageTrat(preprocess_path)
@@ -603,7 +560,7 @@ class UnetProcess:
         plt.close()
         
 
-    def unet_predict(self, save_path='', usefull_path=False, save_unet_path=False):
+    def unet_predict(self, model, save_path='', usefull_path=False, save_unet_path=False):
         '''
         Performs the UNet prediction and saves the results.
 
@@ -625,7 +582,7 @@ class UnetProcess:
             ori_y, y = self.read_mask(self.mask.image(matrix=True))
             
             '''prediction'''
-            y_proba = self.model.predict(x) 
+            y_proba = model.predict(x) 
             y_pred = y_proba[0] > 0.5
             y_proba = np.squeeze(y_proba)
             y_pred = np.squeeze(y_pred)
