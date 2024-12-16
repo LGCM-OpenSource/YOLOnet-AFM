@@ -293,8 +293,8 @@ class CropImages:
         """
         list_pixel=[]
         
-        image_bw = np.array(self.bw_image.image)
-        image_opt = np.array(self.opt_image.image)
+        image_bw = np.array(self.bw_image.image())
+        image_opt = np.array(self.opt_image.image())
 
         # Compare all color channels using NumPy
         comparison_result = np.any(image_bw != image_opt, axis=-1)
@@ -355,7 +355,7 @@ class CropImages:
             get_jMax = crop_position['jMax']
             
             '''cropp image'''
-            crop_opt_image = self.opt_image.image[get_iMin:get_iMax, get_jMin:get_jMax]
+            crop_opt_image = self.opt_image.image()[get_iMin:get_iMax, get_jMin:get_jMax]
             
             
             '''resize image'''
