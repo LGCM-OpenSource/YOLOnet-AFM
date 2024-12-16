@@ -49,10 +49,7 @@ class Models:
     ----------
     unet_path : str
         Path to the UNet model.
-    xgb_path : str
-        Path to the XGBoost model.
-    logreg_path : str
-        Path to the Logistic Regression model.
+   
     smooth : float
         A small constant for numerical stability.
 
@@ -88,8 +85,6 @@ class Models:
     predict_proba(x)
         Predicts class probabilities using the model.
 
-    predict_proba_result(y)
-        Processes predicted probabilities to obtain class predictions.
     """
 
     unet_path = f'models{os.sep}unet_afm_optico_more_images.h5'
@@ -453,13 +448,13 @@ class UnetProcess:
         return ori_x, x
 
 
-    def resize_prediction_to_original_size(self, y_pred):
+    def resize_prediction_to_original_size(self, y):
         '''
         Resizes a predicted image to its original size.
 
         Parameters:
         -----------
-        y_pred: (numpy.ndarray)
+        y: (numpy.ndarray)
             Predicted image.
 
         Returns:
@@ -467,25 +462,17 @@ class UnetProcess:
             Resized predicted image and flattened version: Tuple[numpy.ndarray, numpy.ndarray].
         '''
         kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(5,5))
-        y_pred = np.expand_dims(y_pred, axis=-1) * 255.0
 
         x_dim,y_dim = self.opt_image.dimensions(matrix=False)
         
         # Removing external outliers
-        y_pred = cv2.morphologyEx(y_pred, cv2.MORPH_OPEN, kernel)
-
-        # y_pred = cv2.dilate(y_pred,kernel,iterations = 1)
+        y_opening_filter = cv2.morphologyEx(y.astype(np.uint8), cv2.MORPH_OPEN, kernel)
 
         # Filling empty spaces inside the nucleus
-        y_pred = cv2.morphologyEx(y_pred, cv2.MORPH_CLOSE, kernel)
-        y_pred  = cv2.resize(y_pred, (y_dim, x_dim))
+        y_closing_filter = cv2.morphologyEx(y_opening_filter, cv2.MORPH_CLOSE, kernel)
+        y_resized  = cv2.resize(y_closing_filter, (y_dim, x_dim))
         
-        y_pred[y_pred>0] = 1
-        y_pred_flatten = y_pred.copy()
-        y_pred_flatten[y_pred_flatten>0] = 1
-        y_pred_flatten = y_pred_flatten.flatten()
-        
-        return y_pred, y_pred_flatten
+        return y_resized
     
 
     def get_count(self, predict_sheet):
@@ -508,59 +495,85 @@ class UnetProcess:
     
     
     def show_predict(self, process_date, y, y_pred, topography, save_path, metrics):
+        # Extração de métricas
         precision = metrics['Precision'][0]
         recall = metrics['Recall'][0]
         dice = metrics['Dice'][0]
-        
-        
+
+        # Obtenção e processamento da imagem óptica
         optical_image = self.opt_image.image()
         optical_image = cv2.cvtColor(optical_image, cv2.COLOR_BGR2RGB)
-        
+
+        # Configuração da figura
         plt.figure(figsize=(10, 6))
 
+        # Subplot 1: Imagem óptica original
         plt.subplot(2, 3, 1)
         plt.imshow(optical_image)
         plt.title(process_date)
         plt.axis('off')
 
+        # Subplot 2: Stardist com sobreposição óptica
         plt.subplot(2, 3, 2)
-        plt.imshow(optical_image, alpha=0.7)  
-        plt.imshow(y, alpha=0.5)  
+        plt.imshow(optical_image, alpha=0.7)
+        plt.imshow(y, alpha=0.5)
         plt.title("Stardist with Optical Overlay")
         plt.axis('off')
 
+        # Subplot 3: Y_pred com sobreposição óptica
         plt.subplot(2, 3, 3)
-        plt.imshow(optical_image, alpha=0.7)  
-        plt.imshow(y_pred, alpha=0.5, cmap='jet')  
+        plt.imshow(optical_image, alpha=0.7)
+        plt.imshow(y_pred, alpha=0.5, cmap='jet')
         plt.title("Y_pred with Optical Overlay")
         plt.axis('off')
 
+        # Subplot 4: Topografia normalizada
         plt.subplot(2, 3, 4)
         plt.imshow(topography)
         plt.title("Norm Height")
         plt.axis('off')
 
+        # Subplot 5: Combinação de Y_pred, Y e imagem óptica
         plt.subplot(2, 3, 5)
-        plt.imshow(optical_image, alpha=0.7)  
-        plt.imshow(y_pred, alpha=0.5, cmap='jet')  
-        plt.imshow(y, alpha=0.5)  
+        plt.imshow(optical_image, alpha=0.7)
+        plt.imshow(y_pred, alpha=0.5, cmap='jet')
+        plt.imshow(y, alpha=0.5)
         plt.title("Y_pred, Y & Optical Overlay")
         plt.axis('off')
 
+        # Subplot 6: Métricas
         plt.subplot(2, 3, 6)
         plt.axis('off')
-        plt.text(0.95, 0.05, f'Precision: {precision:.2f}\nRecall: {recall:.2f}\nDice: {dice:.2f}', 
-         verticalalignment='bottom', horizontalalignment='right', 
-         transform=plt.gca().transAxes, 
-         color='white', fontsize=10, bbox=dict(facecolor='black', alpha=0.5))
-        
-        
-        
+        metrics_text = (f'Precision: {precision:.2f}\n'
+                        f'Recall: {recall:.2f}\n'
+                        f'Dice: {dice:.2f}')
+        plt.text(
+            0.95, 0.05, metrics_text,
+            verticalalignment='bottom', horizontalalignment='right',
+            transform=plt.gca().transAxes,
+            color='white', fontsize=10,
+            bbox=dict(facecolor='black', alpha=0.5)
+        )
+
+        # Salvar a figura
         plt.savefig(save_path, format="svg")
         plt.close()
-        
 
-    def unet_predict(self, model, save_path='', usefull_path=False, save_unet_path=False):
+
+    def save_predict(self, y_pred, save_path):
+        fig, ax = plt.subplots(figsize=(self.opt_image.image().shape[1] / 100, 
+                                        self.opt_image.image().shape[0] / 100), dpi=100)
+        
+        ax.imshow(self.opt_image.image()[:,:,::-1], alpha=0.7)
+        ax.imshow(y_pred, cmap='gray', alpha=0.5)
+        ax.axis('off') 
+        
+        
+        plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
+        plt.savefig(save_path, bbox_inches='tight', pad_inches=0)
+        plt.close(fig) 
+
+    def unet_predict(self, model):
         '''
         Performs the UNet prediction and saves the results.
 
@@ -577,7 +590,7 @@ class UnetProcess:
         '''
         try:
             optical_image = self.opt_image.image()
-            optical_image_res = cv2.resize(optical_image, (256,256))
+            # optical_image_res = cv2.resize(optical_image, (256,256))
             ori_x, x = self.read_image(self.preprocess_image.image(matrix=True))
             ori_y, y = self.read_mask(self.mask.image(matrix=True))
             
@@ -588,54 +601,12 @@ class UnetProcess:
             y_pred = np.squeeze(y_pred)
             y_pred = y_pred > 0.5
             
-            #Resize prediction from 256x256 to original image size
-            y_pred_resized, y_pred_flatten = self.resize_prediction_to_original_size(y_pred)
-            y_resized, y_flatten = self.resize_prediction_to_original_size(y)            
-            if usefull_path:
-                save_usefulll_path = usefull_path.replace(f'data_complete{os.sep}input{os.sep}Usefull_data{os.sep}',f'data_complete{os.sep}output{os.sep}predict_sheets{os.sep}') 
-                df = DataFrameTrat(usefull_path)
-                df_afm = df.df
+            # #Resize prediction from 256x256 to original image size
+            # y_pred_resized, y_pred_flatten = self.resize_prediction_to_original_size(y_pred)
+            y_resized = self.resize_prediction_to_original_size(y)            
+       
                 
-                # df_afm['unet_prediction'] = y_pred_flatten
-                
-                verify_count = self.get_count(df_afm)
-                verify_objects = self.count_objects(df_afm)
-                
-                
-            '''transpose prediction to optical image'''
-            # y = self.preprocess_image.predicted_nucleus_to_image(optical_image, y_resized)
-            # y_pred = self.preprocess_image.predicted_nucleus_to_image(optical_image, y_pred_resized)
-
-            '''Save results'''
-            # if save_unet_path:
-            #     fig = plt.figure(figsize=(15,7))
-            #     fig.patch.set_facecolor('white')
-            #     ax1 = fig.add_subplot(1,2,1)
-            #     ax1.set_title('Original optico')
-            #     plt.imshow(self.preprocess_image.image, cmap='gray')
-
-            #     ax2 = fig.add_subplot(1,2,2)
-            #     ax2.set_title('unet predict')
-            #     plt.imshow(y_pred, cmap='gray')
-
-             #     fig.savefig(save_path)
-                
-            # if not verify_count < 177*0.2 or verify_objects > 1:   
-                
-            # df_afm.to_csv(save_usefulll_path, sep='\t', index=False)
-            # self.preprocess_image.save_image(save_path, y_pred)
-                
-            #     return y, y_proba, False
-            
-            # to run pixel segmentation  
-            # plt.subplot(231); plt.imshow(optical_image);
-            # plt.subplot(232); plt.imshow(y_resized);
-            # plt.subplot(233); plt.imshow(y_pred_resized);
-
-
-            
-            # plt.show()
-            return y_resized, y_pred_resized, True
+            return  y_resized, y_proba
         except Exception:
             print(traceback.format_exc())
 
