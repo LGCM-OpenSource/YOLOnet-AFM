@@ -1,7 +1,9 @@
 import os
 import sys
-from utils import UnetProcess, Models, build_file_path, CROP_PATH, UNET_MODELS_PATH, TRAIN_TEST_FILES
+from utils import UnetProcess, Models, build_file_path, CROP_PATH, UNET_MODELS_PATH, TRAIN_TEST_FILES, TerminalStyles, UserInput 
 from tqdm import tqdm
+import argparse
+
 
 
 def build_paths(files_list, actual_process = '_channels_added.npy'):
@@ -14,30 +16,26 @@ def build_paths(files_list, actual_process = '_channels_added.npy'):
         return opt_image_path, usefull_path, preprocess_image_path, mask_path, save_path
 
 
-def select_model(user_input):
-        models = {
-                '1': ('AFM Only','unet_afm_1_channels_only_AFM_CosHeightSum'),
-                '2': ('YOLO-AFM' ,'unet_afm_2_channels_like_yolo_opt_afm'),
-                '3': ('Optical Only' ,'unet_afm_2_channels_only_optical')
-        }
-        selected_model = models[user_input][0]
-        print(f'\nModel ____{selected_model}____ selected')
-        return models[user_input][1]
+parser = argparse.ArgumentParser()
+parser.add_argument('-ms', '--model_selection', type=str, help="select your model to choice preprocess step to make segmentations predictions")
+args = parser.parse_args()
+model_selector = args.model_selection
 
+# model_selector = 'unet_afm_2_channels_like_yolo_opt_afm'
+confirmation = UserInput.get_user_confirmation('DO YOU WANNA VISUALIZE SEGMENTATION?')
 
-selector = select_model(input('''Select your model: \n
-                 1 - AFM Only\n
-                 2 - YOLO-AFM\n
-                 3 - Optical Only\n
-                 ____________________________________
-                 '''))
-
-model_info = UNET_MODELS_PATH[selector]
-
+model_info = UNET_MODELS_PATH[model_selector]
 files_list = os.listdir(model_info['preprocess_img'])
 opt_image_path, usefull_path, preprocess_image_path, mask_path, save_path = build_paths(files_list)
-model = Models('unet', model_info["model_path"])
+model = Models(model_info['model_name'], model_info["model_path"])
+
 for i in tqdm(range(len(opt_image_path)), colour='#0000FF'):
         unetTrat =   UnetProcess(opt_image_path[i], preprocess_image_path[i], usefull_path[i], mask_path[i]) 
-        y,y_pred = unetTrat.unet_predict(model)
-        unetTrat.save_predict(y, save_path[i])
+        y_pred = unetTrat.unet_predict(model)
+        
+        y_resized = unetTrat.resize_prediction_to_original_size(y_pred)            
+        unetTrat.save_predict(y_resized, save_path[i])
+        if confirmation: 
+                unetTrat.visualize_prediction(save_path[i])
+                
+        

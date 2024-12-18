@@ -1,10 +1,13 @@
 import os
 import numpy as np
-from utils import UnetProcess, EvalModel, Models, UNET_MODELS_PATH, CROP_PATH, TRAIN_TEST_FILES, create_dir
+from utils import UnetProcess, EvalModel, Models, UNET_MODELS_PATH, CROP_PATH, TRAIN_TEST_FILES, create_dir, UserInput, DataChart, Charts
 from tqdm import tqdm
-from glob import glob
 import matplotlib.pyplot as plt 
 import pandas as pd 
+import cv2 
+import argparse
+
+
 
 def create_topography_map(unetTrat, matrix = False):
         if matrix:
@@ -17,56 +20,63 @@ def create_topography_map(unetTrat, matrix = False):
 
 
 def build_paths(model_info, test_files_list):
-        preprocess_image_path = [os.path.join(model_info['test_path'], file+'_channels_added.npy') for file in test_files_list['Process.Date'].values if os.path.isfile(os.path.join(model_info['test_path'], file+'_channels_added.npy'))]
-        mask_path = [os.path.join(model_info['mask_path'], file+'_channels_added.npy') for file in test_files_list['Process.Date'].values if os.path.isfile(os.path.join(model_info['mask_path'], file+'_channels_added.npy'))]
+        preprocess_image_path = [os.path.join(model_info['preprocess_img'], file+'_channels_added.npy') for file in test_files_list['Process.Date'].values if os.path.isfile(os.path.join(model_info['preprocess_img'], file+'_channels_added.npy'))]
+        mask_path = [os.path.join(model_info['preprocess_mask'], file+'_channels_added.npy') for file in test_files_list['Process.Date'].values if os.path.isfile(os.path.join(model_info['preprocess_mask'], file+'_channels_added.npy'))]
         opt_image_path = [os.path.join(CROP_PATH['optical_crop_resized'], file+'_optico_crop_resized.png') for file in test_files_list['Process.Date'].values if os.path.isfile(os.path.join(CROP_PATH['optical_crop_resized'], file+'_optico_crop_resized.png'))]
         usefull_path = [os.path.join(CROP_PATH['usefull_data'], file+'_UsefullData.tsv') for file in test_files_list['Process.Date'].values if os.path.isfile(os.path.join(CROP_PATH['usefull_data'], file+'_UsefullData.tsv'))]
-
-        return preprocess_image_path, mask_path, opt_image_path, usefull_path
-
-def get_model_info(model_name, train_size):
-                model_info = UNET_MODELS_PATH[model_name]
-                model_name = model_info['model'].replace('NN', train_size)
-                model_path = os.path.join('models', model_name) 
-                print(f'get {model_name} validation... ')
-                
-                return model_info, model_name, model_path
+        y_pred_path = [os.path.join(model_info['save_predict'], file+'_unet.png') for file in test_files_list['Process.Date'].values if os.path.isfile(os.path.join(model_info['save_predict'], file+'_unet.png'))]
+        return preprocess_image_path, mask_path, opt_image_path, usefull_path, y_pred_path
 
 
 def save_specific_metrics():
         dice_file_name = f'{metric_df["Dice"][0]:.2f}'
         create_dir(model_info['save_predict'])
-        save_path = os.path.join(model_info['save_predict'], f'{process_data}_dice_{dice_file_name}.svg')  
+        
+        save_path = os.path.join(model_info['save_predict'], f'{process_data}_dice_{dice_file_name}.png')  
         
         print(metric_df)
         topography = create_topography_map(unetTrat)
         unetTrat.show_predict(process_date = process_data, y=y, y_pred = y_pred, topography=topography, save_path=save_path, metrics=metric_df)
 
 
+parser = argparse.ArgumentParser()
+parser.add_argument('-ms', '--model_selection', type=str, help="select your model to choice preprocess step to make segmentations predictions")
+args = parser.parse_args()
+model_selector = args.model_selection
+
+
+data_chart = DataChart()
+chart = Charts(width=800, height = 500)
 
 df_test_files = pd.read_csv(TRAIN_TEST_FILES['test'])
 
 
-for model in UNET_MODELS_PATH.keys():
+model_info = UNET_MODELS_PATH[model_selector]
+preprocess_image_path, mask_path, opt_image_path, usefull_path, y_pred_path = build_paths(model_info, df_test_files)
 
-        for train_size in TRAIN_TEST_FILES['train'][0].keys():
-                model_info, model_name, model_path = get_model_info(model, train_size)
-                preprocess_image_path, mask_path, opt_image_path, usefull_path = build_paths(model_info, df_test_files)
-                
-                df_list = []
-                model = Models('unet', model_path)
-                for i in tqdm(range(len(opt_image_path)), colour='#0000FF'):
-                        process_data = opt_image_path[i].split(f'{os.sep}')[-1].split('_')[0]
-                        unetTrat =   UnetProcess(opt_image_path[i], preprocess_image_path[i], usefull_path[i], mask_path[i]) 
-                        
-                        y,y_pred, _prob = unetTrat.unet_predict(model)
-                        y_flatten = y.flatten()
-                        y_pred_flatten = y_pred.flatten()
+df_list = []
+model = Models(model_info['model_name'], model_info['model_path'])
+for i in tqdm(range(len(opt_image_path)), colour='#0000FF'):
+        process_data = opt_image_path[i].split(f'{os.sep}')[-1].split('_')[0]
+        unetTrat =   UnetProcess(opt_image_path[i], preprocess_image_path[i], usefull_path[i], mask_path[i]) 
+        
+        y = unetTrat.mask.image(matrix=True)
+        y_pred = cv2.imread(y_pred_path[i], 0)
+        ret2,y_pred_thr_otsu = cv2.threshold(y_pred,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU) 
+        y_pred_thr_otsu_normalized = y_pred_thr_otsu / 255.0
+   
+        y_flatten = y.flatten()
+        y_pred_flatten = y_pred_thr_otsu_normalized.flatten()
 
-                        eval = EvalModel('unet', y_flatten, y_pred_flatten, process_date=process_data) 
-                        scores = eval.get_metrics()
-                        metric_df = eval.metrics_to_df(scores)
-                        df_list.append(metric_df)
-                        
-                        save_specific_metrics()
-                
+        eval = EvalModel(model.model_name, y_flatten, y_pred_flatten, process_date=process_data) 
+        scores = eval.get_metrics()
+        metric_df = eval.metrics_to_df(scores)
+        df_list.append(metric_df)
+        save_specific_metrics()
+        
+model_validation_metrics = pd.concat(df_list, axis=0)
+
+model_validation_metrics_melt = data_chart.apply_melt(model_validation_metrics)
+
+fig = chart.box_plot(model_validation_metrics_melt, x='Model', y='scores', color='metrics')
+fig.write_image('model_metrics.png')
