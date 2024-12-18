@@ -2,6 +2,7 @@
 import os
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 import tensorflow as tf
 from tensorflow.keras.utils import CustomObjectScope
 
@@ -421,7 +422,7 @@ class UnetProcess:
         ori_x = x
         # x = x/255.0
         # x = x.astype(np.float32)
-        x = np.expand_dims(x, axis=0)   ## (1, 256, 256, 3)
+        x = np.expand_dims(x, axis=0)   ## (1, 256, 256, 2)
         return ori_x, x
     
     def read_mask(self, image):
@@ -465,10 +466,8 @@ class UnetProcess:
 
         x_dim,y_dim = self.opt_image.dimensions(matrix=False)
         
-        # Removing external outliers
         y_opening_filter = cv2.morphologyEx(y.astype(np.uint8), cv2.MORPH_OPEN, kernel)
 
-        # Filling empty spaces inside the nucleus
         y_closing_filter = cv2.morphologyEx(y_opening_filter, cv2.MORPH_CLOSE, kernel)
         y_resized  = cv2.resize(y_closing_filter, (y_dim, x_dim))
         
@@ -517,14 +516,14 @@ class UnetProcess:
         plt.subplot(2, 3, 2)
         plt.imshow(optical_image, alpha=0.7)
         plt.imshow(y, alpha=0.5)
-        plt.title("Stardist with Optical Overlay")
+        plt.title("Stardist Golden Standard")
         plt.axis('off')
 
         # Subplot 3: Y_pred com sobreposição óptica
         plt.subplot(2, 3, 3)
         plt.imshow(optical_image, alpha=0.7)
         plt.imshow(y_pred, alpha=0.5, cmap='jet')
-        plt.title("Y_pred with Optical Overlay")
+        plt.title("Y_pred")
         plt.axis('off')
 
         # Subplot 4: Topografia normalizada
@@ -538,7 +537,7 @@ class UnetProcess:
         plt.imshow(optical_image, alpha=0.7)
         plt.imshow(y_pred, alpha=0.5, cmap='jet')
         plt.imshow(y, alpha=0.5)
-        plt.title("Y_pred, Y & Optical Overlay")
+        plt.title("Y_pred and Y Overlay")
         plt.axis('off')
 
         # Subplot 6: Métricas
@@ -556,10 +555,22 @@ class UnetProcess:
         )
 
         # Salvar a figura
-        plt.savefig(save_path, format="svg")
+        plt.savefig(save_path)
         plt.close()
 
+    def visualize_prediction(self, prediction_path):
+        original_image = self.opt_image.image()
+        prediction = cv2.imread(prediction_path)
 
+        plt.figure(figsize=(10, 5))
+        plt.subplot(1, 2, 1)
+        plt.title('Optical Image')
+        plt.imshow(original_image[:,:,::-1], cmap='gray')
+        plt.subplot(1, 2, 2)
+        plt.title('Predict')
+        plt.imshow(prediction[:,:,::-1], cmap='gray')
+        plt.show()
+        
     def save_predict(self, y_pred, save_path):
         fig, ax = plt.subplots(figsize=(self.opt_image.image().shape[1] / 100, 
                                         self.opt_image.image().shape[0] / 100), dpi=100)
@@ -568,12 +579,19 @@ class UnetProcess:
         ax.imshow(y_pred, cmap='gray', alpha=0.5)
         ax.axis('off') 
         
-        
         plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
         plt.savefig(save_path, bbox_inches='tight', pad_inches=0)
         plt.close(fig) 
-
-    def unet_predict(self, model):
+    
+    def model_predict(self, model, x):
+            y_proba_predicts = model.predict(x) 
+            y_pred = y_proba_predicts[0] > 0.5
+            y_proba_predicts = np.squeeze(y_proba_predicts)
+            y_pred = np.squeeze(y_pred)
+            
+            return y_pred, y_proba_predicts
+        
+    def unet_predict(self, model, prc_curve=False):
         '''
         Performs the UNet prediction and saves the results.
 
@@ -589,24 +607,15 @@ class UnetProcess:
             None
         '''
         try:
-            optical_image = self.opt_image.image()
-            # optical_image_res = cv2.resize(optical_image, (256,256))
             ori_x, x = self.read_image(self.preprocess_image.image(matrix=True))
             ori_y, y = self.read_mask(self.mask.image(matrix=True))
             
-            '''prediction'''
-            y_proba = model.predict(x) 
-            y_pred = y_proba[0] > 0.5
-            y_proba = np.squeeze(y_proba)
-            y_pred = np.squeeze(y_pred)
-            y_pred = y_pred > 0.5
-            
-            # #Resize prediction from 256x256 to original image size
-            # y_pred_resized, y_pred_flatten = self.resize_prediction_to_original_size(y_pred)
-            y_resized = self.resize_prediction_to_original_size(y)            
-       
+            y_pred, y_proba = self.model_predict(model, x)
+                        
+            if prc_curve:
+                return y_proba
                 
-            return  y_resized, y_proba
+            return  y_pred
         except Exception:
             print(traceback.format_exc())
 
