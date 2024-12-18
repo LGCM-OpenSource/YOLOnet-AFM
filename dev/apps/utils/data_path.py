@@ -29,9 +29,17 @@ def build_file_path(path, file, actual_process = '_OpticalImg.png',  new_process
         >>> treat_file_names(path, file)
         '{os.sep}data{os.sep}images{os.sep}sample'
     """
-    filename = file.replace(actual_process, new_process)
-    file_path = os.path.join(path, filename)
-    return file_path
+    if isinstance(new_process, list):
+        for process in new_process:
+            filename = file.replace(actual_process, process)
+            file_path = os.path.join(path, filename)
+            if os.path.isfile(file_path):
+                return file_path
+                break
+    else: 
+        filename = file.replace(actual_process, new_process)
+        file_path = os.path.join(path, filename)
+        return file_path
 
 
 CROP_PATH = {
@@ -48,29 +56,32 @@ UNET_MODELS_PATH = {
     
     'unet_afm_1_channels_only_AFM_CosHeightSum': {
             'model_path': f'models{os.sep}unet_afm_1_channels_only_AFM_CosHeightSum_234_samples_stardist_mask.h5',
+            'model_name': 'AFM-Only',
             'preprocess_img': f'data{os.sep}intermediate{os.sep}pre_processing_afm{os.sep}image{os.sep}',
             'preprocess_mask': f'data{os.sep}intermediate{os.sep}pre_processing_afm{os.sep}mask{os.sep}',
             'test_path': f'data{os.sep}input{os.sep}train{os.sep}train_1_channels_only_AFM_CosHeightSum{os.sep}opt_img_training',
             'mask_path': f'data{os.sep}input{os.sep}train{os.sep}train_1_channels_only_AFM_CosHeightSum{os.sep}msk_img_training',
-            'save_predict': f'data{os.sep}output{os.sep}unet_afm_1_channels_only_AFM_CosHeightSum'
+            'save_predict': f'data{os.sep}output{os.sep}unet_afm_1_channels_only_AFM_CosHeightSum{os.sep}'
                 
     },
     'unet_afm_2_channels_like_yolo_opt_afm':{
             'model_path':f'models{os.sep}unet_afm_2_channels_like_yolo_opt_afm_234_samples_stardist_mask.h5',
+            'model_name': 'YOLO-AFM',
             'preprocess_img': f'data{os.sep}intermediate{os.sep}pre_processing_optico_and_afm{os.sep}image{os.sep}',
             'preprocess_mask': f'data{os.sep}intermediate{os.sep}pre_processing_optico_and_afm{os.sep}mask{os.sep}',
             'test_path':f'data{os.sep}input{os.sep}train{os.sep}train_2_channels_like_yolo_opt_afm{os.sep}opt_img_training',
             'mask_path':f'data{os.sep}input{os.sep}train{os.sep}train_2_channels_like_yolo_opt_afm{os.sep}msk_img_training',
-            'save_predict': f'data{os.sep}output{os.sep}unet_afm_2_channels_like_yolo_opt_afm'
+            'save_predict': f'data{os.sep}output{os.sep}unet_afm_2_channels_like_yolo_opt_afm{os.sep}'
             
     },
     'unet_afm_2_channels_only_optical':{
             'model_path': f'models{os.sep}unet_afm_2_channels_only_optical_234_samples_stardist_mask.h5',
+            'model_name': 'Optical-Only',
             'preprocess_img':  f'data{os.sep}intermediate{os.sep}pre_processing_optico{os.sep}image{os.sep}',
             'preprocess_mask': f'data{os.sep}intermediate{os.sep}pre_processing_optico{os.sep}mask{os.sep}',
             'test_path': f'data{os.sep}input{os.sep}train{os.sep}train_2_channels_only_optical{os.sep}opt_img_training',
             'mask_path': f'data{os.sep}input{os.sep}train{os.sep}train_2_channels_only_optical{os.sep}msk_img_training',
-            'save_predict': f'data{os.sep}output{os.sep}unet_afm_2_channels_only_optical'
+            'save_predict': f'data{os.sep}output{os.sep}unet_afm_2_channels_only_optical{os.sep}'
     }
     
     
