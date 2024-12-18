@@ -1,8 +1,10 @@
-import os
+from utils import UserInput
 import sys
 import platform
 import subprocess
-from tqdm import tqdm
+import os 
+from tqdm import tqdm 
+
 
 # Verify and adjust the execution command according to the operating system
 def run_by_operating_system(abs_path_file):
@@ -12,12 +14,13 @@ def run_by_operating_system(abs_path_file):
     else:
             return subprocess.run([sys.executable,  f'{abs_path_file}'], shell=True, stdin=None, stdout=None, stderr=None, close_fds=True)
 
+
 # Function to execute a script with or without arguments
 def run_script(file, msg, arg=None):
     script_path = os.path.join(current_directory, file)
 
-    if arg is not None and file.split('_')[1] == 'eval':
-        arg_string = f' -op {arg}'
+    if arg is not None:
+        arg_string = f' -ms {arg}'
         script_path = script_path + arg_string
         
     print(f'START {file}... {msg}\nPlease wait')
@@ -25,53 +28,29 @@ def run_script(file, msg, arg=None):
     print(f'FINISH {file}... {msg}\n')
 
 
+def have_arguments(process_script):
+    if len(process_script) < 3:
+        return False
+    return True
+
 # Current directory of the script
 current_directory = os.path.dirname(os.path.abspath(__file__))
 
-# Dictionary with the scripts to be executed and their corresponding messages
-scripts_dict = {
+process_flow_scripts_dict = {
     'CROP_IMG': ('1_cropping_opt_images.py', 'cropping images...'),
-    'PREP_UNET': ('2_preprocess_unet.py', 'Generating optical AFM image...'),
-    'PREP_PIXEL': ('3_preprocess_pixel.py', 'Normalizing AFM data file...'),
-    'PRED_VUNET': ('4_vUnet_AFM_predictions.py', 'Segmenting cells...'),
-    'PRED_UNET': ('5_unet_AFM_predict.py', 'Segmenting cells...'),
-    'PRED_PIXEL': ('6_pixel_predict.py', 'Segmenting cells...'),
-    'EVAL_MODEL': ('7_eval_model.py', 'Getting general metrics...'),
-    'EVAL_CELL': ('8_eval_model_per_cell.py', 'Getting specific metrics...')
-}
-
-# Options list
-options = {
-    '0': ['CROP_IMG', 'PREP_UNET', 'PREP_PIXEL', 'PRED_VUNET', 'PRED_UNET', 'PRED_PIXEL', 'EVAL_MODEL', 'EVAL_CELL'],
-    '1': ['CROP_IMG', 'PREP_UNET', 'PRED_VUNET', 'EVAL_MODEL', 'EVAL_CELL'],
-    '2': ['CROP_IMG', 'PREP_UNET', 'PRED_UNET', 'EVAL_MODEL', 'EVAL_CELL'],
-    '3': ['CROP_IMG', 'PREP_PIXEL', 'PRED_PIXEL', 'EVAL_MODEL', 'EVAL_CELL']
+    'PREP_UNET': ('2_preprocess_unet.py',  '-ms' , 'Generating optical AFM image...'),
+    'PRED_UNET': ('4_predicts.py', '-ms', 'Segmenting cells...'),
+    'EVAL_MODEL': ('5_eval_models.py', '-ms',  'Getting general metrics...'),
 }
 
 
 
-# Solicits the user to select an option
-while True:
-    print(
-        '''
-        Select a number according to which model you want to evaluate:
-
-        0 - All Models
-        1 - vUnet_AFM
-        2 - Unet_AFM
-        3 - Pixel_AFM
-        '''
-    )
-    option = input('Enter the number of the desired option:\n')
-
-    if option.isdigit() and option in options.keys():
-        option = option
-        break
-    else:
-        print("Enter a valid option.\n")
+model_selector = UserInput.select_model()
 
 # Execution of the scripts
-print('START PROJECT')
-for script_key in tqdm(options[option], colour='green'):
-    run_script(scripts_dict[script_key][0], scripts_dict[script_key][1], option)
+for script_key in tqdm(process_flow_scripts_dict, colour='green'):
+    arg = None
+    if have_arguments(process_flow_scripts_dict[script_key]):
+        arg =  model_selector
+        run_script(process_flow_scripts_dict[script_key][0], process_flow_scripts_dict[script_key][2], arg)
 print('FINISH PROJECT')
