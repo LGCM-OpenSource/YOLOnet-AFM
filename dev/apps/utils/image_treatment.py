@@ -113,8 +113,12 @@ class ImageTrat:
                     y_dim = int(y_dim[2])
             return (y_dim, x_dim)
         else:
-            x_dim, y_dim, chan = self.image(matrix=matrix).shape
-            return x_dim, y_dim
+            if len(self.image(matrix=matrix).shape)>2:
+                x_dim, y_dim, _ = self.image(matrix=matrix).shape
+            else:
+                x_dim, y_dim = self.image(matrix=matrix).shape
+                
+            return (x_dim, y_dim)
     
     def image_channels(self, image):
         """
@@ -292,15 +296,17 @@ class CropImages:
             A list of pixel coordinates representing the area of interest.
         """
         list_pixel=[]
+        kernel = np.ones((5,5), dtype=np.uint8)
         
         image_bw = np.array(self.bw_image.image())
         image_opt = np.array(self.opt_image.image())
-
-        # Compare all color channels using NumPy
-        comparison_result = np.any(image_bw != image_opt, axis=-1)
+        
+        comparison_result = np.any(image_bw != image_opt, axis=-1).astype(np.uint8)
+        comparison_result_opening = cv2.morphologyEx(comparison_result, cv2.MORPH_OPEN, kernel)
+        
 
         # Get the indices of different pixels
-        rows, cols = np.where(comparison_result)
+        rows, cols = np.where(comparison_result_opening)
         list_pixel = list(zip(rows, cols))
 
         return list_pixel
@@ -413,7 +419,7 @@ class GenerateAFMOptico:
         """
         self.opt_image = ImageTrat(img_path)
         self.df_afm = DataFrameTrat(df_path)
-        self.target = 'Generic Segmentation'
+        self.target = 'stardist'
         self.process_date = 'Process Date'
         self.flatten_height = 'Planned Height'  
     
@@ -435,57 +441,30 @@ class GenerateAFMOptico:
             The image with added channels.
         """
         num_channels = len(channels)
-        new_img = np.zeros((img.shape[0], img.shape[1], num_channels))
+        new_img = np.zeros((img.shape[0], img.shape[1], num_channels), dtype=np.float32)
         
         for i in range(num_channels):
             new_img[:,:,i] = channels[i]
         
-        return new_img.astype(np.float32)
+        return new_img
+    
+    def apply_sobel_filter(self,image):
+    
+        # Aplicar o filtro de Sobel no eixo x
+        sobel_x = cv2.Sobel(image, cv2.CV_64F, 1, 0, ksize=3)
+        # Aplicar o filtro de Sobel no eixo y
+        sobel_y = cv2.Sobel(image, cv2.CV_64F, 0, 1, ksize=3)
+        
+        # Calcular a magnitude da borda
+        sobel_magnitude = np.sqrt(sobel_x**2 + sobel_y**2)
+        
+        # Converter a magnitude para escala de 8 bits
+        sobel_magnitude = np.uint8(sobel_magnitude / np.max(sobel_magnitude) * 255)
+        
+        
+        return sobel_magnitude
     
     
-    def treat_planned_height_by_viridis_map(self, planned_image, dimensions):
-            plt.imshow(planned_image)
-            plt.axis('off')  # Desativar os eixos para uma visualização mais limpa
-            plt.savefig('planned_virids.png', bbox_inches='tight', pad_inches=0)
-            planned_viridis = cv2.imread('planned_virids.png')
-            planned_viridis = cv2.resize(planned_viridis, (dimensions[1], dimensions[0]), cv2.INTER_AREA)
-            # test = cv2.cvtColor(test, cv2.COLOR_BGR2RGB)
-            
-            colors_list = []
-            for chan in self.opt_image.image_channels(planned_viridis):
-                color_normalized = (chan - np.mean(chan)) / np.std(chan)
-                colors_list.append(color_normalized)
-                
-            # Return list in sequence, blue, green, red
-            return colors_list
-
-    def show_rgb_virids(self, blue, green, red, new_img, optical_image):
-
-            plt.subplot(1,5,1)
-            plt.imshow(blue, cmap='gray')
-            plt.title("Planned BLUE")
-            plt.axis('off')
-            
-            plt.subplot(1,5,2)
-            plt.imshow(green, cmap='gray')
-            plt.title("Planned GREEN")
-            plt.axis('off')
-            
-            plt.subplot(1,5,3)
-            plt.imshow(red, cmap='gray')
-            plt.title("Planned RED")
-            plt.axis('off')
-            
-            plt.subplot(1,5,4)
-            plt.imshow(new_img[:,:,0], cmap='gray')
-            plt.title("Planned Height")
-            plt.axis('off')
-            
-            plt.subplot(1,5,5)
-            plt.imshow(optical_image)
-            plt.title("Optical Image")
-            plt.axis('off')
-            plt.show()
     
     def read_transparent_png(self, image_4channel):
         """
@@ -511,7 +490,74 @@ class GenerateAFMOptico:
         final_image = base + white
         return final_image.astype(np.uint8)
     
-    def run_generate_afm_optico_images(self, save_path):
+    
+    def cos_height_sum_feature(self, channels, kernel_size=(10,10), only_afm=False):
+            cos_height_sum = (np.cos(channels[0]) + channels[0]) 
+            kernel = np.ones(kernel_size, np.uint8)
+            
+            cos_height_sum_01 = 255 * (cos_height_sum - cos_height_sum.min())/ (cos_height_sum.max() - cos_height_sum.min())
+            
+            ret, binary_threshold = cv2.threshold(cos_height_sum_01, 245,255, cv2.THRESH_BINARY)
+            cos_heigh_erode = cv2.erode(-binary_threshold, kernel,iterations = 1)
+            
+            if only_afm:
+                return cos_heigh_erode
+            else:
+                channels.pop(0)
+                channels = [channels[i] * cos_heigh_erode for i in range(len(channels))]
+                return channels
+    
+    def select_feature_type(self, channels, pre_process):
+        if pre_process == 'YOLO-AFM':
+            channels = self.cos_height_sum_feature(channels, kernel_size=(15, 15), only_afm=False)
+        elif pre_process == 'AFM-Only':
+            channels = self.cos_height_sum_feature(channels, kernel_size=(5, 5), only_afm=True)
+        else: 
+            channels.pop(0)
+        return channels
+         
+    def create_image_based_on_feature(self, optical_image, channels):
+        new_img = self.add_new_channels(optical_image, channels)
+        
+        if len(channels)>3:
+            new_img = channels
+            
+        return new_img   
+
+    def select_normalization(self, afm_info, feat, pre_process,  substrate=False):
+        if pre_process == 'yolo-afm':
+            if feat == 'Planned Height':
+                afm_info = self.df_afm.min_max_scale(afm_info, feat, substrate=substrate)
+            else: 
+                afm_info = self.df_afm.zscore(afm_info, feat, substrate=substrate)
+        
+        elif pre_process == 'AFM-Only':
+                afm_info = self.df_afm.min_max_scale(afm_info, feat, substrate=substrate)
+        else: 
+                afm_info = self.df_afm.zscore(afm_info, feat, substrate=substrate)
+    
+        return afm_info
+    
+    
+    def data_normalizer(self,afm_info, features, pre_process, features_that_no_need_remove_substrate = ['Planned Height', 'blue', 'hist_equalized']):
+        for feat in features[1:-2]:
+                #Remove null or inf values
+                mean_without_substrate = afm_info[feat].loc[afm_info['Segment'] != 'Substrate'].mean()
+                
+                replacement_null_values_dict = {np.inf:mean_without_substrate,
+                                                - np.inf:mean_without_substrate,
+                                                np.nan:mean_without_substrate}
+                
+                afm_info[feat] = afm_info[feat].replace(replacement_null_values_dict)
+                substrate = feat in features_that_no_need_remove_substrate
+                afm_info = self.select_normalization(afm_info, feat, pre_process, substrate)
+        return afm_info
+                    
+                    
+    def save_matrix(self, save_path, img):
+        return np.save(save_path, img)            
+
+    def run_generate_afm_optico_images(self, pre_process = ''):
         """
         Generates AFM optical images and saves the results.
 
@@ -526,6 +572,7 @@ class GenerateAFMOptico:
             The function doesn't return a value but saves the image.
         """
         try:
+
             optical_image = self.opt_image.image()
             dimensions = self.opt_image.dimensions()
             blue, _,__ = self.opt_image.image_channels(optical_image)
@@ -539,57 +586,26 @@ class GenerateAFMOptico:
             afm_info['blue'] = blue_flatten 
             afm_info['hist_equalized'] = equalized_image_flatten
             
-            
-            '''2 channels (only optico)'''
-            features = [self.process_date, 'blue','hist_equalized','Segment', self.target]
-            
-            '''4 channels (only AFM)'''
-            # features = [self.process_date, self.flatten_height,'YM_Fmax1500pN', 'YM_Fmax0300pN', 'MaxPosition_F1500pN','Segment', self.target]
-            
-            '''6_channels (optico + AFM)'''
-            # features = [self.process_date, self.flatten_height, 'blue', 'hist_equalized', 'YM_Fmax1500pN', 'YM_Fmax0300pN', 'MaxPosition_F1500pN','Segment', self.target]
-            
+            features = [self.process_date, self.flatten_height,'blue','hist_equalized', 'Segment', self.target]
             afm_info = afm_info[features]
-            afm_info = self.df_afm.clean_target(afm_info)
+            # afm_info = self.df_afm.clean_target(afm_info)
+            
             features_that_no_need_remove_substrate = ['Planned Height', 'blue', 'hist_equalized']
-            for feat in features[1:-2]:
-                substrate = False
-                #Remove null or inf values
-                mean_without_substrate = afm_info[feat].loc[afm_info['Segment'] != 'Substrate'].mean()
-                afm_info[feat].replace([np.inf, - np.inf, np.nan], mean_without_substrate, inplace=True)
-                
-                if feat in features_that_no_need_remove_substrate:
-                    #Calc Zscore by mean and std with substrate
-                    substrate = True
-                    
-                #Calc Zscore by mean and std without substrate
-                afm_info = self.df_afm.zscore(afm_info, feat, substrate=substrate)
-                    
+            afm_info = self.data_normalizer(afm_info, features, pre_process, features_that_no_need_remove_substrate)
             
-            channels = []
-            for feat in features[1:-2]:
-                feature_image = self.df_afm.create_channel_by_df(afm_info,  feat, dimensions) 
-                if feat == 'Planned Height':
-                    feature_image = - feature_image
+            channels = [
+                        self.df_afm.create_channel_by_df(afm_info, feat, dimensions)
+                        for feat in features[1:-2]
+                        ]
+            
+            # Apply threshold to certain channels
+            for i, feat in enumerate(features[1:-2]):
                 if feat not in features_that_no_need_remove_substrate:
-                    #apply threshold
-                    feature_image[feature_image > 3] = 3
-                    feature_image[feature_image < -3] = -3
-                channels.append(feature_image)
+                    channels[i] = np.clip(channels[i], -1, 1)
             
-            new_img = self.add_new_channels(optical_image, channels)
-            new_img = new_img.astype(np.float32)
-            
-
-            # new_img = self.read_transparent_png(new_img)
-
-            #Create mask
-            mask = self.df_afm.create_channel_by_df(afm_info,  self.target, dimensions)
-            mask = mask.astype(np.uint8)
-            
-            
-            np.save(save_path, new_img)
-            mask_save_path = save_path.replace(f'pre_processing_only_optico{os.sep}image', f'pre_processing_only_optico{os.sep}mask')
-            np.save(mask_save_path, mask)
+            selected_channels = self.select_feature_type(channels, pre_process)
+            new_img = self.create_image_based_on_feature(optical_image, selected_channels)
+            mask = self.df_afm.create_channel_by_df(afm_info,  self.target, dimensions).astype(np.uint8)
+            return new_img, mask
         except Exception:
             print(traceback.format_exc())
