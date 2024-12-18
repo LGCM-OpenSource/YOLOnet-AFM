@@ -1,11 +1,15 @@
-from .image_treatment import CropImages
-from .image_treatment import GenerateAFMOptico
+from .image_treatment import CropImages, GenerateAFMOptico
 
-from .dataframe_treatment import PreProcessDataframe
-from .dataframe_treatment import DataFrameTrat
+from .dataframe_treatment import PreProcessDataframe, DataFrameTrat
 
-from .models import UnetProcess, PixelProcess
-from .models import EvalModel
+from .models import UnetProcess, PixelProcess, EvalModel, Models
 
 from .colors_to_pcr import COLOR_METRICS_STYLE
-from .chart_class import DataChart
+
+from .chart_class import *
+
+from .data_path import *
+
+from .unet_model import *
+
+from .terminal_style import *
