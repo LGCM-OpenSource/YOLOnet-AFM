@@ -39,8 +39,8 @@ current_directory = os.path.dirname(os.path.abspath(__file__))
 process_flow_scripts_dict = {
     'CROP_IMG': ('1_cropping_opt_images.py', 'cropping images...'),
     'PREP_UNET': ('2_preprocess_unet.py',  '-ms' , 'Generating optical AFM image...'),
-    'PRED_UNET': ('4_predicts.py', '-ms', 'Segmenting cells...'),
-    'EVAL_MODEL': ('5_eval_models.py', '-ms',  'Getting general metrics...'),
+    'PRED_UNET': ('3_predicts.py', '-ms', 'Segmenting cells...'),
+    'EVAL_MODEL': ('4_eval_models.py', '-ms',  'Getting general metrics...'),
 }
 
 
@@ -53,4 +53,4 @@ for script_key in tqdm(process_flow_scripts_dict, colour='green'):
     if have_arguments(process_flow_scripts_dict[script_key]):
         arg =  model_selector
         run_script(process_flow_scripts_dict[script_key][0], process_flow_scripts_dict[script_key][2], arg)
-print('FINISH PROJECT')
+print('DONE')
