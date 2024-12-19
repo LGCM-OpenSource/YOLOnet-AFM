@@ -61,7 +61,9 @@ UNET_MODELS_PATH = {
             'preprocess_mask': f'data{os.sep}intermediate{os.sep}pre_processing_afm{os.sep}mask{os.sep}',
             'test_path': f'data{os.sep}input{os.sep}train{os.sep}train_1_channels_only_AFM_CosHeightSum{os.sep}opt_img_training',
             'mask_path': f'data{os.sep}input{os.sep}train{os.sep}train_1_channels_only_AFM_CosHeightSum{os.sep}msk_img_training',
-            'save_predict': f'data{os.sep}output{os.sep}unet_afm_1_channels_only_AFM_CosHeightSum{os.sep}'
+            'save_predict': f'data{os.sep}output{os.sep}unet_afm_1_channels_only_AFM_CosHeightSum{os.sep}predicts{os.sep}',
+            'save_metrics': f'data{os.sep}output{os.sep}unet_afm_1_channels_only_AFM_CosHeightSum{os.sep}'
+            
                 
     },
     'unet_afm_2_channels_like_yolo_opt_afm':{
@@ -71,7 +73,9 @@ UNET_MODELS_PATH = {
             'preprocess_mask': f'data{os.sep}intermediate{os.sep}pre_processing_optico_and_afm{os.sep}mask{os.sep}',
             'test_path':f'data{os.sep}input{os.sep}train{os.sep}train_2_channels_like_yolo_opt_afm{os.sep}opt_img_training',
             'mask_path':f'data{os.sep}input{os.sep}train{os.sep}train_2_channels_like_yolo_opt_afm{os.sep}msk_img_training',
-            'save_predict': f'data{os.sep}output{os.sep}unet_afm_2_channels_like_yolo_opt_afm{os.sep}'
+            'save_predict': f'data{os.sep}output{os.sep}unet_afm_2_channels_like_yolo_opt_afm{os.sep}predicts{os.sep}',
+            'save_metrics': f'data{os.sep}output{os.sep}unet_afm_2_channels_like_yolo_opt_afm{os.sep}'
+            
             
     },
     'unet_afm_2_channels_only_optical':{
@@ -81,7 +85,9 @@ UNET_MODELS_PATH = {
             'preprocess_mask': f'data{os.sep}intermediate{os.sep}pre_processing_optico{os.sep}mask{os.sep}',
             'test_path': f'data{os.sep}input{os.sep}train{os.sep}train_2_channels_only_optical{os.sep}opt_img_training',
             'mask_path': f'data{os.sep}input{os.sep}train{os.sep}train_2_channels_only_optical{os.sep}msk_img_training',
-            'save_predict': f'data{os.sep}output{os.sep}unet_afm_2_channels_only_optical{os.sep}'
+            'save_predict': f'data{os.sep}output{os.sep}unet_afm_2_channels_only_optical{os.sep}predicts{os.sep}',
+            'save_metrics': f'data{os.sep}output{os.sep}unet_afm_2_channels_only_optical{os.sep}'
+            
     }
     
     
