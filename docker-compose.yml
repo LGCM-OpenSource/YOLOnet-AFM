@@ -1,15 +1,17 @@
-version: '0.1'
-
 services:
-  unet_afm:
+  yolo_afm:
     build: .
     stdin_open: true
-    container_name: unet_afm_container
+    container_name: YOLO-AFM
     volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - data:/app/data
       - models:/app/models
     environment:
+      - DISPLAY=:1.0
       - PYTHONUNBUFFERED=1
+    tty: true
+
 volumes:
   data:
     driver: local # Define the driver and options under the volume name
