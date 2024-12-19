@@ -2,7 +2,7 @@ from .image_treatment import CropImages, GenerateAFMOptico
 
 from .dataframe_treatment import PreProcessDataframe, DataFrameTrat
 
-from .models import UnetProcess, PixelProcess, EvalModel, Models
+from .models import UnetProcess, EvalModel, Models
 
 from .colors_to_pcr import COLOR_METRICS_STYLE
 
