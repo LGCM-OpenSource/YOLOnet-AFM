@@ -5,17 +5,16 @@ from tqdm import tqdm
 import argparse
 
 
-
 def build_paths(files_list, actual_process = '_channels_added.npy'):
         opt_image_path = [build_file_path(CROP_PATH['optical_crop_resized'], img, actual_process = actual_process, new_process='_optico_crop_resized.png') for img in files_list]
         usefull_path = [build_file_path(CROP_PATH['usefull_data'], img, actual_process = actual_process, new_process='_UsefullData.tsv') for img in files_list]
         preprocess_image_path = [os.path.join(model_info['preprocess_img'], img) for img in files_list]
         mask_path = [os.path.join(model_info['preprocess_mask'], img) for img in files_list]
-        save_path = [model_info['save_predict']+file.replace('_channels_added.npy', '_unet.png') for file in files_list]
+        save_path = [os.path.join(model_info['save_predict'],file.replace('_channels_added.npy', '_unet.png')) for file in files_list]
 
         return opt_image_path, usefull_path, preprocess_image_path, mask_path, save_path
 
-
+term = TerminalStyles()
 parser = argparse.ArgumentParser()
 parser.add_argument('-ms', '--model_selection', type=str, help="select your model to choice preprocess step to make segmentations predictions")
 args = parser.parse_args()
@@ -37,5 +36,9 @@ for i in tqdm(range(len(opt_image_path)), colour='#0000FF'):
         unetTrat.save_predict(y_resized, save_path[i])
         if confirmation: 
                 unetTrat.visualize_prediction(save_path[i])
+                
+print(f'''
+      {term.BOLD}{model_selector}{term.RESET}\npredicts saved in {term.SAVE_COLOR}{model_info['save_predict']}{term.RESET}
+      ''')
                 
         
