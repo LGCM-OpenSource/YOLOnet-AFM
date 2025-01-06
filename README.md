@@ -1,7 +1,7 @@
 # UNet_AFM
  In this repository, the project for segmenting cellular structures through atomic force microscopy (AFM) and its respective models will be stored.
  
-![Slide1](https://github.com/ArtRocha/Unet_AFM/assets/61946276/4d4579d3-6c4a-4008-af93-a22f9077d976)
+![Slide1](papers_fig/mainText/fig2_models_preprocessing.jpg)
 
 > The project is a U-Net aimed at segmenting cell nuclei using features derived from Atomic Force Microscopy (AFM).
 ## 📋 Hardware Prerequisites
