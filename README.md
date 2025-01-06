@@ -268,9 +268,9 @@ These instructions will allow you to obtain a copy of the project up and running
 **OUTPUT:**
 > * Optical Images Crop `data/input/optical_images_resized`
 
-> ![Slide1](https://github.com/ArtRocha/Unet_AFM/assets/61946276/11099a1d-a287-41ca-bbae-23626afe96bd)
+> ![Slide1](papers_fig/suppFigs/mat_supp_integrante_optico_with_AFM.jpg)
 
-:framed_picture: 2_preprocess_unet.py
+:open_file_folder: 2_preprocess_unet.py
 > This script is responsible for processing the data that will be used in the UNet_AFM, meaning the integration of the optical image with the AFM information.
 
 **INPUT:**
@@ -281,23 +281,22 @@ These instructions will allow you to obtain a copy of the project up and running
 > * AFM optical image `data/intermediate/pre_processing_optico_and_afm/image`
 > * Mask `data/intermediate/pre_processing_optico_and_afm/mask`
 
->  ![Slide1](https://github.com/ArtRocha/Unet_AFM/assets/61946276/4d4579d3-6c4a-4008-af93-a22f9077d976)
+>  ![Slide1](papers_fig/mainText/models_process_unet.png)
 
-:open_file_folder: 3_prdicts.py 
+:dart: 3_predicts.py 
 > This script is responsible to take pre-process images selected by user and make yours respective predictions.
 
 **INPUT:**
 > * Optical Images Crop `data/input/optical_images_resized`
 > * AFM data file `data/input/Usefull_data`
-> * selected preprocess image `data/intermediate/pre_processing_<model-selected>`
-> * selected preprocess mask `data/intermediate/pre_processing_<model-selected>` --- optional
+> * selected preprocess image `data/intermediate/pre_processing_<model-selected>/image`
+> * selected preprocess mask `data/intermediate/pre_processing_<model-selected>/mask` --- optional
 
 **OUTPUT**
 > * Segmented image `data/output/<model-selected>/predicts`
 
-> ![Ap038_Segmentação enxugado - Copia pptx](https://github.com/ArtRocha/Unet_AFM/assets/61946276/e55d929e-4ffc-4adb-8131-4427e19a814c)
 
-:dart: 4_ecal_models.py
+:bar_chart: 4_eval_models.py
 > This script search for test files and compare with model segmentation to show yours performance in `data/output/<model-selected>/model_metrics.png`
 
 **INPUT:**
@@ -308,54 +307,7 @@ These instructions will allow you to obtain a copy of the project up and running
 > * Segmented image `data/output/vunet_AFM_predictions/predicts`
 > * AFM data file segmented `data/output/vunet_AFM_predictions/predict_sheets`
 
-:dart: 5_Unet_AFM_predict.py
-> This script performs segmentations using the Unet_AFM model and sends the results to the folder `data/output/unet_AFM_predictions/`
 
-**INPUT:**
-> * Optical Images Crop `data/input/optical_images_resized`
-> * AFM data file `data/input/Usefull_data`
-> * AFM optical image `data/intermediate/pre_processing_optico_and_afm/image`
-> * Mask `data/intermediate/pre_processing_optico_and_afm/mask`
-
-**OUTPUT**
-> * Segmented image `data/output/unet_AFM_predictions/predicts`
-> * AFM data file segmented `data/output/unet_AFM_predictions/predict_sheets`
-
-:dart: 6_pixel_predict.py
-> This script performs segmentations using the pixel-wise segmentation model and sends the results to the folder `data/output/only_AFM_predictions/`.
-
-**INPUT:**
-> * Normalized AFM data file `data/intermediate/pre_processing_only_afm`
-> * AFM data file `data/input/Usefull_data`
-> * Optical Images Crop `data/input/optical_images_resized`
-
-**OUTPUT**
-> * Segmented image `data/output/only_afm_predictions/predicts`
-> * AFM data file segmented `data/output/only_afm_predictions/predict_sheets`
-
-
-:bar_chart: 7_eval_model.py
-> This script retrieves information specified from user:
-
-**INPUT:**
-> * AFM data file segmented`data/ouput/<SELECTED_MODEL>/predict_sheets`
-
-**OUTPUT:**
-> * Model metrics `data/ouput/<SELECTED_MODEL>/`
-
-:bar_chart: 8_eval_model_per_cell.py
-> In this script, the user selects the path based on the model to be evaluated, and the script returns the segmented cell and its respective metrics.
-
-**INPUT:**
-> * Segmented image `data/output/<SELECTED_MODEL>/predicts`
-> * AFM data file segmented`data/ouput/<SELECTED_MODEL>/predict_sheets`
-
-**OUTPUT:**
-> * Metrics per cell `data/output/<SELECTED_MODEL>/metrics_per_cell`
-
-
-:heavy_check_mark: Solve NUMA (Non-Uniformed Memory Access)
-> (https://gist.github.com/zrruziev/b93e1292bf2ee39284f834ec7397ee9f)
 
 ## 🛠️ Build with
 
@@ -375,7 +327,7 @@ These instructions will allow you to obtain a copy of the project up and running
   <tr>
     <td align="center">
       <a href="https://github.com/ArtRocha">
-        <img src="https://github.com/ArtRocha/Unet_AFM/assets/61946276/486735c6-716a-445f-a7f9-8a2d849e3d47" width="150px;" alt="Foto Arthur Rocha" /><br>
+        <img src="https://media.licdn.com/dms/image/v2/D4D03AQEDHHDwcJ71-Q/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1676640793420?e=1741824000&v=beta&t=PyCIUjPJ4R1YoHwnBFh7H-MELeTjA-BwU-dO-zz10Rk" width="150px;" alt="Foto Arthur Rocha" /><br>
         <sub>
           <b style="font-size:20px"> Arthur Rocha </b>
         </sub>
@@ -383,7 +335,7 @@ These instructions will allow you to obtain a copy of the project up and running
     </td>
     <td align="center" >
          <a href="http://lattes.cnpq.br/8207473893996045">
-           <img src="https://github.com/ArtRocha/Unet_AFM/assets/61946276/b114b01f-8df3-4acf-bc1a-8981331ff67c" width="150px;" alt="Foto de Ayumi Aurea"/><br>
+           <img src="https://media.licdn.com/dms/image/v2/C4D03AQHao6xS_1V4MQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1517361324904?e=1741824000&v=beta&t=utQZ1VrmSCGQzZePZkn12QNi_30F05B61aplPDLTYkM" width="150px;" alt="Foto de Ayumi Aurea"/><br>
            <sub  >
              <b style="font-size:20px"> Ayumi Aurea Miyakawa </b><br>
            </sub>
@@ -399,7 +351,7 @@ These instructions will allow you to obtain a copy of the project up and running
     </td>
     <td align="center">
       <a href="https://github.com/EdCarlos-dev">
-        <img src="https://github.com/ArtRocha/Unet_AFM/assets/61946276/558ae40e-626f-4305-b550-cde25f2f8172" width="150px;" alt="Foto de Ed Santos e Silva"/><br>
+        <img src="https://media.licdn.com/dms/image/v2/D4D03AQHPPE38HWKxgQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1682383748193?e=1741824000&v=beta&t=WJhEASVpf3eCXmboJok2n1dxDRvvxkApnQao0h4KdGo" width="150px;" alt="Foto de Ed Santos e Silva"/><br>
         <sub>
           <b style="font-size:20px"> Ed Santos e Silva </b><br>
         </sub>
