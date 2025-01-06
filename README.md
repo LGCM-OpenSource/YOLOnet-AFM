@@ -1,7 +1,7 @@
 # UNet_AFM
  In this repository, the project for segmenting cellular structures through atomic force microscopy (AFM) and its respective models will be stored.
  
-![Slide1](https://github.com/ArtRocha/Unet_AFM/assets/61946276/4d4579d3-6c4a-4008-af93-a22f9077d976)
+![Slide1](papers_fig/mainText/fig2_models_preprocessing.jpg)
 
 > The project is a U-Net aimed at segmenting cell nuclei using features derived from Atomic Force Microscopy (AFM).
 ## 📋 Hardware Prerequisites
@@ -195,71 +195,50 @@ These instructions will allow you to obtain a copy of the project up and running
    ```
 5. Run project:
    ```
-   sudo docker exec -it unet_afm_container python /app/dev/apps/main.py
+   sudo docker exec -it YOLO-AFM python /app/dev/apps/main.py
    ```
 
-### :file_folder: FOLDER ARCHITECTURE
+### :file_folder: DATA FOLDER ARCHITECTURE
 <details>
 
- <summary>See folder architecture</summary>
+ <summary>See data folder architecture</summary>
  
 ```
-├── data
-│   │
-├───input
-│    ├───optical_images_resized
-│    ├───original_images
-│    ├───Usefull_data
-│    
-├───intermediate
-│   ├─── pre_processing_optico_and_afm
-│       ├───image
-│       └───mask
-├───output
-│   ├───only_afm_predictions
-│   │   ├───metrics_per_cell
-│   │   ├───predicts        
-│   │   └───predict_sheets  
-│   ├───unet_AFM_predictions
-│   │   ├───metrics_per_cell
-│   │   ├───predicts
-│   │   └───predict_sheets
-│   └───vunet_AFM_predictions
-│       ├───metrics_per_cell
-│       ├───predicts
-│       └───predict_sheets
-└───raw
-    ├───bw_images
-    ├───optical_images
-    └───txt_files
-├── dev
-│   │
-└───apps
-    │   1_cropping_opt_images.py
-    │   2_preprocess_unet.py
-    │   3_preprocess_pixel.py
-    │   4_vUnet_AFM_predictions.py
-    │   5_unet_AFM_predict.py
-    │   6_pixel_predict.py
-    │   7_eval_model.py
-    │   8_eval_model_per_cell.py
-    │   main.py
-    │   metrics.py
-    │   __init__.py
-    │
-    ├───utils
-    │   │   colors_to_pcr.py
-    │   │   dataframe_treatment.py
-    │   │   image_treatment.py
-    │   │   models.py
-    │   │   unet_model.py
-    │   │   __init__.py
-├── models
-│   
-├── README.md
-├── requirements_linux.txt
-├── requirements_win.txt
-└── setup.py
+├── datasets
+├── input
+│   ├── optical_images_resized
+│   ├── train
+│   │   ├── train_1_channels_only_AFM_CosHeightSum
+│   │   │   ├── msk_img_training
+│   │   │   └── opt_img_training
+│   │   ├── train_2_channels_like_yolo_opt_afm
+│   │   │   ├── msk_img_training
+│   │   │   └── opt_img_training
+│   │   └── train_2_channels_only_optical
+│   │       ├── msk_img_training
+│   │       └── opt_img_training
+│   └── Usefull_data
+├── intermediate
+│   ├── pre_processing_afm
+│   │   ├── image
+│   │   └── mask
+│   ├── pre_processing_optico
+│   │   ├── image
+│   │   └── mask
+│   └── pre_processing_optico_and_afm
+│       ├── image
+│       └── mask
+├── output
+│   ├── unet_afm_1_channels_only_AFM_CosHeightSum
+│   │   └── predicts
+│   ├── unet_afm_2_channels_like_yolo_opt_afm
+│   │   └── predicts
+│   └── unet_afm_2_channels_only_optical
+│       └── predicts
+└── raw
+    ├── bw_images
+    ├── optical_images
+    └── txt_files
 ```
 
  
@@ -271,10 +250,9 @@ These instructions will allow you to obtain a copy of the project up and running
 
 :robot: main.py
 > This script runs the entire project according to the option selected by the user:
-> * Option 0: Runs all models and returns their respective general and specific metrics.
-> * Option 1: Runs the vUnet_AFM model and returns its general and specific metrics.
-> * Option 2: Runs the Unet_AFM model and returns its general and specific metrics.
-> * Option 3: Runs the AFM_only model (per pixel) and returns its general and specific metrics.
+> * Option 1: Runs the AFM-Only model process and returns its segmentations, general and specific metrics.
+> * Option 2: Runs the YOLO-AFM model process and returns its segmentations, general and specific metrics.
+> * Option 3: Runs the Optical-Only model process and returns its segmentations, general and specific metrics.
 
 ### 💻 Scripts Details
 
@@ -305,25 +283,26 @@ These instructions will allow you to obtain a copy of the project up and running
 
 >  ![Slide1](https://github.com/ArtRocha/Unet_AFM/assets/61946276/4d4579d3-6c4a-4008-af93-a22f9077d976)
 
-:open_file_folder: 3_preprocess_pixel.py 
-> This script is responsible for creating the features 'Norm Height' and 'Height Position', which are derived from the feature 'Flatten Height'. Additionally, it normalizes the features 'MaxPosition_F0500pN' and 'YM_Fmax0500pN' using the StandardScaler method.
-
-**INPUT:**
-> * AFM data file `data/input/Usefull_data`
-
-**OUTPUT**
-> * Normalized AFM data file `data/intermediate/pre_processing_only_afm`
-
-> ![Ap038_Segmentação enxugado - Copia pptx](https://github.com/ArtRocha/Unet_AFM/assets/61946276/e55d929e-4ffc-4adb-8131-4427e19a814c)
-
-:dart: 4_vUnet_AFM_predict.py
-> This script performs segmentations using the vUnet_AFM model, where pixel-wise segmentation is triggered in cases where the Unet_AFM does not provide adequate segmentation and sends the results to the folder `data/output/vunet_AFM_predictions/`.
+:open_file_folder: 3_prdicts.py 
+> This script is responsible to take pre-process images selected by user and make yours respective predictions.
 
 **INPUT:**
 > * Optical Images Crop `data/input/optical_images_resized`
 > * AFM data file `data/input/Usefull_data`
-> * AFM optical image `data/intermediate/pre_processing_optico_and_afm/image`
-> * Mask `data/intermediate/pre_processing_optico_and_afm/mask`
+> * selected preprocess image `data/intermediate/pre_processing_<model-selected>`
+> * selected preprocess mask `data/intermediate/pre_processing_<model-selected>` --- optional
+
+**OUTPUT**
+> * Segmented image `data/output/<model-selected>/predicts`
+
+> ![Ap038_Segmentação enxugado - Copia pptx](https://github.com/ArtRocha/Unet_AFM/assets/61946276/e55d929e-4ffc-4adb-8131-4427e19a814c)
+
+:dart: 4_ecal_models.py
+> This script search for test files and compare with model segmentation to show yours performance in `data/output/<model-selected>/model_metrics.png`
+
+**INPUT:**
+> * selected preprocess mask `data/intermediate/pre_processing_<model-selected>`
+> * Segmented image `data/output/<model-selected>/predicts`
 
 **OUTPUT**
 > * Segmented image `data/output/vunet_AFM_predictions/predicts`
