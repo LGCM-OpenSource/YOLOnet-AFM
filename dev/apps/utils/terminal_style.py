@@ -2,6 +2,7 @@
 class TerminalStyles:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+    ITALIC = '\033[3m'
     RESET = '\033[0m'
     COLORS = {
         'BLACK': '\033[30m',
@@ -14,8 +15,11 @@ class TerminalStyles:
         'WHITE': '\033[37m',
         'PURPLE': '\033[95m'
     }
-
-
+    
+    SAVE_COLOR = '\033[92m\033[1m\033[3m'
+    ONLY_AFM = COLORS['PURPLE']
+    AFM_YOLO = COLORS['GREEN']
+    OPTICAL = COLORS['BLUE']
 class UserInput:
     @staticmethod
     def select_model():
@@ -25,9 +29,9 @@ class UserInput:
             '3': ('Optical-Only', 'unet_afm_2_channels_only_optical')
         }
         print(f'''{TerminalStyles.BOLD}Select your model:{TerminalStyles.RESET}
-                 1 - {TerminalStyles.COLORS['PURPLE']}{models['1'][0]}{TerminalStyles.RESET}
-                 2 - {TerminalStyles.COLORS['GREEN']}{models['2'][0]}{TerminalStyles.RESET}
-                 3 - {TerminalStyles.COLORS['BLUE']}{models['3'][0]}{TerminalStyles.RESET}
+                 1 - {TerminalStyles.ONLY_AFM}{models['1'][0]}{TerminalStyles.RESET}
+                 2 - {TerminalStyles.AFM_YOLO}{models['2'][0]}{TerminalStyles.RESET}
+                 3 - {TerminalStyles.OPTICAL}{models['3'][0]}{TerminalStyles.RESET}
                  ____________________________________''')
         
         user_input = input()
