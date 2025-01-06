@@ -1,7 +1,9 @@
 import os
-from utils import CropImages,build_file_path, CROP_PATH
+from utils import CropImages,build_file_path, CROP_PATH, TerminalStyles
 from tqdm import tqdm
 
+
+term = TerminalStyles()
 
 dir = os.listdir(CROP_PATH['optical_raw'])
 
@@ -14,3 +16,5 @@ for img in tqdm(dir, colour='#0000FF'):
 
     imgTrat = CropImages(image_opt, image_bw)
     imgTrat.run_crop_image(dest, txt_dir)
+
+print(f'Cropped images saved in: {term.SAVE_COLOR}{CROP_PATH["optical_crop_resized"]}{term.RESET}\n')
