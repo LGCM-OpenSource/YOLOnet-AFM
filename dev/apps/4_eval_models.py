@@ -1,6 +1,6 @@
 import os
 import numpy as np
-from utils import UnetProcess, EvalModel, Models, UNET_MODELS_PATH, CROP_PATH, TRAIN_TEST_FILES, create_dir, UserInput, DataChart, Charts
+from utils import UnetProcess, EvalModel, Models, UNET_MODELS_PATH, CROP_PATH, TRAIN_TEST_FILES, create_dir, UserInput, DataChart, Charts, TerminalStyles
 from tqdm import tqdm
 import matplotlib.pyplot as plt 
 import pandas as pd 
@@ -30,15 +30,15 @@ def build_paths(model_info, test_files_list):
 
 def save_specific_metrics():
         dice_file_name = f'{metric_df["Dice"][0]:.2f}'
-        create_dir(model_info['save_predict'])
+        create_dir(model_info['save_metrics'])
         
-        save_path = os.path.join(model_info['save_predict'], f'{process_data}_dice_{dice_file_name}.png')  
+        save_path = os.path.join(model_info['save_metrics'], f'{process_data}_dice_{dice_file_name}.png')  
         
         print(metric_df)
         topography = create_topography_map(unetTrat)
         unetTrat.show_predict(process_date = process_data, y=y, y_pred = y_pred, topography=topography, save_path=save_path, metrics=metric_df)
 
-
+term = TerminalStyles()
 parser = argparse.ArgumentParser()
 parser.add_argument('-ms', '--model_selection', type=str, help="select your model to choice preprocess step to make segmentations predictions")
 args = parser.parse_args()
@@ -80,3 +80,8 @@ model_validation_metrics_melt = data_chart.apply_melt(model_validation_metrics)
 
 fig = chart.box_plot(model_validation_metrics_melt, x='Model', y='scores', color='metrics')
 fig.write_image(f'{model_info["save_metrics"]}model_metrics.png')
+
+
+print(f'''
+      {term.BOLD}{model_selector}{term.RESET} metrics saved in {term.SAVE_COLOR}{model_info['save_metrics']}{term.RESET} \n 
+      ''')
