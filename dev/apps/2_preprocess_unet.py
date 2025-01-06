@@ -1,8 +1,10 @@
-from utils import GenerateAFMOptico, UNET_MODELS_PATH, CROP_PATH, build_file_path
+from utils import GenerateAFMOptico, UNET_MODELS_PATH, CROP_PATH, build_file_path,TerminalStyles
 import os 
 from tqdm import tqdm 
 import argparse
 
+
+term = TerminalStyles()
 parser = argparse.ArgumentParser()
 parser.add_argument('-ms', '--model_selection', type=str, help="select your model to choice preprocess step to make segmentations predictions")
 args = parser.parse_args()
@@ -29,4 +31,8 @@ for img in tqdm(dire):
     
     afm_optico_process.save_matrix(save_img_path, new_img)
     afm_optico_process.save_matrix(save_mask_path, mask)
+    
+print(f'''{model_selector} pre-processing:\n
+      Images saved in {term.SAVE_COLOR}{model_info['preprocess_img']}\033[0m\n
+      Masks saved in {term.SAVE_COLOR}{model_info['preprocess_mask']}\033[0m''')
     
