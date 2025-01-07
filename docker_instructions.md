@@ -83,7 +83,7 @@ docker ps
 ## Access Container
 Access the container using:
 ```bash
-docker compose exec unet_afm_container /bin/bash  
+docker compose exec YOLO-AFM /bin/bash  
 ```
 
 ---
@@ -91,4 +91,4 @@ docker compose exec unet_afm_container /bin/bash
 ## Run Script
 Navigate to the project folder and execute the following command:
 ```bash
-sudo docker exec -it unet_afm_container python /app/dev/apps/main.py  
+sudo docker exec -it YOLO-AFM python /app/dev/apps/main.py  
