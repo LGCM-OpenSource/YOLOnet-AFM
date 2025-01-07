@@ -112,11 +112,11 @@ Before you begin, make sure you've met the following prerequisites:
                                 <td>pip install pandas==1.5.3</td>
                               </tr>
                               <tr>
-                                <td>plotly</td>
-                                <td>10.1.0</td>
-                                <td>pip install plotly==10.1.0</td>
+                                <td>Pillow</td>
+                                <td>10.1.0 </td>
+                                <td>pip install Pillow==10.1.0 </td>
                               </tr>
-                           <tr>
+                              <tr>
                                 <td>plotly</td>
                                 <td>5.9.0</td>
                                 <td>pip install plotly==5.9.0</td>
@@ -138,8 +138,8 @@ Before you begin, make sure you've met the following prerequisites:
                               </tr>
                                <tr>
                                 <td>setuptools</td>
-                                <td>69.5.1</td>
-                                <td>pip install setuptools==69.5.1</td>
+                                <td>69.5.1 </td>
+                                <td>pip install setuptools==69.5.1 </td>
                               </tr>
                                <tr>
                                 <td>six</td>
@@ -160,11 +160,6 @@ Before you begin, make sure you've met the following prerequisites:
                                 <td>tqdm</td>
                                 <td>4.64.1</td>
                                 <td>pip install tqdm==4.64.1</td>
-                              </tr>
-                              <tr>
-                                <td>xgboost</td>
-                                <td>1.7.3</td>
-                                <td>pip install xgboost==1.7.3</td>
                               </tr>
                             </tbody>
                           </table>
