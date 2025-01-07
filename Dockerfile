@@ -1,27 +1,27 @@
-# Imagem base do Python
+# Base Python image
 FROM python:3.9-slim
 
-# Atualiza o sistema e instala dependências necessárias
+# Update the system and install necessary dependencies
 RUN apt-get update && apt-get install -y \
     python3-tk \
     libx11-dev \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Diretório de trabalho dentro do contêiner
+# Working directory inside the container
 WORKDIR /app
 
-# Copie o arquivo requirements.txt e instale as dependências
+# Copy the requirements.txt file and install dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r ./requirements.txt
 
-# Copie o restante do código do projeto
+# Copy the rest of the project code
 COPY . .
 
-# Configuração para o backend TkAgg do Matplotlib
+# Configuration for the TkAgg backend of Matplotlib
 ENV MPLBACKEND TkAgg
 
-# Configurar variáveis de ambiente para evitar problemas com buffers
+# Configure environment variables to avoid buffer issues
 ENV PYTHONUNBUFFERED=1
 
-# Comando padrão para executar quando o contêiner iniciar
+# Default command to execute when the container starts
 CMD ["python", "/app/dev/apps/main.py"]
