@@ -1,0 +1,55 @@
+# config.yaml
+
+# --- General Settings ---
+general:
+  seed: 42  # For reproducibility
+  model_folder: "models"
+  monitor: "val_loss" # Metric to monitor for callbacks
+
+# --- Data Settings ---
+data:
+  train_ratio: 0.8 # Ratio of training data to total data
+  dataset_path: "data/input/train/" # Base path for training data
+  df_train_path: "data/datasets/df_train_{}_selected.csv" # Path to training data CSV, {} will be replaced by train_size
+  suffixes: # Data augmentation suffixes
+    - "_channels_added_90.npy"
+    - "_channels_added_180.npy"
+    - "_channels_added_270.npy"
+    - "_channels_added_flip_90.npy"
+    - "_channels_added_flip_180.npy"
+    - "_channels_added_flip_270.npy"
+    - "_channels_added_flip.npy"
+    - "_channels_added.npy"
+
+# --- Model Settings ---
+model:
+  input_shape: [256, 256] # Height, Width
+  model_type: "unet" # Options: "unet", "half-unet"
+  channels: 2
+
+# --- Training Settings ---
+training:
+  batch_size: 16
+  num_epochs: 100
+  learning_rate: 0.0001 # 1e-4
+  optimizer: "Adam" # Options: "Adam", "SGD"
+
+# --- Callbacks Settings ---
+callbacks:
+  model_checkpoint:
+    save_best_only: True
+    verbose: 1
+  reduce_lr:
+    factor: 0.1
+    patience: 5
+    min_lr: 0.0000001 # 1e-7
+    verbose: 1
+  early_stopping:
+    patience: 20
+    restore_best_weights: False
+
+# --- Model Selection ---
+model_selection:
+  # - "train_2_channels_only_optical"
+  # - "train_1_channels_only_AFM_CosHeightSum"
+  - "train_2_channels_like_yolo_opt_afm"
