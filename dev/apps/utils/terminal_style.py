@@ -34,7 +34,7 @@ class UserInput:
                  3 - {TerminalStyles.OPTICAL}{models['3'][0]}{TerminalStyles.RESET}
                  ____________________________________''')
         
-        user_input = input()
+        user_input = input("Enter option (1/2/3): ").strip()
         selected_model = models.get(user_input)
         
         if selected_model:
@@ -44,7 +44,51 @@ class UserInput:
         else:
             print(f'{TerminalStyles.COLORS["RED"]}Invalid selection. Please choose a valid option.{TerminalStyles.RESET}')
             return None
+    
+    @staticmethod
+    def select_operation():
+        operations = {
+            '1': ('Train new Model', 'train'),
+            '2': ('Use Pre-trained Model', 'segment')
+        }
+        print(f'''{TerminalStyles.BOLD}Select operation:{TerminalStyles.RESET}
+                 1 - {TerminalStyles.COLORS['BLUE']}{operations['1'][0]}{TerminalStyles.RESET}
+                 2 - {TerminalStyles.COLORS['GREEN']}{operations['2'][0]}{TerminalStyles.RESET}
+                 ____________________________________''')
 
+        user_input = input("Enter option (1/2): ").strip()
+        selected_operation = operations.get(user_input)
+
+        if selected_operation:
+            print(f'\nOperation {TerminalStyles.BOLD}{TerminalStyles.COLORS["CYAN"]}__{selected_operation[0]}__{TerminalStyles.RESET} selected\n')
+            return selected_operation[1]
+        else:
+            print(f'{TerminalStyles.COLORS["RED"]}Invalid selection. Please choose a valid option.{TerminalStyles.RESET}')
+            return None
+
+    
+    @staticmethod
+    def select_training_type():
+        options = {
+            '1': ('UNet', 'unet'),
+            '2': ('HALF-UNet', 'half-unet')
+        }
+
+        print(f'''{TerminalStyles.BOLD}Select training type:{TerminalStyles.RESET}
+                 1 - {TerminalStyles.COLORS['MAGENTA']}{options['1'][0]}{TerminalStyles.RESET}
+                 2 - {TerminalStyles.COLORS['CYAN']}{options['2'][0]}{TerminalStyles.RESET}
+                 ____________________________________''')
+
+        user_input = input("Enter option (1/2): ").strip()
+        selected_option = options.get(user_input)
+
+        if selected_option:
+            print(f'\n{TerminalStyles.BOLD}Training method selected: {TerminalStyles.COLORS["YELLOW"]}{selected_option[0]}{TerminalStyles.RESET}\n')
+            return selected_option[1]
+        else:
+            print(f'{TerminalStyles.COLORS["RED"]}Invalid selection. Please choose a valid option.{TerminalStyles.RESET}')
+            return None
+    
     @staticmethod
     def get_user_confirmation(prompt):
         while True:
