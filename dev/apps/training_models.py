@@ -6,7 +6,7 @@ import tensorflow as tf
 from tensorflow.keras.callbacks import ModelCheckpoint, CSVLogger, ReduceLROnPlateau, EarlyStopping
 from tensorflow.keras.optimizers import Adam
 from utils import build_unet, iou, dice_coef
-from utils import build_half_unet_model_batch_normalization
+from utils import build_half_unet_model_batch_normalization, load_config, UNET_MODELS_PATH
 import pandas as pd
 from tensorflow.python.client import device_lib
 from glob import glob
@@ -50,18 +50,13 @@ def select_unet_architecture(model_type, input_shape=(256, 256, 1)):
         model_builder = build_half_unet_model_batch_normalization(input_shape)
     return model_builder
 
-def load_config(config_path):
-    """Loads the configuration from the YAML file."""
-    with open(config_path, "r") as f:
-        config = yaml.safe_load(f)
-    return config
 
 def parse_arguments():
     """Parses command-line arguments."""
     parser = argparse.ArgumentParser(description="Segmentation models training script")
     parser.add_argument("-c", "--config", type=str, default="config.yaml", help="Path to the config.yaml file")
     parser.add_argument("-mt", "--model_type", type=str, choices=["unet", "half-unet"], help="Select unet arch: 'unet' or 'half-unet'")
-    parser.add_argument("-ms", "--model_select", type=str, nargs="+", help="List of training directories.")
+    parser.add_argument('-ms', '--model_selection', type=str, help="select your model to choice preprocess step to make segmentations predictions")
     parser.add_argument("-bs", "--batch_size", type=int, help="Batch size for training.")
     parser.add_argument("-ne", "--num_epochs", type=int, help="Number of training epochs.")
     parser.add_argument("-lr", "--learning_rate", type=float, help="Learning rate for the optimizer.")
@@ -103,13 +98,13 @@ if __name__ == "__main__":
     args = parse_arguments()
 
     # Load the configuration from the YAML file
-    config = load_config(args.config)
+    config = load_config()
 
     # Override configuration values with command-line arguments if provided
     if args.model_type:
-        config["model"]["model_type"] = args.model_type
-    if args.model_select:
-        config["model_selection"] = args.model_select
+        config["model"]["model_type"] = args.model_type  
+    if args.model_selection:
+        config["model"]["model_selection"] = args.model_selection
     if args.batch_size:
         config["training"]["batch_size"] = args.batch_size
     if args.num_epochs:
@@ -129,24 +124,28 @@ if __name__ == "__main__":
 
     # Training parameters
     H, W = config["model"]["input_shape"]
-    model_type = config["model"]["model_type"]
-    model_select = config["model_selection"]
+    
+    model_type = config['model']['model_type']
+    model_select = config["model"]["model_selection"]
+    
+    if model_select == 'unet_afm_1_channels_only_AFM_CosHeightSum':
+        config["model"]["channels"] = 1
+    
+    channels = config["model"]["channels"]
     batch_size = config["training"]["batch_size"]
     num_epochs = config["training"]["num_epochs"]
     learning_rate = config["training"]["learning_rate"]
-        
-    channels = config["model"]["channels"]
 
     # Model selection
     model = select_unet_architecture(model_type, (H, W, channels))
 
-    name = f"{model_type}_{model_select[0]}"
+    name = f"{model_type}_{model_select}"
     print(f"Training {name} model...")
 
-    dataset_path = os.path.join(config["data"]["dataset_path"], model_select[0])
 
-    image_paths = sorted(glob(os.path.join(dataset_path, "opt_img_training", "*.npy")))
-    mask_paths = sorted(glob(os.path.join(dataset_path, "msk_img_training", "*.npy")))
+    image_paths = sorted(glob(os.path.join(UNET_MODELS_PATH[model_select]['train_path'], '*.npy')))
+    mask_paths = sorted(glob(os.path.join(UNET_MODELS_PATH[model_select]['mask_path'], '*.npy')))
+
 
     train_ratio = config["data"]["train_ratio"]
     num_samples = len(image_paths)
