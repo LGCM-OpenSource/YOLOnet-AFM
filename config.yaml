@@ -25,6 +25,7 @@ data:
 model:
   input_shape: [256, 256] # Height, Width
   model_type: "unet" # Options: "unet", "half-unet"
+  model_selection: "unet_afm_2_channels_like_yolo_opt_afm"
   channels: 2
 
 # --- Training Settings ---
@@ -48,8 +49,4 @@ callbacks:
     patience: 20
     restore_best_weights: False
 
-# --- Model Selection ---
-model_selection:
-  # - "train_2_channels_only_optical"
-  # - "train_1_channels_only_AFM_CosHeightSum"
-  - "train_2_channels_like_yolo_opt_afm"
+
