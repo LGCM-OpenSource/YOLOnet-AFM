@@ -20,11 +20,11 @@ def create_topography_map(unetTrat, matrix = False):
 
 
 def build_paths(model_info, test_files_list):
-        preprocess_image_path = [os.path.join(model_info['preprocess_img'], file+'_channels_added.npy') for file in test_files_list['Process.Date'].values if os.path.isfile(os.path.join(model_info['preprocess_img'], file+'_channels_added.npy'))]
-        mask_path = [os.path.join(model_info['preprocess_mask'], file+'_channels_added.npy') for file in test_files_list['Process.Date'].values if os.path.isfile(os.path.join(model_info['preprocess_mask'], file+'_channels_added.npy'))]
-        opt_image_path = [os.path.join(CROP_PATH['optical_crop_resized'], file+'_optico_crop_resized.png') for file in test_files_list['Process.Date'].values if os.path.isfile(os.path.join(CROP_PATH['optical_crop_resized'], file+'_optico_crop_resized.png'))]
-        usefull_path = [os.path.join(CROP_PATH['usefull_data'], file+'_UsefullData.tsv') for file in test_files_list['Process.Date'].values if os.path.isfile(os.path.join(CROP_PATH['usefull_data'], file+'_UsefullData.tsv'))]
-        y_pred_path = [os.path.join(model_info['save_predict'], file+'_unet.png') for file in test_files_list['Process.Date'].values if os.path.isfile(os.path.join(model_info['save_predict'], file+'_unet.png'))]
+        preprocess_image_path = [os.path.join(model_info['preprocess_img'], file+'_channels_added.npy') for file in test_files_list if os.path.isfile(os.path.join(model_info['preprocess_img'], file+'_channels_added.npy'))]
+        mask_path = [os.path.join(model_info['preprocess_mask'], file+'_channels_added.npy') for file in test_files_list if os.path.isfile(os.path.join(model_info['preprocess_mask'], file+'_channels_added.npy'))]
+        opt_image_path = [os.path.join(CROP_PATH['optical_crop_resized'], file+'_optico_crop_resized.png') for file in test_files_list if os.path.isfile(os.path.join(CROP_PATH['optical_crop_resized'], file+'_optico_crop_resized.png'))]
+        usefull_path = [os.path.join(CROP_PATH['usefull_data'], file+'_UsefullData.tsv') for file in test_files_list if os.path.isfile(os.path.join(CROP_PATH['usefull_data'], file+'_UsefullData.tsv'))]
+        y_pred_path = [os.path.join(model_info['save_predict'], file+'_unet.png') for file in test_files_list if os.path.isfile(os.path.join(model_info['save_predict'], file+'_unet.png'))]
         return preprocess_image_path, mask_path, opt_image_path, usefull_path, y_pred_path
 
 
@@ -42,37 +42,44 @@ term = TerminalStyles()
 parser = argparse.ArgumentParser()
 parser.add_argument('-ms', '--model_selection', type=str, help="select your model to choice preprocess step to make segmentations predictions")
 args = parser.parse_args()
-model_selector = args.model_selection
+# model_selector = args.model_selection
 
+model_selector = 'unet_afm_1_channels_only_AFM_CosHeightSum'
 
 data_chart = DataChart()
 chart = Charts(width=800, height = 500)
 
-df_test_files = pd.read_csv(TRAIN_TEST_FILES['test'])
+# df_test_files = pd.read_csv(TRAIN_TEST_FILES['test'])
+
+predict_list = os.listdir(UNET_MODELS_PATH[model_selector]['save_predict'])
+predict_list = [i.split('_')[0] for i in predict_list]
 
 
 model_info = UNET_MODELS_PATH[model_selector]
-preprocess_image_path, mask_path, opt_image_path, usefull_path, y_pred_path = build_paths(model_info, df_test_files)
+preprocess_image_path, mask_path, opt_image_path, usefull_path, y_pred_path = build_paths(model_info, predict_list)
 
 df_list = []
 model = Models(model_info['model_name'], model_info['model_path'])
 for i in tqdm(range(len(opt_image_path)), colour='#0000FF'):
-        process_data = opt_image_path[i].split(f'{os.sep}')[-1].split('_')[0]
-        unetTrat =   UnetProcess(opt_image_path[i], preprocess_image_path[i], usefull_path[i], mask_path[i]) 
+        try:
+                process_data = opt_image_path[i].split(f'{os.sep}')[-1].split('_')[0]
+                unetTrat =   UnetProcess(opt_image_path[i], preprocess_image_path[i], usefull_path[i], mask_path[i]) 
+                
+                y = unetTrat.mask.image(matrix=True)
+                y_pred = cv2.imread(y_pred_path[i], 0)
+                ret2,y_pred_thr_otsu = cv2.threshold(y_pred,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU) 
+                y_pred_thr_otsu_normalized = y_pred_thr_otsu / 255.0
         
-        y = unetTrat.mask.image(matrix=True)
-        y_pred = cv2.imread(y_pred_path[i], 0)
-        ret2,y_pred_thr_otsu = cv2.threshold(y_pred,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU) 
-        y_pred_thr_otsu_normalized = y_pred_thr_otsu / 255.0
-   
-        y_flatten = y.flatten()
-        y_pred_flatten = y_pred_thr_otsu_normalized.flatten()
+                y_flatten = y.flatten()
+                y_pred_flatten = y_pred_thr_otsu_normalized.flatten()
 
-        eval = EvalModel(model.model_name, y_flatten, y_pred_flatten, process_date=process_data) 
-        scores = eval.get_metrics()
-        metric_df = eval.metrics_to_df(scores)
-        df_list.append(metric_df)
-        save_specific_metrics()
+                eval = EvalModel(model.model_name, y_flatten, y_pred_flatten, process_date=process_data) 
+                scores = eval.get_metrics()
+                metric_df = eval.metrics_to_df(scores)
+                df_list.append(metric_df)
+                save_specific_metrics()
+        except Exception:
+                print(Exception)
         
 model_validation_metrics = pd.concat(df_list, axis=0)
 
