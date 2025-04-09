@@ -5,14 +5,37 @@ from tqdm import tqdm
 import argparse
 
 
-def build_paths(files_list, actual_process = '_channels_added.npy'):
-        opt_image_path = [build_file_path(CROP_PATH['optical_crop_resized'], img, actual_process = actual_process, new_process='_optico_crop_resized.png') for img in files_list]
-        usefull_path = [build_file_path(CROP_PATH['usefull_data'], img, actual_process = actual_process, new_process='_UsefullData.tsv') for img in files_list]
-        preprocess_image_path = [os.path.join(model_info['preprocess_img'], img) for img in files_list]
-        mask_path = [os.path.join(model_info['preprocess_mask'], img) for img in files_list]
-        save_path = [os.path.join(model_info['save_predict'],file.replace('_channels_added.npy', '_unet.png')) for file in files_list]
 
-        return opt_image_path, usefull_path, preprocess_image_path, mask_path, save_path
+def build_paths(files_list, actual_process='_channels_added.npy'):
+    valid_data = []
+
+    for img in files_list:
+        opt = build_file_path(CROP_PATH['optical_crop_resized'], img, actual_process, '_optico_crop_resized.png')
+        use = build_file_path(CROP_PATH['usefull_data'], img, actual_process, '_UsefullData.tsv')
+        pre = os.path.join(model_info['preprocess_img'], img)
+        mask = os.path.join(model_info['preprocess_mask'], img)
+        save = os.path.join(model_info['save_predict'], img.replace('_channels_added.npy', '_unet.png'))
+
+        paths = {
+            "optical": opt,
+            "usefull": use,
+            "preprocess_img": pre,
+            "mask": mask
+        }
+
+        missing = [name for name, path in paths.items() if not os.path.exists(path)]
+
+        if missing:
+            print(f"[AVISO] File '{img}' ignored. Path doesn't exist in: {', '.join(missing)}")
+        else:
+            valid_data.append((opt, use, pre, mask, save))
+
+
+    if not valid_data:
+        return [], [], [], [], []
+
+    opt, use, pre, mask, save = zip(*valid_data)
+    return list(opt), list(use), list(pre), list(mask), list(save)
 
 term = TerminalStyles()
 parser = argparse.ArgumentParser()
@@ -20,7 +43,7 @@ parser.add_argument('-ms', '--model_selection', type=str, help="select your mode
 args = parser.parse_args()
 model_selector = args.model_selection
 
-# model_selector = 'unet_afm_2_channels_like_yolo_opt_afm'
+# model_selector = 'unet_afm_1_channels_only_AFM_CosHeightSum'
 confirmation = UserInput.get_user_confirmation('DO YOU WANNA VISUALIZE SEGMENTATION?')
 
 model_info = UNET_MODELS_PATH[model_selector]
