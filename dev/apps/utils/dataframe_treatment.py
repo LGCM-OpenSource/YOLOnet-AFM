@@ -57,7 +57,7 @@ class DataFrameTrat:
         pandas.DataFrame
             The loaded DataFrame.
         """
-        return pd.read_csv(self.df_path, sep='\t', index_col=0)    
+        return pd.read_csv(self.df_path, sep='\t', index_col=0, low_memory=False)    
     
     def clean_target(self, df):
         """
