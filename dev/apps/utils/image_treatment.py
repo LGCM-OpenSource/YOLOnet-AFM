@@ -4,14 +4,18 @@ import traceback
 import os
 from .dataframe_treatment import DataFrameTrat
 import matplotlib.pyplot as plt
+import logging # <-- Import logging
+from .logger import get_logger, setup_logger # <-- Import logger functions
+from .data_path import create_dir
 '''
 CLASS               LINE
 
-ImageTrat             18
-CropImages           223
-GenerateAFMOptico    350
+ImageTrat             25
+CropImages           230
+GenerateAFMOptico    357
 
 '''
+
 
 #Esta classe inclui todos os métodos para o recorte da imagem optica a partir da imagem BW
 class ImageTrat:
@@ -405,8 +409,9 @@ class GenerateAFMOptico:
     run_generate_afm_optico_images(save_path)
         Generates AFM optical images and saves the results.
     """
+    logger = setup_logger('image_treatment', level=logging.INFO)
     
-    def __init__(self, img_path, df_path):
+    def __init__(self, img_path, df_path, target_col='stardist', process_date_col='Process Date', height_col='Planned Height'):
         """
         Constructs an instance of the GenerateAFMOptico class.
 
@@ -417,11 +422,34 @@ class GenerateAFMOptico:
         df_path : str
             The path to the CSV file containing AFM data.
         """
-        self.opt_image = ImageTrat(img_path)
-        self.df_afm = DataFrameTrat(df_path)
-        self.target = 'stardist'
-        self.process_date = 'Process Date'
-        self.flatten_height = 'Planned Height'  
+        self.logger.info(f"Initializing GenerateAFMOptico:")
+        self.logger.info(f"  Image Path: {img_path}")
+        self.logger.info(f"  DataFrame Path: {df_path}")
+        self.logger.info(f"  Target Column: {target_col}")
+        self.logger.info(f"  Process Date Column: {process_date_col}")
+        self.logger.info(f"  Height Column: {height_col}")
+        try:
+            if not os.path.exists(img_path):
+                 self.logger.error(f"GenerateAFMOptico init failed: Image path does not exist: {img_path}")
+                 raise FileNotFoundError(f"Image path does not exist: {img_path}")
+            if not os.path.exists(df_path):
+                 self.logger.error(f"GenerateAFMOptico init failed: DataFrame path does not exist: {df_path}")
+                 raise FileNotFoundError(f"DataFrame path does not exist: {df_path}")
+
+            self.opt_image = ImageTrat(img_path)
+            self.df_afm = DataFrameTrat(df_path)
+            self.target = target_col
+            self.process_date = process_date_col
+            self.flatten_height = height_col
+            self.logger.info("GenerateAFMOptico initialized successfully.")
+        
+        except FileNotFoundError as fnf_error:
+             self.logger.error(f"Initialization failed due to missing file: {fnf_error}")
+             raise
+        except Exception as e:
+            self.logger.error(f"Error during GenerateAFMOptico initialization: {e}")
+            self.logger.error(traceback.format_exc())
+            raise # Re-raise the exception
     
     
     def add_new_channels(self, img, channels):
@@ -492,57 +520,86 @@ class GenerateAFMOptico:
     
     
     def cos_height_sum_feature(self, channels, kernel_size=(10,10), only_afm=False):
-            cos_height_sum = (np.cos(channels[0]) + channels[0]) 
-            kernel = np.ones(kernel_size, np.uint8)
+            self.logger.debug(f"Applying cos_height_sum_feature. Kernel: {kernel_size}, Only AFM: {only_afm}")
+            if not channels:
+                self.logger.error("Cannot apply cos_height_sum_feature: input channel list is empty.")
+                raise ValueError("Input channel list is empty.")
+            try:
+                
+                height_channel = channels[0]
+                cos_height_sum = (np.cos(height_channel) + height_channel)
+                kernel = np.ones(kernel_size, np.uint8)
+                
+                cos_height_sum_01 = 255 * (cos_height_sum - cos_height_sum.min())/ (cos_height_sum.max() - cos_height_sum.min())
+                
+                ret, binary_threshold = cv2.threshold(cos_height_sum_01, 245,255, cv2.THRESH_BINARY)
+                cos_heigh_erode = cv2.erode(-binary_threshold, kernel,iterations = 1)
+                self.logger.debug(f"Generated cos_height_erode mask. Shape: {cos_heigh_erode.shape}")
             
-            cos_height_sum_01 = 255 * (cos_height_sum - cos_height_sum.min())/ (cos_height_sum.max() - cos_height_sum.min())
-            
-            ret, binary_threshold = cv2.threshold(cos_height_sum_01, 245,255, cv2.THRESH_BINARY)
-            cos_heigh_erode = cv2.erode(-binary_threshold, kernel,iterations = 1)
-            
-            if only_afm:
-                return cos_heigh_erode
-            else:
-                channels.pop(0)
-                channels = [channels[i] * cos_heigh_erode for i in range(len(channels))]
+                if only_afm:
+                    self.logger.debug("Returning only the eroded cos_height feature.")
+                    return cos_heigh_erode
+                else:
+                    channels.pop(0)
+                    channels = [channels[i] * cos_heigh_erode for i in range(len(channels))]
+                    self.logger.debug(f"Applied eroded mask to {len(channels)} remaining channels.")
+
                 return channels
-    
+            except Exception as e:
+                    self.logger.error(f"Error in cos_height_sum_feature: {e}")
+                    self.logger.error(traceback.format_exc())
+                    raise
+        
     def select_feature_type(self, channels, pre_process):
+        self.logger.info(f"Selecting feature type based on pre_process: {pre_process}")
+        original_channel_count = len(channels)
         if pre_process == 'YOLO-AFM':
+            self.logger.debug("Applying YOLO-AFM feature selection (cos_height_sum, kernel 15x15, not only AFM).")
             channels = self.cos_height_sum_feature(channels, kernel_size=(15, 15), only_afm=False)
         elif pre_process == 'AFM-Only':
+            self.logger.debug("Applying AFM-Only feature selection (cos_height_sum, kernel 5x5, only AFM).")
             channels = self.cos_height_sum_feature(channels, kernel_size=(5, 5), only_afm=True)
         else: 
             channels.pop(0)
         return channels
          
     def create_image_based_on_feature(self, optical_image, channels):
+        self.logger.debug(f"Creating image based on {len(channels)} selected features.")
         new_img = self.add_new_channels(optical_image, channels)
         
         if len(channels)>3:
             new_img = channels
-            
+        self.logger.debug(f"Created feature-based image with shape: {new_img.shape}")
         return new_img   
 
     def select_normalization(self, afm_info, feat, pre_process,  substrate=False):
+        self.logger.debug(f"Selecting normalization for feature '{feat}'. Pre-process: {pre_process}, Substrate: {substrate}")
         if pre_process == 'yolo-afm':
             if feat == 'Planned Height':
+                self.logger.debug(f"Applying Min-Max scaling to '{feat}'.")
                 afm_info = self.df_afm.min_max_scale(afm_info, feat, substrate=substrate)
             else: 
+                self.logger.debug(f"Applying Z-score scaling to '{feat}'.")
                 afm_info = self.df_afm.zscore(afm_info, feat, substrate=substrate)
         
         elif pre_process == 'AFM-Only':
+                self.logger.debug(f"Applying Min-Max scaling to '{feat}'.")
                 afm_info = self.df_afm.min_max_scale(afm_info, feat, substrate=substrate)
         else: 
+                self.logger.debug(f"Applying Z-score scaling to '{feat}'.")
                 afm_info = self.df_afm.zscore(afm_info, feat, substrate=substrate)
     
         return afm_info
     
     
     def data_normalizer(self,afm_info, features, pre_process, features_that_no_need_remove_substrate = ['Planned Height', 'blue', 'hist_equalized']):
+        self.logger.debug(f"Starting data normalization for features: {features[1:-2]}")
         for feat in features[1:-2]:
-                #Remove null or inf values
+            self.logger.debug(f"Normalizing feature: {feat}")
+            #Remove null or inf values
+            try:
                 mean_without_substrate = afm_info[feat].loc[afm_info['Segment'] != 'Substrate'].mean()
+                self.logger.debug(f"  Mean without substrate for {feat}: {mean_without_substrate}")
                 
                 replacement_null_values_dict = {np.inf:mean_without_substrate,
                                                 - np.inf:mean_without_substrate,
@@ -551,11 +608,34 @@ class GenerateAFMOptico:
                 afm_info[feat] = afm_info[feat].replace(replacement_null_values_dict)
                 substrate = feat in features_that_no_need_remove_substrate
                 afm_info = self.select_normalization(afm_info, feat, pre_process, substrate)
+            except KeyError as ke:
+                    self.logger.error(f"KeyError during normalization of '{feat}': {ke}. Check if 'Segment' column exists.")
+                    raise
+            except Exception as e:
+                    self.logger.error(f"Error normalizing feature '{feat}': {e}")
+                    self.logger.error(traceback.format_exc())
+                    raise
+        self.logger.debug("Data normalization completed.")
         return afm_info
                     
                     
     def save_matrix(self, save_path, img):
-        return np.save(save_path, img)            
+        """Saves the numpy matrix, logging the action."""
+        self.logger.debug(f"Attempting to save matrix of shape {img.shape} to: {save_path}")
+        try:
+            # Ensure directory exists before saving
+            save_dir = os.path.dirname(save_path)
+            if not os.path.exists(save_dir):
+                self.logger.warning(f"Save directory does not exist, creating: {save_dir}")
+                os.makedirs(save_dir) # Use makedirs to create parent dirs if needed
+
+            np.save(save_path, img)
+            self.logger.info(f"Matrix saved successfully to: {save_path}")
+            return True
+        except Exception as e:
+            self.logger.error(f"Failed to save matrix to {save_path}: {e}")
+            self.logger.error(traceback.format_exc())
+            return False          
 
     def run_generate_afm_optico_images(self, pre_process = ''):
         """
@@ -571,32 +651,56 @@ class GenerateAFMOptico:
         None
             The function doesn't return a value but saves the image.
         """
+        self.logger.info(f"Running generation for pre-process type: '{pre_process}'")
         try:
 
+            self.logger.debug("Loading optical image...")
             optical_image = self.opt_image.image()
             dimensions = self.opt_image.dimensions()
+            self.logger.debug(f"Optical image loaded. Dimensions: {dimensions}")
+            self.logger.debug("Extracting blue channel and calculating equalized image...")
             blue, _,__ = self.opt_image.image_channels(optical_image)
             equalized_image = self.opt_image.equalize_img(optical_image)
             
             #Flatten blue and equalized_image
             blue_flatten = blue.flatten()
             equalized_image_flatten = equalized_image.flatten()
+            self.logger.debug("Blue channel and equalized image processed.")
             
-            afm_info = self.df_afm.df
+            self.logger.debug("Loading AFM DataFrame...")
+            afm_info = self.df_afm.df.copy()
+            self.logger.debug(f"AFM DataFrame loaded. Shape: {afm_info.shape}")
             afm_info['blue'] = blue_flatten 
             afm_info['hist_equalized'] = equalized_image_flatten
+            self.logger.debug("Added 'blue' and 'hist_equalized' columns to DataFrame.")
             
+            # Define features - Ensure 'Segment' and target exist
+            required_cols = [self.process_date, self.flatten_height, 'Segment', self.target]
+            missing_cols = [col for col in required_cols if col not in afm_info.columns]
+            if missing_cols:
+                 self.logger.error(f"Missing required columns in DataFrame: {missing_cols}")
+                 raise ValueError(f"DataFrame missing required columns: {missing_cols}")
             features = [self.process_date, self.flatten_height,'blue','hist_equalized', 'Segment', self.target]
+            self.logger.debug(f"Using features: {features}")
             afm_info = afm_info[features]
             # afm_info = self.df_afm.clean_target(afm_info)
             
             features_that_no_need_remove_substrate = ['Planned Height', 'blue', 'hist_equalized']
             afm_info = self.data_normalizer(afm_info, features, pre_process, features_that_no_need_remove_substrate)
-            
-            channels = [
-                        self.df_afm.create_channel_by_df(afm_info, feat, dimensions)
-                        for feat in features[1:-2]
-                        ]
+            self.logger.debug("Creating channels from DataFrame features...")
+            channels = []
+            for feat in features[1:-2]: # Iterate through features used for channels
+                try:
+                    channel = self.df_afm.create_channel_by_df(afm_info, feat, dimensions)
+                    channels.append(channel)
+                    self.logger.debug(f"  Created channel for '{feat}'. Shape: {channel.shape}")
+                except Exception as e:
+                    self.logger.error(f"Error creating channel for feature '{feat}': {e}")
+                    raise
+            self.logger.debug(f"Total channels created before selection: {len(channels)}")
+
+            # Apply threshold/clipping
+            self.logger.debug("Applying clipping to relevant channels...")
             
             # Apply threshold to certain channels
             for i, feat in enumerate(features[1:-2]):
@@ -604,8 +708,23 @@ class GenerateAFMOptico:
                     channels[i] = np.clip(channels[i], -1, 1)
             
             selected_channels = self.select_feature_type(channels, pre_process)
+            self.logger.debug("Creating final image based on selected features...")
             new_img = self.create_image_based_on_feature(optical_image, selected_channels)
             mask = self.df_afm.create_channel_by_df(afm_info,  self.target, dimensions).astype(np.uint8)
+                        # Ensure mask is binary 0 or 1
+            mask[mask > 0] = 1
+            self.logger.info("Image and mask generation completed successfully.")
+            self.logger.debug(f"  Final image shape: {new_img.shape}, dtype: {new_img.dtype}")
+            self.logger.debug(f"  Final mask shape: {mask.shape}, dtype: {mask.dtype}, unique values: {np.unique(mask)}")
+
             return new_img, mask
-        except Exception:
-            print(traceback.format_exc())
+        except FileNotFoundError as fnf_error:
+            self.logger.error(f"File not found during image/mask generation: {fnf_error}")
+            raise # Re-raise specific error
+        except ValueError as val_error:
+            self.logger.error(f"Value error during image/mask generation: {val_error}")
+            raise # Re-raise specific error
+        except Exception as e:
+            self.logger.error(f"An unexpected error occurred during image/mask generation: {e}")
+            self.logger.error(traceback.format_exc())
+            raise # Re-raise general error
