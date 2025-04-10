@@ -40,9 +40,11 @@ def run_by_operating_system(abs_path_file, logger):
             abs_path_file.split(), # Split command properly
             shell=False, 
             check=True,
-            capture_output=True,
             text=True,
-            cwd=current_directory # Ensure scripts run from the correct directory
+            cwd=current_directory,
+            stdout=sys.stdout,
+            stderr=sys.stderr
+            # Ensure scripts run from the correct directory
         )
         logger.info(f"Command stdout:\n{result.stdout}")
         if result.stderr:
@@ -135,7 +137,7 @@ if __name__ == "__main__":
             script_args = {} # Common argument
 
             if script_file != '1_cropping_opt_images.py':
-                 script_args["-ms"] = model_selector # Add training type argument only if training
+                 script_args["-ms"] = model_selector 
                  
             if script_file == 'training_models.py' and opcao.strip().lower() == "train":
                  script_args["-mt"] = select_arch # Add training type argument only if training
