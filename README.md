@@ -1,203 +1,131 @@
-# UNet_AFM
- In this repository, the project for segmenting cellular structures through atomic force microscopy (AFM) and its respective models will be stored.
- 
-![Slide1](papers_fig/mainText/fig2_models_preprocessing.jpg)
+# UNet_AFM: Cellular Structure Segmentation using U-Net and Atomic Force Microscopy
 
-> The project is a U-Net aimed at segmenting cell nuclei using features derived from Atomic Force Microscopy (AFM).
-## 📋 Hardware Prerequisites
-Before you begin, make sure you've met the following prerequisites:
-* RAM: At least 8 GB recommended to ensure adequate performance during the model segmentation and evaluation process.
-* PROCESSOR: A 64-bit multicore processor capable of executing SSE2 instructions or higher is recommended. An Intel® Core™ i5-10400 processor or equivalent is sufficient for most tasks.
-* GRAPHICS: A dedicated graphics card with CUDA support is recommended if using deep learning techniques that make use of GPU acceleration. However, the code provided in this repository should run smoothly on an integrated graphics card such as Intel® UHD Graphics 630.
+<!-- Optional Badges: Add relevant badges here, e.g., build status, license, version -->
+<!-- [![Build Status](URL_TO_YOUR_CI_BADGE)](URL_TO_YOUR_CI_PIPELINE) -->
+<!-- [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) -->
 
-## 💻 Requirements
-* `python >= 3.9.19 `
-* `Docker`
+This repository contains the code and models for a project focused on segmenting cellular structures, specifically nuclei, using data derived from Atomic Force Microscopy (AFM), optionally combined with optical microscopy images. The core segmentation model is based on the U-Net architecture.
+
+![Project Workflow Diagram](papers_fig/mainText/fig2_models_preprocessing.jpg)
+*Figure: Overview of the data preprocessing and model application workflow.*
+
+## ✨ Features
+
+*   **AFM Data Processing:** Scripts to process raw AFM data (`.txt` files).
+*   **Optical Image Integration:** Tools to crop, resize, and align optical images with AFM data.
+*   **Multiple Data Modes:** Supports segmentation using:
+    *   AFM data only (1 channel: CosHeightSum)
+    *   Optical data only (2 channels)
+    *   Combined AFM and Optical data (2 channels)
+*   **U-Net Model Implementation:** Utilizes TensorFlow/Keras (and potentially PyTorch components) for the U-Net model.
+*   **Prediction Pipeline:** Generates segmentation masks for input images using trained models.
+*   **Performance Evaluation:** Calculates and visualizes segmentation metrics (e.g., IoU, Dice coefficient).
+*   **Dockerized Environment:** Ensures reproducibility and simplifies dependency management.
+
+## 📋 Table of Contents
+
+*   Hardware Prerequisites
+*   Software Requirements
+*   Installation & Setup
+*   Usage
+*   Project Structure
+*   Workflow Pipeline
+*   Script Details
+*   Libraries Used
+*   Built With
+*   Contributing
+*   License
+*   Authors
+*   Acknowledgments
+
+## ⚙️ Hardware Prerequisites
+
+Ensure your system meets the following minimum recommendations for optimal performance:
+
+*   **RAM:** 8 GB+ (More recommended for larger datasets/models)
+*   **Processor:** 64-bit multicore CPU (e.g., Intel Core i5-10400 or equivalent/better)
+*   **Graphics:**
+    *   *Recommended:* NVIDIA GPU with CUDA support for accelerated training/inference.
+    *   *Minimum:* Integrated graphics (e.g., Intel UHD Graphics 630) should suffice for running predictions, though potentially slower.
+
+## 💻 Software Requirements
+
+*   **Python:** Version 3.9.19 or higher.
+*   **Docker:** Required for containerized setup.
+
+<details>
+<summary>Click for Docker Installation Guide</summary>
+
+*   **Windows:**
+    1.  Install **WSL (Windows Subsystem for Linux)**: WSL Installation Guide
+    2.  Install **Docker Desktop for Windows**: Docker Desktop Download (Requires WSL 2 backend). Follow the setup instructions, including logging into a Docker Hub account.
+*   **Linux (Ubuntu Example):**
+    1.  Follow the official guide: Install Docker Engine on Ubuntu
+    2.  For other distributions, check the Docker documentation.
+*   **macOS:**
+    1.  Install **Docker Desktop for Mac**: Docker Desktop Download
+
+> [!TIP]
+> **Post-installation (Linux/macOS):** Add your user to the `docker` group to run Docker commands without `sudo`:
+> ```bash
+> sudo usermod -aG docker $USER
+> ```
+> You'll need to **log out and log back in** or **reboot** for this change to take effect.
+
+</details>
+
+## 🚀 Installation & Setup
+
+Follow these steps to get the project running locally using Docker:
+
+1.  **Clone the Repository:**
+    *(Replace `<YOUR_GIT_REPOSITORY_URL>` with the actual URL)*
+    ```bash
+    git clone <YOUR_GIT_REPOSITORY_URL>
+    cd UNet_AFM
+    ```
+
+2.  **Download Data and Models:**
+    *   Access the provided Google Drive link (or other source).
+    *   Download `data.zip` and the `models` folder.
+    *   **Extract** `data.zip` into the root of the cloned `UNet_AFM` directory. You should now have a `UNet_AFM/data/` folder structure matching the one described in Project Structure.
+    *   Place the downloaded `models` folder directly into the root of the `UNet_AFM` directory. You should have `UNet_AFM/models/`.
+
+3.  **Build and Start the Docker Container:**
+    *(Run without `sudo` if you added your user to the `docker` group)*
+    ```bash
+    docker compose up -d --build
+    ```
+    This command builds the Docker image based on the `Dockerfile` (installing all Python libraries listed in `requirements.txt`) and starts the container in detached mode (`-d`).
+
+## ▶️ Usage
+
+The main entry point for running the segmentation pipeline is `main.py` inside the Docker container.
+
+*   **Execute the Main Script:**
+    *(Run without `sudo` if you added your user to the `docker` group)*
+    ```bash
+    docker exec -it UNet_AFM python /app/dev/apps/main.py
+    ```
+    *(Note: The container name `UNet_AFM` might vary slightly depending on your `docker-compose.yml` configuration or directory name. Use `docker ps` to find the correct running container name if needed.)*
+
+*   **User Options:**
+    The script will prompt you to select an option:
+    *   **Option 1:** Run the **AFM-Only** model pipeline (uses `train_1_channels_only_AFM_CosHeightSum` data).
+    *   **Option 2:** Run the **Combined Optical+AFM** model pipeline (uses `train_2_channels_like_yolo_opt_afm` data).
+    *   **Option 3:** Run the **Optical-Only** model pipeline (uses `train_2_channels_only_optical` data).
+
+The selected pipeline will perform preprocessing (if needed, though typically done beforehand by specific scripts), run predictions using the corresponding model from the `models/` directory, save the segmentation results, and generate evaluation metrics. Outputs are saved within the `data/output/<model-selected>/` directory.
+
+## 📁 Data Folder Structure
+
+The project follows this general directory layout:
 
 <details>
 <summary>
- Click here for the Docker installation guide
+ Click here to see 
 </summary>
 
- ### For installing Docker on Windows, please follow these steps and documentation:
-
-1. **Install WSL (Windows Subsystem for Linux)**
-   - [WSL Installation Guide](https://docs.microsoft.com/windows/wsl/install)
-   - WSL will ensure an environment where Docker will function properly.
-
-2. **Install Docker Desktop for Windows**
-   - [Docker Desktop Download](https://www.docker.com/products/docker-desktop)
-   - After installation, create a free account on Docker Hub and make sure you are logged into Docker Desktop with it.
-   - In some cases, the Docker Desktop installation process will include registration and login.
-
-### For installing Docker on Linux:
-1. **Docker Ubuntu**
-   - [Docker Ubuntu Download](https://docs.docker.com/engine/install/ubuntu/)
-   - If you are using a different Linux distribution, you can consult the menu on the left side of the page for other possible distributions for Docker installation.
-
-</details>
-
-> [!TIP]
-> After installation, remember to run the command `sudo usermod -aG docker $USER` and restart your session to use Docker without needing to use `sudo`.
-
-### :books: Libraries
-
-<details>
-
-<summary> Click Here to see project libraries </summary>
-> Here is the table with the libraries used and their respective versions.
-                 <!DOCTYPE html>
-                        <html>
-                        <head>
-                        </head>
-                        <body>
-                          <table>
-                            <thead>
-                              <tr>
-                                <th>Lib</th>
-                                <th>Version</th>
-                                <th>Installation command</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              </tr>
-                               <tr>
-                                <td>h5py</td>
-                                <td>3.11.0</td>
-                                <td>pip install h5py==3.11.0</td>
-                              </tr>
-                               <tr>
-                                <td>kaleido</td>
-                                <td>0.2.1</td>
-                                <td>pip install kaleido==0.2.1</td>
-                              </tr>
-                               <tr>
-                                <td>keras</td>
-                                <td>2.14.0</td>
-                                <td>pip install keras==2.14.0</td>
-                              </tr>
-                               <tr>
-                                <td>Keras-Preprocessing</td>
-                                <td>1.1.2</td>
-                                <td>pip install Keras-Preprocessing==1.1.2</td>
-                              </tr>
-                                 <tr>
-                                <td>matplotlib</td>
-                                <td>3.7.0</td>
-                                <td>pip install matplotlib==3.7.0</td>
-                              </tr>
-                                 <tr>
-                                <td>numpy</td>
-                                <td>1.26.4</td>
-                                <td>pip install numpy==1.26.4</td>
-                              </tr>
-                                 <tr>
-                                <td>opencv_python</td>
-                                <td>4.5.5.64</td>
-                                <td>pip install opencv_python==4.5.5.64</td>
-                              </tr>
-                                 <tr>
-                                <td>opencv-python-headless</td>
-                                <td>4.5.4.60</td>
-                                <td>pip install opencv-python-headless==4.5.4.60</td>
-                              </tr>
-                              <tr>
-                                <td>opt-einsum</td>
-                                <td>3.3.0</td>
-                                <td>pip install opt-einsum==3.3.0</td>
-                              </tr>
-                              <tr>
-                                <td>pandas</td>
-                                <td>1.5.3</td>
-                                <td>pip install pandas==1.5.3</td>
-                              </tr>
-                              <tr>
-                                <td>Pillow</td>
-                                <td>10.1.0 </td>
-                                <td>pip install Pillow==10.1.0 </td>
-                              </tr>
-                              <tr>
-                                <td>plotly</td>
-                                <td>5.9.0</td>
-                                <td>pip install plotly==5.9.0</td>
-                              </tr>
-                               <tr>
-                                <td>scikit_image</td>
-                                <td>0.19.3</td>
-                                <td>pip install scikit-image==0.19.3</td>
-                              </tr>
-                               <tr>
-                                <td>scikit-learn</td>
-                                <td>1.2.1</td>
-                                <td>pip install scikit-learn==1.2.1</td>
-                              </tr>
-                               <tr>
-                                <td>scipy</td>
-                                <td>1.10.0</td>
-                                <td>pip install scipy==1.10.0</td>
-                              </tr>
-                               <tr>
-                                <td>setuptools</td>
-                                <td>69.5.1 </td>
-                                <td>pip install setuptools==69.5.1 </td>
-                              </tr>
-                               <tr>
-                                <td>six</td>
-                                <td>1.16.0</td>
-                                <td>pip install six==1.16.0</td>
-                              </tr>
-                              <tr>
-                                <td>Tensorflow</td>
-                                <td>2.14.0</td>
-                                <td>pip install tensorflow==2.14.0</td>
-                              </tr>
-                              <tr>
-                                <td>Torch</td>
-                                <td>2.3.0</td>
-                                <td>pip install torch==2.3.0</td>
-                              </tr>
-                              <tr>
-                                <td>tqdm</td>
-                                <td>4.64.1</td>
-                                <td>pip install tqdm==4.64.1</td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </body>
-                        </html>
-
-
-</details>
-
-> [!NOTE]
-> All projects libraries will be installed on docker build comand.
-
-
-## 🚀 Start
-These instructions will allow you to obtain a copy of the project up and running on your local machine for development and testing purposes.
-
-1. Clone project
-   ```
-   git clone <GIT_URL>
-   ```
-3. Access the [Drive link](https://drive.google.com/drive/folders/15N1tuNQ12LPO_nU7bUBwtT78i2IcD40k?usp=drive_link)
-   * Download the file `data.zip` and the folder `models`;
-   * Extract `data.zip` folder to root directory;
-   * Set the `models` folders to the project's root directory.
-4. To build docker container and install all dependences run:
-   ```
-   sudo docker compose up -d --build
-   ```
-5. Run project:
-   ```
-   sudo docker exec -it YOLO-AFM python /app/dev/apps/main.py
-   ```
-
-### :file_folder: DATA FOLDER ARCHITECTURE
-<details>
-
- <summary>See data folder architecture</summary>
- 
 ```
 ├── datasets
 ├── input
@@ -234,138 +162,229 @@ These instructions will allow you to obtain a copy of the project up and running
     ├── bw_images
     ├── optical_images
     └── txt_files
+
 ```
 
- 
+
+
 </details>
 
 
-## :arrow_forward: Project scripts
+## 🔄 Integrated Workflow (Orchestrated by `main.py`)
 
+This workflow describes the different paths `main.py` can take based on user choices. It handles both model training and segmentation/evaluation.
 
-:robot: main.py
-> This script runs the entire project according to the option selected by the user:
-> * Option 1: Runs the AFM-Only model process and returns its segmentations, general and specific metrics.
-> * Option 2: Runs the YOLO-AFM model process and returns its segmentations, general and specific metrics.
-> * Option 3: Runs the Optical-Only model process and returns its segmentations, general and specific metrics.
+1.  **Start Execution:**
+    *   Run the main script within the Docker container:
+        ```bash
+        docker exec -it UNet_AFM python /app/dev/apps/main.py
+        ```
+        *(Adjust container name `UNet_AFM` if necessary)*
 
-### 💻 Scripts Details
+2.  **User Input: Select Operation Mode:**
+    *   The script prompts: "Do you want to **Train** a new model or perform **Segmentation** with a pre-trained model?"
 
-:scissors: 1_cropping_opt_images.py
+3.  **Path 1: Model Training**
+    *   **User Input: Select Model Type:**
+        *   Choose the data/model type (e.g., "AFM-Only (CHS)", "Combined (YOLO-AFMnet)", "Optical-Only").
+    *   **User Input: Select Architecture:**
+        *   Choose the model architecture (e.g., "U-Net", "Half-U-Net").
+    *   **`main.py` Executes Training Sequence:**
+        *   **a. Cropping:** Runs logic equivalent to `1_cropping_opt_images.py` on relevant raw data.
+        *   **b. Preprocessing:** Runs logic equivalent to `2_preprocess_unet.py` for the selected model type, preparing images and masks into the correct format (channels, normalization) and saving them to the appropriate `data/intermediate/` directory.
+        *   **c. Data Augmentation:** Applies augmentation techniques to the preprocessed training data.
+        *   **d. Model Training:**
+            *   Defines the selected network architecture (U-Net/Half-U-Net).
+            *   Trains the model using the augmented, preprocessed data.
+            *   Saves the trained model weights to the `models/` directory (e.g., `models/unet_combined_v1.h5`).
+        *   *(End of Training Path)*
 
-> This script is responsible for matching the pixels of the optical image with the AFM spreadsheet, applying the cropping of the region of interest and resizing the optical images.
+4.  **Path 2: Segmentation & Evaluation**
+    *   **User Input: Select Model Type:**
+        *   Choose the model type for segmentation (e.g., "AFM-Only (CHS)", "Combined (YOLO-AFMnet)", "Optical-Only"). This implies using a model previously trained for this type.
+    *   **`main.py` Executes Segmentation Sequence:**
+        *   **a. Cropping:** Runs logic equivalent to `1_cropping_opt_images.py` on the input data intended for segmentation.
+        *   **b. Preprocessing:** Runs logic equivalent to `2_preprocess_unet.py` for the selected model type, preparing the input images (and masks if available for evaluation) and saving them to the appropriate `data/intermediate/` directory.
+        *   **c. Prediction (using `3_predicts.py` logic):**
+            *   Loads the appropriate **pre-trained** model from the `models/` directory corresponding to the selected type.
+            *   Runs inference on the preprocessed input images from `data/intermediate/`.
+            *   Saves predicted segmentation masks to `data/output/<model-selected>/predicts/`.
+        *   **d. Evaluation (using `4_eval_models.py` logic):**
+            *   Loads the predicted masks (from step c) and corresponding ground truth masks (from `data/intermediate/`).
+            *   Calculates performance metrics (e.g., IoU, Dice).
+            *   Saves evaluation results (e.g., `model_metrics.png`) to `data/output/<model-selected>/`.
+        *   *(End of Segmentation Path)*
 
-**INPUT:**
-> * Optical Images `data/raw/optical_images`
-> * BW Images `data/raw/bw_images`
-> * AFM Matrix `data/raw/txt_files`
+## 📜 Script Details
 
-**OUTPUT:**
-> * Optical Images Crop `data/input/optical_images_resized`
+<details>
+<summary>Click to expand script descriptions</summary>
 
-> ![Slide1](papers_fig/suppFigs/mat_supp_integrante_optico_with_AFM.jpg)
+---
 
-:open_file_folder: 2_preprocess_unet.py
-> This script is responsible for processing the data that will be used in the UNet_AFM, meaning the integration of the optical image with the AFM information.
+### :scissors: `1_cropping_opt_images.py`
 
-**INPUT:**
-> * Optical Images Crop `data/input/optical_images_resized`
-> * AFM data file `data/input/Usefull_data`
+*   **Purpose:** Aligns optical images with AFM data by cropping the region of interest and resizing.
+*   **Input:**
+    *   `data/raw/optical_images/`
+    *   `data/raw/bw_images/` (Likely ground truth masks used for alignment/reference)
+    *   `data/raw/txt_files/` (AFM data files, potentially for coordinates)
+*   **Output:**
+    *   `data/input/optical_images_resized/`
 
-**OUTPUT:**
-> * AFM optical image `data/intermediate/pre_processing_optico_and_afm/image`
-> * Mask `data/intermediate/pre_processing_optico_and_afm/mask`
+---
 
->  ![Slide1](papers_fig/mainText/models_process_unet.png)
+### :open_file_folder: `2_preprocess_unet.py`
 
-:dart: 3_predicts.py 
-> This script is responsible to take pre-process images selected by user and make yours respective predictions.
+*   **Purpose:** Prepares the final input tensors for the U-Net model by combining/formatting optical and/or AFM data channels as required for each specific model type. Also prepares corresponding masks.
+*   **Input:**
+    *   `data/input/optical_images_resized/`
+    *   `data/input/Usefull_data/` (Supporting AFM info)
+    *   Raw data sources as needed (`data/raw/`)
+*   **Output (Example for Combined):**
+    *   `data/intermediate/pre_processing_optico_and_afm/image/`
+    *   `data/intermediate/pre_processing_optico_and_afm/mask/`
+    *   *(Similar outputs created in `pre_processing_afm` and `pre_processing_optico` directories depending on execution)*
 
-**INPUT:**
-> * Optical Images Crop `data/input/optical_images_resized`
-> * AFM data file `data/input/Usefull_data`
-> * selected preprocess image `data/intermediate/pre_processing_<model-selected>/image`
-> * selected preprocess mask `data/intermediate/pre_processing_<model-selected>/mask` --- optional
+---
 
-**OUTPUT**
-> * Segmented image `data/output/<model-selected>/predicts`
+### :dart: `3_predicts.py`
 
+*   **Purpose:** Loads a pre-trained model and generates segmentation predictions on a specified preprocessed dataset.
+*   **Input:**
+    *   Preprocessed images: `data/intermediate/pre_processing_<model-selected>/image/`
+    *   Trained model file: `models/<model_file_name>`
+*   **Output:**
+    *   Predicted masks: `data/output/<model-selected>/predicts/`
 
-:bar_chart: 4_eval_models.py
-> This script search for test files and compare with model segmentation to show yours performance in `data/output/<model-selected>/model_metrics.png`
+---
 
-**INPUT:**
-> * selected preprocess mask `data/intermediate/pre_processing_<model-selected>`
-> * Segmented image `data/output/<model-selected>/predicts`
+### :bar_chart: `4_eval_models.py`
 
-**OUTPUT**
-> * Segmented image `data/output/vunet_AFM_predictions/predicts`
-> * AFM data file segmented `data/output/vunet_AFM_predictions/predict_sheets`
+*   **Purpose:** Compares predicted segmentation masks against ground truth masks to evaluate model performance.
+*   **Input:**
+    *   Predicted masks: `data/output/<model-selected>/predicts/`
+    *   Ground truth masks: `data/intermediate/pre_processing_<model-selected>/mask/`
+*   **Output:**
+    *   Metrics visualization: `data/output/<model-selected>/model_metrics.png`
+    *   (Potentially) Text files or logs with detailed metrics.
 
+---
+</details>
 
+## 📚 Libraries Used
 
-## 🛠️ Build with
+<details>
+<summary>Click Here to see project libraries</summary>
 
-> * [Visual Studio Code](https://code.visualstudio.com/) - Code Editor
-> * [Notion](https://notion.so/) - Task Manager 
-> * [Git Lab](http://172.22.133.244:8081/) - Code repo 
-> * [Python](https://www.python.org/) -  Python superset
-> * [Pandas](https://www.python.org/) -  Python lib
-> * [Scikit-Learn](https://scikit-learn.org/stable/#) -  Python lib
-> * [Scikit-Image](https://scikit-image.org/) -  Python lib
-> * [Opencv](https://docs.opencv.org/4.x/d6/d00/tutorial_py_root.html) -  Python lib
+> The following Python libraries are used in this project. They are automatically installed when building the Docker container via `requirements.txt`.
+
+| Library                  | Version   | Purpose                                     |
+| :----------------------- | :-------- | :------------------------------------------ |
+| h5py                     | 3.11.0    | Interacting with HDF5 files (often for models) |
+| kaleido                  | 0.2.1     | Saving Plotly figures as static images      |
+| keras                    | 2.14.0    | High-level API for TensorFlow               |
+| Keras-Preprocessing      | 1.1.2     | Data preprocessing utilities for Keras      |
+| matplotlib               | 3.7.0     | Plotting and visualization                  |
+| numpy                    | 1.26.4    | Fundamental package for numerical computing |
+| opencv_python            | 4.5.5.64  | Computer Vision library (image processing)  |
+| opencv-python-headless | 4.5.4.60  | Headless OpenCV (for servers/containers)    |
+| opt-einsum               | 3.3.0     | Optimized tensor contractions (dependency)  |
+| pandas                   | 1.5.3     | Data manipulation and analysis (CSV, etc.)  |
+| Pillow                   | 10.1.0    | Python Imaging Library (fork)               |
+| plotly                   | 5.9.0     | Interactive plotting library                |
+| scikit_image             | 0.19.3    | Image processing algorithms                 |
+| scikit-learn             | 1.2.1     | Machine learning tools (metrics, etc.)      |
+| scipy                    | 1.10.0    | Scientific and technical computing          |
+| setuptools               | 69.5.1    | Package building utilities                  |
+| six                      | 1.16.0    | Python 2/3 compatibility library          |
+| Tensorflow               | 2.14.0    | Deep Learning framework                     |
+| Torch                    | 2.3.0     | Deep Learning framework (potentially used)  |
+| tqdm                     | 4.64.1    | Progress bars for loops                     |
+
+</details>
+
+> [!NOTE]
+> All project libraries are installed automatically within the Docker container when running `docker compose up --build`.
+
+## 🛠️ Built With
+
+*   **Languages:** Python
+*   **Frameworks:** TensorFlow, Keras, PyTorch
+*   **Libraries:** OpenCV, Scikit-Image, Scikit-Learn, Pandas, NumPy, Matplotlib, Plotly
+*   **Tools:** Docker, Git
+*   **Editors/Management:** Visual Studio Code, Notion (Task Management)
+
+## 🤝 Contributing
+
+Contributions are welcome! If you'd like to contribute, please follow these steps:
+
+1.  Fork the repository.
+2.  Create a new branch (`git checkout -b feature/YourFeatureName`).
+3.  Make your changes.
+4.  Commit your changes (`git commit -m 'Add some feature'`).
+5.  Push to the branch (`git push origin feature/YourFeatureName`).
+6.  Open a Pull Request.
+
+Please ensure your code adheres to existing style conventions and includes relevant tests if applicable.
+
+## 📄 License
+
+This project is licensed under the [NAME OF LICENSE - e.g., MIT License] - see the `LICENSE` file (if available) for details.
+*(If no LICENSE file exists, consider adding one, e.g., MIT, Apache 2.0)*
 
 ## ✒️ Authors
 
-
-<table align="center">
-  <tr>
-    <td align="center">
+<table align="center" style="border: none; background: none;">
+  <tr style="border: none; background: none;">
+    <td align="center" style="border: none; background: none;">
       <a href="https://github.com/ArtRocha">
         <img src="https://media.licdn.com/dms/image/v2/D4D03AQEDHHDwcJ71-Q/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1676640793420?e=1741824000&v=beta&t=PyCIUjPJ4R1YoHwnBFh7H-MELeTjA-BwU-dO-zz10Rk" width="150px;" alt="Foto Arthur Rocha" /><br>
         <sub>
-          <b style="font-size:20px"> Arthur Rocha </b>
+          <b style="font-size:16px"> Arthur Rocha </b>
         </sub>
       </a>
     </td>
-    <td align="center" >
+    <td align="center" style="border: none; background: none;">
          <a href="http://lattes.cnpq.br/8207473893996045">
            <img src="https://media.licdn.com/dms/image/v2/C4D03AQHao6xS_1V4MQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1517361324904?e=1741824000&v=beta&t=utQZ1VrmSCGQzZePZkn12QNi_30F05B61aplPDLTYkM" width="150px;" alt="Foto de Ayumi Aurea"/><br>
-           <sub  >
-             <b style="font-size:20px"> Ayumi Aurea Miyakawa </b><br>
+           <sub>
+             <b style="font-size:16px"> Ayumi Aurea Miyakawa </b><br>
            </sub>
          </a>
        </td>
-        <td align="center" >
+        <td align="center" style="border: none; background: none;">
       <a href="http://lattes.cnpq.br/0399495551887391">
         <img src="http://servicosweb.cnpq.br/wspessoa/servletrecuperafoto?tipo=1&id=K8153430T2" width="150px;" alt="Foto de Cleyton Biffe"/><br>
-        <sub  >
-          <b style="font-size:20px"> Cleyton Biffe </b><br>
+        <sub>
+          <b style="font-size:16px"> Cleyton Biffe </b><br>
         </sub>
       </a>
     </td>
-    <td align="center">
+    <td align="center" style="border: none; background: none;">
       <a href="https://github.com/EdCarlos-dev">
         <img src="https://media.licdn.com/dms/image/v2/D4D03AQHPPE38HWKxgQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1682383748193?e=1741824000&v=beta&t=WJhEASVpf3eCXmboJok2n1dxDRvvxkApnQao0h4KdGo" width="150px;" alt="Foto de Ed Santos e Silva"/><br>
         <sub>
-          <b style="font-size:20px"> Ed Santos e Silva </b><br>
+          <b style="font-size:16px"> Ed Santos e Silva </b><br>
         </sub>
       </a>
     </td>
-     <td align="center" >
+     <td align="center" style="border: none; background: none;">
       <a href="http://lattes.cnpq.br/9674023945962136">
         <img src="https://lh3.googleusercontent.com/a-/ALV-UjUC_CbCkHR3n6mjft683RBUYRlmXo9xZdX01RdaTErJyQ=s272-p-k-rw-no" width="150px;" alt="Foto de Jose Patane"/><br>
-        <sub  >
-          <b style="font-size:20px"> Jose Patane </b><br>
+        <sub>
+          <b style="font-size:16px"> Jose Patane </b><br>
         </sub>
       </a>
     </td>
   </tr>
 </table>
 
+## 🙏 Acknowledgments
 
-<div align="center"> 
- <img  src="https://genetica.incor.usp.br/wp-content/uploads/2021/05/cropped-temp.png" width="400px;"/>  
+<div align="center">
+ <img src="https://genetica.incor.usp.br/wp-content/uploads/2021/05/cropped-temp.png" width="300px;" alt="InCor Logo"/>
 
-© Todos os direitos reservados, 2024 
+ © Todos os direitos reservados, 2025 - Instituto do Coração (InCor) HCFMUSP
 </div>
+
