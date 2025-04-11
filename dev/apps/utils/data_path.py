@@ -1,6 +1,8 @@
 
 import os 
 
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
 def create_dir(path):
     if not os.path.isdir(path):
         os.makedirs(path)
@@ -43,50 +45,51 @@ def build_file_path(path, file, actual_process = '_OpticalImg.png',  new_process
 
 
 CROP_PATH = {
-    
-    'optical_raw' : f'data{os.sep}raw{os.sep}optical_images{os.sep}',
-    'optical_bw_raw' : f'data{os.sep}raw{os.sep}bw_images',
-    'txt_files': f'data{os.sep}raw{os.sep}txt_files{os.sep}',
-    'usefull_data': f'data{os.sep}input{os.sep}Usefull_data{os.sep}',
-    'optical_crop_resized' : f'data{os.sep}input{os.sep}optical_images_resized'
+    'optical_raw' : os.path.join(PROJECT_ROOT, f'data{os.sep}raw{os.sep}optical_images{os.sep}'),
+    'optical_bw_raw' : os.path.join(PROJECT_ROOT, f'data{os.sep}raw{os.sep}bw_images'),
+    'txt_files': os.path.join(PROJECT_ROOT, f'data{os.sep}raw{os.sep}txt_files{os.sep}'),
+    'usefull_data': os.path.join(PROJECT_ROOT, f'data{os.sep}input{os.sep}Usefull_data{os.sep}'),
+    'optical_crop_resized' : os.path.join(PROJECT_ROOT, f'data{os.sep}input{os.sep}optical_images_resized')
 }
 
 
+YAML_FILE = os.path.join(PROJECT_ROOT, 'config.yaml')
+
+
+
 UNET_MODELS_PATH = {
-    
     'unet_afm_1_channels_only_AFM_CosHeightSum': {
-            'model_path': f'models{os.sep}unet_afm_1_channels_only_AFM_CosHeightSum_234_samples_stardist_mask.h5',
+            'model_path': os.path.join(PROJECT_ROOT, f'models{os.sep}unet_afm_1_channels_only_AFM_CosHeightSum_234_samples_stardist_mask.h5'),
             'model_name': 'AFM-Only',
-            'preprocess_img': f'data{os.sep}intermediate{os.sep}pre_processing_afm{os.sep}image{os.sep}',
-            'preprocess_mask': f'data{os.sep}intermediate{os.sep}pre_processing_afm{os.sep}mask{os.sep}',
-            'train_path': f'data{os.sep}input{os.sep}train{os.sep}train_1_channels_only_AFM_CosHeightSum{os.sep}opt_img_training',
-            'mask_path': f'data{os.sep}input{os.sep}train{os.sep}train_1_channels_only_AFM_CosHeightSum{os.sep}msk_img_training',
-            'save_predict': f'data{os.sep}output{os.sep}unet_afm_1_channels_only_AFM_CosHeightSum{os.sep}predicts{os.sep}',
-            'save_metrics': f'data{os.sep}output{os.sep}unet_afm_1_channels_only_AFM_CosHeightSum{os.sep}'
-            
-                
+            'preprocess_img': os.path.join(PROJECT_ROOT, f'data{os.sep}intermediate{os.sep}pre_processing_afm{os.sep}image{os.sep}'),
+            'preprocess_mask': os.path.join(PROJECT_ROOT, f'data{os.sep}intermediate{os.sep}pre_processing_afm{os.sep}mask{os.sep}'),
+            'train_path': os.path.join(PROJECT_ROOT, f'data{os.sep}input{os.sep}train{os.sep}train_1_channels_only_AFM_CosHeightSum{os.sep}opt_img_training{os.sep}'),
+            'mask_path': os.path.join(PROJECT_ROOT, f'data{os.sep}input{os.sep}train{os.sep}train_1_channels_only_AFM_CosHeightSum{os.sep}msk_img_training{os.sep}'),
+            'save_predict': os.path.join(PROJECT_ROOT, f'data{os.sep}output{os.sep}unet_afm_1_channels_only_AFM_CosHeightSum{os.sep}predicts{os.sep}'),
+            'save_metrics': os.path.join(PROJECT_ROOT, f'data{os.sep}output{os.sep}unet_afm_1_channels_only_AFM_CosHeightSum{os.sep}')
     },
+    
     'unet_afm_2_channels_like_yolo_opt_afm':{
-            'model_path':f'models{os.sep}unet_afm_2_channels_like_yolo_opt_afm_234_samples_stardist_mask.h5',
+            'model_path':os.path.join(PROJECT_ROOT, f'models{os.sep}unet_afm_2_channels_like_yolo_opt_afm_234_samples_stardist_mask.h5'),
             'model_name': 'YOLO-AFM',
-            'preprocess_img': f'data{os.sep}intermediate{os.sep}pre_processing_optico_and_afm{os.sep}image{os.sep}',
-            'preprocess_mask': f'data{os.sep}intermediate{os.sep}pre_processing_optico_and_afm{os.sep}mask{os.sep}',
-            'train_path':f'data{os.sep}input{os.sep}train{os.sep}train_2_channels_like_yolo_opt_afm{os.sep}opt_img_training',
-            'mask_path':f'data{os.sep}input{os.sep}train{os.sep}train_2_channels_like_yolo_opt_afm{os.sep}msk_img_training',
-            'save_predict': f'data{os.sep}output{os.sep}unet_afm_2_channels_like_yolo_opt_afm{os.sep}predicts{os.sep}',
-            'save_metrics': f'data{os.sep}output{os.sep}unet_afm_2_channels_like_yolo_opt_afm{os.sep}'
+            'preprocess_img': os.path.join(PROJECT_ROOT, f'data{os.sep}intermediate{os.sep}pre_processing_optico_and_afm{os.sep}image{os.sep}'),
+            'preprocess_mask': os.path.join(PROJECT_ROOT, f'data{os.sep}intermediate{os.sep}pre_processing_optico_and_afm{os.sep}mask{os.sep}'),
+            'train_path': os.path.join(PROJECT_ROOT, f'data{os.sep}input{os.sep}train{os.sep}train_2_channels_like_yolo_opt_afm{os.sep}opt_img_training{os.sep}'),
+            'mask_path': os.path.join(PROJECT_ROOT, f'data{os.sep}input{os.sep}train{os.sep}train_2_channels_like_yolo_opt_afm{os.sep}msk_img_training{os.sep}'),
+            'save_predict': os.path.join(PROJECT_ROOT, f'data{os.sep}output{os.sep}unet_afm_2_channels_like_yolo_opt_afm{os.sep}predicts{os.sep}'),
+            'save_metrics': os.path.join(PROJECT_ROOT, f'data{os.sep}output{os.sep}unet_afm_2_channels_like_yolo_opt_afm{os.sep}')
             
             
     },
     'unet_afm_2_channels_only_optical':{
             'model_path': f'models{os.sep}unet_afm_2_channels_only_optical_234_samples_stardist_mask.h5',
             'model_name': 'Optical-Only',
-            'preprocess_img':  f'data{os.sep}intermediate{os.sep}pre_processing_optico{os.sep}image{os.sep}',
-            'preprocess_mask': f'data{os.sep}intermediate{os.sep}pre_processing_optico{os.sep}mask{os.sep}',
-            'train_path': f'data{os.sep}input{os.sep}train{os.sep}train_2_channels_only_optical{os.sep}opt_img_training',
-            'mask_path': f'data{os.sep}input{os.sep}train{os.sep}train_2_channels_only_optical{os.sep}msk_img_training',
-            'save_predict': f'data{os.sep}output{os.sep}unet_afm_2_channels_only_optical{os.sep}predicts{os.sep}',
-            'save_metrics': f'data{os.sep}output{os.sep}unet_afm_2_channels_only_optical{os.sep}'
+            'preprocess_img': os.path.join(PROJECT_ROOT, f'data{os.sep}intermediate{os.sep}pre_processing_optico{os.sep}image{os.sep}'),
+            'preprocess_mask': os.path.join(PROJECT_ROOT, f'data{os.sep}intermediate{os.sep}pre_processing_optico{os.sep}mask{os.sep}'),
+            'train_path': os.path.join(PROJECT_ROOT, f'data{os.sep}input{os.sep}train{os.sep}train_2_channels_only_optical{os.sep}opt_img_training{os.sep}'),
+            'mask_path': os.path.join(PROJECT_ROOT, f'data{os.sep}input{os.sep}train{os.sep}train_2_channels_only_optical{os.sep}msk_img_training{os.sep}'),
+            'save_predict': os.path.join(PROJECT_ROOT, f'data{os.sep}output{os.sep}unet_afm_2_channels_only_optical{os.sep}predicts{os.sep}'),
+            'save_metrics': os.path.join(PROJECT_ROOT, f'data{os.sep}output{os.sep}unet_afm_2_channels_only_optical{os.sep}')
             
     }
     
@@ -96,14 +99,14 @@ UNET_MODELS_PATH = {
 TRAIN_TEST_FILES = {
     'train': [
                 {        
-                    '15': f'data{os.sep}datasets{os.sep}df_train_15_selected.csv',
-                    '30': f'data{os.sep}datasets{os.sep}df_train_30_selected.csv',
-                    '60': f'data{os.sep}datasets{os.sep}df_train_60_selected.csv',
-                    '120': f'data{os.sep}datasets{os.sep}df_train_120_selected.csv',
-                    '234': f'data{os.sep}datasets{os.sep}df_train_234_selected.csv',
+                    '15': os.path.join(PROJECT_ROOT, f'data{os.sep}datasets{os.sep}df_train_15_selected.csv'),
+                    '30': os.path.join(PROJECT_ROOT, f'data{os.sep}datasets{os.sep}df_train_30_selected.csv'),
+                    '60': os.path.join(PROJECT_ROOT, f'data{os.sep}datasets{os.sep}df_train_60_selected.csv'),
+                    '120': os.path.join(PROJECT_ROOT, f'data{os.sep}datasets{os.sep}df_train_120_selected.csv'),
+                    '234': os.path.join(PROJECT_ROOT, f'data{os.sep}datasets{os.sep}df_train_234_selected.csv'),
                     
                 },
     ],
-    'test': f'data{os.sep}datasets{os.sep}df_Treino.csv',
+    'test': os.path.join(PROJECT_ROOT, f'data{os.sep}datasets{os.sep}df_Treino.csv'),
     }
 
