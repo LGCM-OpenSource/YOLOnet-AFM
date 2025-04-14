@@ -1,9 +1,5 @@
 # UNet_AFM: Cellular Structure Segmentation using U-Net and Atomic Force Microscopy
 
-<!-- Optional Badges: Add relevant badges here, e.g., build status, license, version -->
-<!-- [![Build Status](URL_TO_YOUR_CI_BADGE)](URL_TO_YOUR_CI_PIPELINE) -->
-<!-- [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) -->
-
 This repository contains the code and models for a project focused on segmenting cellular structures, specifically nuclei, using data derived from Atomic Force Microscopy (AFM), optionally combined with optical microscopy images. The core segmentation model is based on the U-Net architecture.
 
 ![Project Workflow Diagram](papers_fig/mainText/fig2_models_preprocessing.jpg)
@@ -11,23 +7,23 @@ This repository contains the code and models for a project focused on segmenting
 
 ## ✨ Features
 
-*   **AFM Data Processing:** Scripts to process raw AFM data (`.txt` files).
+*   **AFM Data Processing:** Scripts to process raw AFM data (`.csv` files).
 *   **Optical Image Integration:** Tools to crop, resize, and align optical images with AFM data.
 *   **Multiple Data Modes:** Supports segmentation using:
     *   AFM data only (1 channel: CosHeightSum)
     *   Optical data only (2 channels)
     *   Combined AFM and Optical data (2 channels)
-*   **U-Net Model Implementation:** Utilizes TensorFlow/Keras (and potentially PyTorch components) for the U-Net model.
+*   **U-Net Model Implementation:** Utilizes TensorFlow/Keras for the U-Net model.
 *   **Prediction Pipeline:** Generates segmentation masks for input images using trained models.
-*   **Performance Evaluation:** Calculates and visualizes segmentation metrics (e.g., IoU, Dice coefficient).
+*   **Performance Evaluation:** Calculates and visualizes segmentation metrics (e.g., Precision, Recall and Dice coefficient).
 *   **Dockerized Environment:** Ensures reproducibility and simplifies dependency management.
 
 ## 📋 Table of Contents
 
-*   Hardware Prerequisites
-*   Software Requirements
-*   Installation & Setup
-*   Usage
+*   [Hardware Prerequisites](#️-hardware-prerequisites)
+*   [Software Requirements](#-software-requirements)
+*   [Installation & Setup](#-installation--setup)
+*   [Usage](#️-usage)
 *   Project Structure
 *   Workflow Pipeline
 *   Script Details
