@@ -24,15 +24,14 @@ This repository contains the code and models for a project focused on segmenting
 *   [Software Requirements](#-software-requirements)
 *   [Installation & Setup](#-installation--setup)
 *   [Usage](#️-usage)
-*   Project Structure
-*   Workflow Pipeline
-*   Script Details
-*   Libraries Used
-*   Built With
-*   Contributing
-*   License
-*   Authors
-*   Acknowledgments
+*   [Project Structure](#-data-folder-structure)
+*   [Workflow Pipeline](#-integrated-workflow-orchestrated-by-mainpy)
+*   [Script Details](#-script-details)
+*   [Libraries Used](#-libraries-used)
+*   [Built With](#️-built-with)
+*   [Contributing](#-contributing)
+*   [Authors](#️-authors)
+*   [Acknowledgments](#-acknowledgments)
 
 ## ⚙️ Hardware Prerequisites
 
@@ -324,10 +323,10 @@ Contributions are welcome! If you'd like to contribute, please follow these step
 
 Please ensure your code adheres to existing style conventions and includes relevant tests if applicable.
 
-## 📄 License
+<!-- ## 📄 License
 
 This project is licensed under the [NAME OF LICENSE - e.g., MIT License] - see the `LICENSE` file (if available) for details.
-*(If no LICENSE file exists, consider adding one, e.g., MIT, Apache 2.0)*
+*(If no LICENSE file exists, consider adding one, e.g., MIT, Apache 2.0)* -->
 
 ## ✒️ Authors
 
