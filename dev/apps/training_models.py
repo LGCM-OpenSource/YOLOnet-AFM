@@ -139,7 +139,7 @@ def train_model(model, train_dataset, valid_dataset, model_name, config):
             optimizer=Adam(config["training"]["learning_rate"]),
             metrics=[dice_coef, iou, tf.keras.metrics.Recall(), tf.keras.metrics.Precision()],
         )
-        model.summary(print_fn=logger.info) # Log model summary
+        # model.summary(print_fn=logger.info) # Log model summary
 
         # Callbacks setup and logging
         model_save_path = os.path.join(config["general"]["model_folder"], f"{model_name}.h5")
@@ -150,25 +150,20 @@ def train_model(model, train_dataset, valid_dataset, model_name, config):
         model_checkpoint = ModelCheckpoint(
             model_save_path, monitor=monitor_metric, save_best_only=True, verbose=1
         )
-        logger.info(f" - ModelCheckpoint: Saving best model to {model_save_path}, monitoring '{monitor_metric}'")
 
         reduce_lr = ReduceLROnPlateau(
             monitor=monitor_metric, factor=0.1, patience=5, min_lr=1e-7, verbose=1
         )
-        logger.info(f" - ReduceLROnPlateau: Monitoring '{monitor_metric}', factor=0.1, patience=5")
 
         csv_logger = CSVLogger(log_save_path)
-        logger.info(f" - CSVLogger: Saving training logs to {log_save_path}")
 
         early_stopping = EarlyStopping(
             monitor=monitor_metric, patience=20, restore_best_weights=False, verbose=1
         )
-        logger.info(f" - EarlyStopping: Monitoring '{monitor_metric}', patience=20")
 
         callbacks_list = [model_checkpoint, reduce_lr, csv_logger, early_stopping]
 
         # Start training
-        logger.info(f"Starting model.fit with {config['training']['num_epochs']} epochs.")
         history = model.fit(
             train_dataset,
             epochs=config["training"]["num_epochs"],
