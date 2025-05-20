@@ -3,6 +3,7 @@
 This repository contains the code and models for a project focused on segmenting cellular structures, specifically nuclei, using data derived from Atomic Force Microscopy (AFM), optionally combined with optical microscopy images. The core segmentation model is based on the U-Net architecture.
 
 ![Project Workflow Diagram](papers_fig/mainText/fig2_models_preprocessing.jpg)
+
 *Figure: Overview of the data preprocessing and model application workflow.*
 
 ## ✨ Features
@@ -37,7 +38,7 @@ This repository contains the code and models for a project focused on segmenting
 
 Ensure your system meets the following minimum recommendations for optimal performance:
 
-*   **RAM:** 8 GB+ (More recommended for larger datasets/models)
+*   **RAM:** 8 GB+ (More recommended for training with larger datasets/models)
 *   **Processor:** 64-bit multicore CPU (e.g., Intel Core i5-10400 or equivalent/better)
 *   **Graphics:**
     *   *Recommended:* NVIDIA GPU with CUDA support for accelerated training/inference.
