@@ -1,8 +1,8 @@
 services:
-  yolo_afm:
+  yolonet_afm:
     build: .
     stdin_open: true
-    container_name: YOLO-AFM
+    container_name: YOLOnet-AFM
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - data:/app/data
