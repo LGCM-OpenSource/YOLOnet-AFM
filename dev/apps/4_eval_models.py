@@ -80,7 +80,7 @@ for i in tqdm(range(len(opt_image_path)), colour='#0000FF'):
                 metric_df = eval.metrics_to_df(scores)
                 df_list.append(metric_df)
                 save_specific_metrics()
-        except Exception:
+        except Exception as e:
                 logger.error(f"Error processing image index {i}: {e}", exc_info=True)
         
 model_validation_metrics = pd.concat(df_list, axis=0)
