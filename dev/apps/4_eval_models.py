@@ -1,6 +1,9 @@
 import os
 import numpy as np
-from utils import UnetProcess, EvalModel, Models, UNET_MODELS_PATH, CROP_PATH, TRAIN_TEST_FILES, create_dir, UserInput, DataChart, Charts, TerminalStyles
+from utils import (UnetProcess, EvalModel, Models, 
+                   UNET_MODELS_PATH, CROP_PATH, create_dir, 
+                   DataChart, Charts, TerminalStyles,
+                   setup_logger)
 from tqdm import tqdm
 import matplotlib.pyplot as plt 
 import pandas as pd 
@@ -8,12 +11,11 @@ import cv2
 import argparse
 
 
+logger = setup_logger('Evaluating model')
 
 def create_topography_map(unetTrat, matrix = False):
-        if matrix:
-                matrix = True
         opt_image_dimension = unetTrat.opt_image
-        opt_image_dimension = opt_image_dimension.dimensions(matrix=False)
+        opt_image_dimension = opt_image_dimension.dimensions(matrix)
         
         topography = np.array(unetTrat.df_afm.df['Planned Height']).reshape(opt_image_dimension)
         return topography
@@ -34,7 +36,7 @@ def save_specific_metrics():
         
         save_path = os.path.join(model_info['save_metrics'], f'{process_data}_dice_{dice_file_name}.png')  
         
-        print(metric_df)
+        logger.info(f"Metrics DataFrame:\n{metric_df}")
         topography = create_topography_map(unetTrat)
         unetTrat.show_predict(process_date = process_data, y=y, y_pred = y_pred, topography=topography, save_path=save_path, metrics=metric_df)
 
@@ -79,7 +81,7 @@ for i in tqdm(range(len(opt_image_path)), colour='#0000FF'):
                 df_list.append(metric_df)
                 save_specific_metrics()
         except Exception:
-                print(Exception)
+                logger.error(f"Error processing image index {i}: {e}", exc_info=True)
         
 model_validation_metrics = pd.concat(df_list, axis=0)
 
@@ -89,6 +91,6 @@ fig = chart.box_plot(model_validation_metrics_melt, x='Model', y='scores', color
 fig.write_image(f'{model_info["save_metrics"]}model_metrics.png')
 
 
-print(f'''
+logger.info(f'''
       {term.BOLD}{model_selector}{term.RESET} metrics saved in {term.SAVE_COLOR}{model_info['save_metrics']}{term.RESET} \n 
       ''')
