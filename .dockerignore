@@ -1,0 +1,30 @@
+# Dependências instaladas pelo host
+venv/
+.env/
+__pycache__/
+*.py[cod]
+
+# Dados, modelos e outras pastas que serão montadas como volumes
+# data/
+data2/
+data3/
+models/
+
+# Outros artefatos que não precisamos no build
+.git/
+.gitignore
+Dockerfile*
+docker-compose*
+Makefile
+
+# IDEs, cache, etc.
+.vscode/
+.idea/
+*.swp
+
+# Logs
+logs/
+*.log
+
+# Tests, se não serão usados no container
+tests/
