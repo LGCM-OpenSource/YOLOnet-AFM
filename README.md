@@ -50,23 +50,25 @@ Ensure your system meets the following minimum recommendations for optimal perfo
 *   **Docker:** Required for containerized setup.
 
 <details>
-<summary>Click for Docker Installation Guide</summary>
+<summary>Docker Installation Guide</summary>
 
-*   **Windows:**
-    1.  Install **WSL (Windows Subsystem for Linux)**: WSL Installation Guide
-    2.  Install **Docker Desktop for Windows**: Docker Desktop Download (Requires WSL 2 backend). Follow the setup instructions, including logging into a Docker Hub account.
-*   **Linux (Ubuntu Example):**
-    1.  Follow the official guide: Install Docker Engine on Ubuntu
-    2.  For other distributions, check the Docker documentation.
-*   **macOS:**
-    1.  Install **Docker Desktop for Mac**: Docker Desktop Download
+### 🪟 Windows
 
-> [!TIP]
-> **Post-installation (Linux/macOS):** Add your user to the `docker` group to run Docker commands without `sudo`:
-> ```bash
-> sudo usermod -aG docker $USER
-> ```
-> You'll need to **log out and log back in** or **reboot** for this change to take effect.
+1. Install WSL:
+
+   * [Install WSL Guide](https://docs.microsoft.com/windows/wsl/install)
+2. Install Docker Desktop:
+
+   * [Download Docker Desktop](https://www.docker.com/products/docker-desktop)
+   * Create a Docker Hub account and log in.
+
+### 🐧 Linux
+
+* Install Docker for your distribution:
+
+  * [Install Docker on Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
+
+> \[!TIP] To use Docker without `sudo`, run: `sudo usermod -aG docker $USER` and restart your session.
 
 </details>
 
@@ -78,7 +80,7 @@ Follow these steps to get the project running locally using Docker:
     *(Replace `<YOUR_GIT_REPOSITORY_URL>` with the actual URL)*
     ```bash
     git clone <YOUR_GIT_REPOSITORY_URL>
-    cd UNet_AFM
+    
     ```
 
 2.  **Download Data and Models:**
@@ -90,7 +92,7 @@ Follow these steps to get the project running locally using Docker:
 3.  **Build and Start the Docker Container:**
     *(Run without `sudo` if you added your user to the `docker` group)*
     ```bash
-    docker compose up -d --build
+    make build
     ```
     This command builds the Docker image based on the `Dockerfile` (installing all Python libraries listed in `requirements.txt`) and starts the container in detached mode (`-d`).
 
@@ -101,7 +103,7 @@ The main entry point for running the segmentation pipeline is `main.py` inside t
 *   **Execute the Main Script:**
     *(Run without `sudo` if you added your user to the `docker` group)*
     ```bash
-    docker exec -it UNet_AFM python /app/dev/apps/main.py
+    make run
     ```
     *(Note: The container name `UNet_AFM` might vary slightly depending on your `docker-compose.yml` configuration or directory name. Use `docker ps` to find the correct running container name if needed.)*
 
@@ -113,14 +115,10 @@ The main entry point for running the segmentation pipeline is `main.py` inside t
 
 The selected pipeline will perform preprocessing (if needed, though typically done beforehand by specific scripts), run predictions using the corresponding model from the `models/` directory, save the segmentation results, and generate evaluation metrics. Outputs are saved within the `data/output/<model-selected>/` directory.
 
-## 📁 Data Folder Structure
-
-The project follows this general directory layout:
+## 📁 Folder Structure
 
 <details>
-<summary>
- Click here to see 
-</summary>
+<summary>Click to show </summary>
 
 ```
 ├── datasets
@@ -161,8 +159,6 @@ The project follows this general directory layout:
 
 ```
 
-
-
 </details>
 
 
@@ -173,9 +169,9 @@ This workflow describes the different paths `main.py` can take based on user cho
 1.  **Start Execution:**
     *   Run the main script within the Docker container:
         ```bash
-        docker exec -it UNet_AFM python /app/dev/apps/main.py
+        make run
         ```
-        *(Adjust container name `UNet_AFM` if necessary)*
+    
 
 2.  **User Input: Select Operation Mode:**
     *   The script prompts: "Do you want to **Train** a new model or perform **Segmentation** with a pre-trained model?"
@@ -268,7 +264,7 @@ This workflow describes the different paths `main.py` can take based on user cho
 ---
 </details>
 
-## 📚 Libraries Used
+## 📚 Python Libraries
 
 <details>
 <summary>Click Here to see project libraries</summary>
