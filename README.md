@@ -76,44 +76,108 @@ Ensure your system meets the following minimum recommendations for optimal perfo
 
 Follow these steps to get the project running locally using Docker:
 
-1.  **Clone the Repository:**
-    *(Replace `<YOUR_GIT_REPOSITORY_URL>` with the actual URL)*
-    ```bash
-    git clone <YOUR_GIT_REPOSITORY_URL>
-    
-    ```
+1. **Clone the Repository:**
 
-2.  **Download Data and Models:**
-    *   Access the provided Google Drive link (or other source).
-    *   Download `data.zip` and the `models` folder.
-    *   **Extract** `data.zip` into the root of the cloned `UNet_AFM` directory. You should now have a `UNet_AFM/data/` folder structure matching the one described in Project Structure.
-    *   Place the downloaded `models` folder directly into the root of the `UNet_AFM` directory. You should have `UNet_AFM/models/`.
+   ```bash
+   git clone <YOUR_GIT_REPOSITORY_URL>
+   ```
 
-3.  **Build and Start the Docker Container:**
-    *(Run without `sudo` if you added your user to the `docker` group)*
-    ```bash
-    make build
-    ```
-    This command builds the Docker image based on the `Dockerfile` (installing all Python libraries listed in `requirements.txt`) and starts the container in detached mode (`-d`).
+2. **Download Data and Models:**
+
+   * Download `data.zip` and the `models` folder from the provided source.
+   * Extract `data.zip` into the project root. This will create the `data/` folder.
+   * Place the `models` folder in the project root.
+
+3. **Build and Start the Docker Container:**
+
+   ```bash
+   make build
+   make up
+   ```
+## 📚 Python Libraries
+
+<details>
+<summary>Click Here to see project libraries</summary>
+
+> The following Python libraries are used in this project. They are automatically installed when building the Docker container via `requirements.txt`.
+
+| Library                  | Version   | Purpose                                     |
+| :----------------------- | :-------- | :------------------------------------------ |
+| h5py                     | 3.11.0    | Interacting with HDF5 files (often for models) |
+| kaleido                  | 0.2.1     | Saving Plotly figures as static images      |
+| keras                    | 2.14.0    | High-level API for TensorFlow               |
+| Keras-Preprocessing      | 1.1.2     | Data preprocessing utilities for Keras      |
+| matplotlib               | 3.7.0     | Plotting and visualization                  |
+| numpy                    | 1.26.4    | Fundamental package for numerical computing |
+| opencv_python            | 4.5.5.64  | Computer Vision library (image processing)  |
+| opencv-python-headless | 4.5.4.60  | Headless OpenCV (for servers/containers)    |
+| opt-einsum               | 3.3.0     | Optimized tensor contractions (dependency)  |
+| pandas                   | 1.5.3     | Data manipulation and analysis (CSV, etc.)  |
+| Pillow                   | 10.1.0    | Python Imaging Library (fork)               |
+| plotly                   | 5.9.0     | Interactive plotting library                |
+| scikit_image             | 0.19.3    | Image processing algorithms                 |
+| scikit-learn             | 1.2.1     | Machine learning tools (metrics, etc.)      |
+| scipy                    | 1.10.0    | Scientific and technical computing          |
+| setuptools               | 69.5.1    | Package building utilities                  |
+| six                      | 1.16.0    | Python 2/3 compatibility library          |
+| Tensorflow               | 2.14.0    | Deep Learning framework                     |
+| Torch                    | 2.3.0     | Deep Learning framework (potentially used)  |
+| tqdm                     | 4.64.1    | Progress bars for loops                     |
+
+</details>
+
+> [!NOTE]
+> All project libraries are installed automatically within the Docker container when running `make build`.
+
 
 ## ▶️ Usage
 
-The main entry point for running the segmentation pipeline is `main.py` inside the Docker container.
+* **Run the Main Script:**
 
-*   **Execute the Main Script:**
-    *(Run without `sudo` if you added your user to the `docker` group)*
-    ```bash
-    make run
-    ```
-    *(Note: The container name `UNet_AFM` might vary slightly depending on your `docker-compose.yml` configuration or directory name. Use `docker ps` to find the correct running container name if needed.)*
+  ```bash
+  make run
+  ```
 
-*   **User Options:**
-    The script will prompt you to select an option:
-    *   **Option 1:** Run the **AFM-Only** model pipeline (uses `train_1_channels_only_AFM_CosHeightSum` data).
-    *   **Option 2:** Run the **Combined Optical+AFM** model pipeline (uses `train_2_channels_like_yolo_opt_afm` data).
-    *   **Option 3:** Run the **Optical-Only** model pipeline (uses `train_2_channels_only_optical` data).
+  This will execute `main.py` inside the Docker container `YOLOnet-AFM`.
 
-The selected pipeline will perform preprocessing (if needed, though typically done beforehand by specific scripts), run predictions using the corresponding model from the `models/` directory, save the segmentation results, and generate evaluation metrics. Outputs are saved within the `data/output/<model-selected>/` directory.
+* **Monitor Logs:**
+
+  ```bash
+  make logs
+  ```
+
+* **Access a Shell in the Container:**
+
+  ```bash
+  make shell
+  ```
+
+## 🛠️ Makefile Commands
+
+The following commands are defined in the `Makefile` to simplify your workflow:
+
+| Comando        | Descrição                                                               |
+| -------------- | ----------------------------------------------------------------------- |
+| `make build`   | Constrói a imagem Docker definida em `docker/docker-compose.yml`        |
+| `make up`      | Inicializa os containers em modo detached (`-d`)                        |
+| `make down`    | Encerra e remove os containers                                          |
+| `make restart` | Reinicia o ambiente (equivalente a `make down && make up`)              |
+| `make logs`    | Mostra os logs do serviço `yolonet_afm`                                 |
+| `make shell`   | Abre um terminal interativo dentro do container                         |
+| `make run`     | Executa o script `main.py` dentro do container                          |
+| `make clean`   | Remove imagens e volumes Docker não utilizados (libera espaço em disco) |
+
+## 🔄 Workflow Options
+
+* **User Options:**
+  The script will prompt you to select an option:
+
+  * **Option 1:** Run the **AFM-Only** model pipeline
+  * **Option 2:** Run the **Combined Optical+AFM** model pipeline
+  * **Option 3:** Run the **Optical-Only** model pipeline
+
+Each pipeline loads a pre-trained model from the `models/` folder, applies preprocessing, generates segmentation masks, and saves results in `data/output/<model-selected>/`.
+
 
 ## 📁 Folder Structure
 
@@ -161,51 +225,6 @@ The selected pipeline will perform preprocessing (if needed, though typically do
 
 </details>
 
-
-## 🔄 Integrated Workflow (Orchestrated by `main.py`)
-
-This workflow describes the different paths `main.py` can take based on user choices. It handles both model training and segmentation/evaluation.
-
-1.  **Start Execution:**
-    *   Run the main script within the Docker container:
-        ```bash
-        make run
-        ```
-    
-
-2.  **User Input: Select Operation Mode:**
-    *   The script prompts: "Do you want to **Train** a new model or perform **Segmentation** with a pre-trained model?"
-
-3.  **Path 1: Model Training**
-    *   **User Input: Select Model Type:**
-        *   Choose the data/model type (e.g., "AFM-Only (CHS)", "Combined (YOLO-AFMnet)", "Optical-Only").
-    *   **User Input: Select Architecture:**
-        *   Choose the model architecture (e.g., "U-Net", "Half-U-Net").
-    *   **`main.py` Executes Training Sequence:**
-        *   **a. Cropping:** Runs logic equivalent to `1_cropping_opt_images.py` on relevant raw data.
-        *   **b. Preprocessing:** Runs logic equivalent to `2_preprocess_unet.py` for the selected model type, preparing images and masks into the correct format (channels, normalization) and saving them to the appropriate `data/intermediate/` directory.
-        *   **c. Data Augmentation:** Applies augmentation techniques to the preprocessed training data.
-        *   **d. Model Training:**
-            *   Defines the selected network architecture (U-Net/Half-U-Net).
-            *   Trains the model using the augmented, preprocessed data.
-            *   Saves the trained model weights to the `models/` directory (e.g., `models/unet_combined_v1.h5`).
-        *   *(End of Training Path)*
-
-4.  **Path 2: Segmentation & Evaluation**
-    *   **User Input: Select Model Type:**
-        *   Choose the model type for segmentation (e.g., "AFM-Only (CHS)", "Combined (YOLO-AFMnet)", "Optical-Only"). This implies using a model previously trained for this type.
-    *   **`main.py` Executes Segmentation Sequence:**
-        *   **a. Cropping:** Runs logic equivalent to `1_cropping_opt_images.py` on the input data intended for segmentation.
-        *   **b. Preprocessing:** Runs logic equivalent to `2_preprocess_unet.py` for the selected model type, preparing the input images (and masks if available for evaluation) and saving them to the appropriate `data/intermediate/` directory.
-        *   **c. Prediction (using `3_predicts.py` logic):**
-            *   Loads the appropriate **pre-trained** model from the `models/` directory corresponding to the selected type.
-            *   Runs inference on the preprocessed input images from `data/intermediate/`.
-            *   Saves predicted segmentation masks to `data/output/<model-selected>/predicts/`.
-        *   **d. Evaluation (using `4_eval_models.py` logic):**
-            *   Loads the predicted masks (from step c) and corresponding ground truth masks (from `data/intermediate/`).
-            *   Calculates performance metrics (e.g., IoU, Dice).
-            *   Saves evaluation results (e.g., `model_metrics.png`) to `data/output/<model-selected>/`.
-        *   *(End of Segmentation Path)*
 
 ## 📜 Script Details
 
@@ -264,40 +283,6 @@ This workflow describes the different paths `main.py` can take based on user cho
 ---
 </details>
 
-## 📚 Python Libraries
-
-<details>
-<summary>Click Here to see project libraries</summary>
-
-> The following Python libraries are used in this project. They are automatically installed when building the Docker container via `requirements.txt`.
-
-| Library                  | Version   | Purpose                                     |
-| :----------------------- | :-------- | :------------------------------------------ |
-| h5py                     | 3.11.0    | Interacting with HDF5 files (often for models) |
-| kaleido                  | 0.2.1     | Saving Plotly figures as static images      |
-| keras                    | 2.14.0    | High-level API for TensorFlow               |
-| Keras-Preprocessing      | 1.1.2     | Data preprocessing utilities for Keras      |
-| matplotlib               | 3.7.0     | Plotting and visualization                  |
-| numpy                    | 1.26.4    | Fundamental package for numerical computing |
-| opencv_python            | 4.5.5.64  | Computer Vision library (image processing)  |
-| opencv-python-headless | 4.5.4.60  | Headless OpenCV (for servers/containers)    |
-| opt-einsum               | 3.3.0     | Optimized tensor contractions (dependency)  |
-| pandas                   | 1.5.3     | Data manipulation and analysis (CSV, etc.)  |
-| Pillow                   | 10.1.0    | Python Imaging Library (fork)               |
-| plotly                   | 5.9.0     | Interactive plotting library                |
-| scikit_image             | 0.19.3    | Image processing algorithms                 |
-| scikit-learn             | 1.2.1     | Machine learning tools (metrics, etc.)      |
-| scipy                    | 1.10.0    | Scientific and technical computing          |
-| setuptools               | 69.5.1    | Package building utilities                  |
-| six                      | 1.16.0    | Python 2/3 compatibility library          |
-| Tensorflow               | 2.14.0    | Deep Learning framework                     |
-| Torch                    | 2.3.0     | Deep Learning framework (potentially used)  |
-| tqdm                     | 4.64.1    | Progress bars for loops                     |
-
-</details>
-
-> [!NOTE]
-> All project libraries are installed automatically within the Docker container when running `docker compose up --build`.
 
 ## 🛠️ Built With
 
