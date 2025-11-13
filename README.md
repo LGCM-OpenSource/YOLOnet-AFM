@@ -1,8 +1,8 @@
-# UNet_AFM: Cellular Structure Segmentation using U-Net and Atomic Force Microscopy
+# YOLOnet-AFM: Cellular Structure Segmentation using Atomic Force Microscopy and U-Net to detect and segment nuclei structure.
 
 This repository contains the code and models for a project focused on segmenting cellular structures, specifically nuclei, using data derived from Atomic Force Microscopy (AFM), optionally combined with optical microscopy images. The core segmentation model is based on the U-Net architecture.
 
-![Project Workflow Diagram](papers_fig/mainText/fig2_models_preprocessing.jpg)
+![Project Workflow Diagram](papers_fig/mainText/fig3-general_pipeline.png)
 
 *Figure: Overview of the data preprocessing and model application workflow.*
 
@@ -12,8 +12,8 @@ This repository contains the code and models for a project focused on segmenting
 *   **Optical Image Integration:** Tools to crop, resize, and align optical images with AFM data.
 *   **Multiple Data Modes:** Supports segmentation using:
     *   AFM data only (1 channel: CosHeightSum)
-    *   Optical data only (2 channels)
     *   Combined AFM and Optical data (2 channels)
+    *   Optical data only (2 channels)
 *   **U-Net Model Implementation:** Utilizes TensorFlow/Keras for the U-Net model.
 *   **Prediction Pipeline:** Generates segmentation masks for input images using trained models.
 *   **Performance Evaluation:** Calculates and visualizes segmentation metrics (e.g., Precision, Recall and Dice coefficient).
@@ -38,7 +38,7 @@ This repository contains the code and models for a project focused on segmenting
 
 Ensure your system meets the following minimum recommendations for optimal performance:
 
-*   **RAM:** 8 GB+ (More recommended for training with larger datasets/models)
+*   **RAM:** 32 GB+ (More recommended for training with larger datasets/models)
 *   **Processor:** 64-bit multicore CPU (e.g., Intel Core i5-10400 or equivalent/better)
 *   **Graphics:**
     *   *Recommended:* NVIDIA GPU with CUDA support for accelerated training/inference.
@@ -79,21 +79,18 @@ Follow these steps to get the project running locally using Docker:
 1. **Clone the Repository:**
 
    ```bash
-   git clone <YOUR_GIT_REPOSITORY_URL>
+   git clone git@github.com:ArtRocha/Unet_AFM.git
    ```
 
-2. **Download Data and Models:**
-
-   * Download `data.zip` and the `models` folder from the provided source.
-   * Extract `data.zip` into the project root. This will create the `data/` folder.
-   * Place the `models` folder in the project root.
-
-3. **Build and Start the Docker Container:**
+2. **Build and Start the Docker Container:**
 
    ```bash
    make build
    make up
    ```
+> [!WARN]
+> If the `Makefile` fails to run, open it and execute the listed commands manually in your terminal.
+
 ## 📚 Python Libraries
 
 <details>
@@ -156,16 +153,17 @@ Follow these steps to get the project running locally using Docker:
 
 The following commands are defined in the `Makefile` to simplify your workflow:
 
-| Comando        | Descrição                                                               |
-| -------------- | ----------------------------------------------------------------------- |
-| `make build`   | Constrói a imagem Docker definida em `docker/docker-compose.yml`        |
-| `make up`      | Inicializa os containers em modo detached (`-d`)                        |
-| `make down`    | Encerra e remove os containers                                          |
-| `make restart` | Reinicia o ambiente (equivalente a `make down && make up`)              |
-| `make logs`    | Mostra os logs do serviço `yolonet_afm`                                 |
-| `make shell`   | Abre um terminal interativo dentro do container                         |
-| `make run`     | Executa o script `main.py` dentro do container                          |
-| `make clean`   | Remove imagens e volumes Docker não utilizados (libera espaço em disco) |
+| Command        | Description                                                     |
+| -------------- | --------------------------------------------------------------- |
+| `make build`   | Builds the Docker image defined in `docker/docker-compose.yml`  |
+| `make up`      | Starts the containers in detached mode (`-d`)                   |
+| `make down`    | Stops and removes the containers                                |
+| `make restart` | Restarts the environment (equivalent to `make down && make up`) |
+| `make logs`    | Displays the logs of the `yolonet_afm` service                  |
+| `make shell`   | Opens an interactive terminal inside the container              |
+| `make run`     | Executes the `main.py` script inside the container              |
+| `make clean`   | Removes unused Docker images and volumes (frees up disk space)  |
+
 
 ## 🔄 Workflow Options
 
@@ -316,7 +314,7 @@ This project is licensed under the [NAME OF LICENSE - e.g., MIT License] - see t
   <tr style="border: none; background: none;">
     <td align="center" style="border: none; background: none;">
       <a href="https://github.com/ArtRocha">
-        <img src="https://media.licdn.com/dms/image/v2/D4D03AQEDHHDwcJ71-Q/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1676640793420?e=1741824000&v=beta&t=PyCIUjPJ4R1YoHwnBFh7H-MELeTjA-BwU-dO-zz10Rk" width="150px;" alt="Foto Arthur Rocha" /><br>
+        <img src="papers_fig/authors/arthur.jpeg" width="150px;" alt="Foto Arthur Rocha" /><br>
         <sub>
           <b style="font-size:16px"> Arthur Rocha </b>
         </sub>
@@ -324,7 +322,7 @@ This project is licensed under the [NAME OF LICENSE - e.g., MIT License] - see t
     </td>
     <td align="center" style="border: none; background: none;">
          <a href="http://lattes.cnpq.br/8207473893996045">
-           <img src="https://media.licdn.com/dms/image/v2/C4D03AQHao6xS_1V4MQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1517361324904?e=1741824000&v=beta&t=utQZ1VrmSCGQzZePZkn12QNi_30F05B61aplPDLTYkM" width="150px;" alt="Foto de Ayumi Aurea"/><br>
+           <img src="papers_fig/authors/ayumi.jpeg" width="150px;" alt="Foto de Ayumi Aurea"/><br>
            <sub>
              <b style="font-size:16px"> Ayumi Aurea Miyakawa </b><br>
            </sub>
@@ -332,7 +330,7 @@ This project is licensed under the [NAME OF LICENSE - e.g., MIT License] - see t
        </td>
         <td align="center" style="border: none; background: none;">
       <a href="http://lattes.cnpq.br/0399495551887391">
-        <img src="http://servicosweb.cnpq.br/wspessoa/servletrecuperafoto?tipo=1&id=K8153430T2" width="150px;" alt="Foto de Cleyton Biffe"/><br>
+        <img src="papers_fig/authors/cleyton.jpeg" width="150px;" alt="Foto de Cleyton Biffe"/><br>
         <sub>
           <b style="font-size:16px"> Cleyton Biffe </b><br>
         </sub>
@@ -340,7 +338,7 @@ This project is licensed under the [NAME OF LICENSE - e.g., MIT License] - see t
     </td>
     <td align="center" style="border: none; background: none;">
       <a href="https://github.com/EdCarlos-dev">
-        <img src="https://media.licdn.com/dms/image/v2/D4D03AQHPPE38HWKxgQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1682383748193?e=1741824000&v=beta&t=WJhEASVpf3eCXmboJok2n1dxDRvvxkApnQao0h4KdGo" width="150px;" alt="Foto de Ed Santos e Silva"/><br>
+        <img src="papers_fig/authors/edcarlos.jpeg" width="150px;" alt="Foto de Ed Santos e Silva"/><br>
         <sub>
           <b style="font-size:16px"> Ed Santos e Silva </b><br>
         </sub>
@@ -348,7 +346,7 @@ This project is licensed under the [NAME OF LICENSE - e.g., MIT License] - see t
     </td>
      <td align="center" style="border: none; background: none;">
       <a href="http://lattes.cnpq.br/9674023945962136">
-        <img src="https://lh3.googleusercontent.com/a-/ALV-UjUC_CbCkHR3n6mjft683RBUYRlmXo9xZdX01RdaTErJyQ=s272-p-k-rw-no" width="150px;" alt="Foto de Jose Patane"/><br>
+        <img src="papers_fig/authors/jose.jpeg" width="150px;" alt="Foto de Jose Patane"/><br>
         <sub>
           <b style="font-size:16px"> Jose Patane </b><br>
         </sub>
