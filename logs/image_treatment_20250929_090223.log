@@ -1,0 +1,10 @@
+2025-09-29 09:02:31 - image_treatment - INFO - Initializing GenerateAFMOptico:
+2025-09-29 09:02:31 - image_treatment - INFO -   Image Path: /home/arthur/lgcm/projects/Unet_AFM/data/input/optical_images_resized/2023.03.23-12.42.52_optico_crop_resized.png
+2025-09-29 09:02:31 - image_treatment - INFO -   DataFrame Path: /home/arthur/lgcm/projects/Unet_AFM/data/input/Usefull_data/2023.03.23-12.42.52_UsefullData.tsv
+2025-09-29 09:02:31 - image_treatment - INFO -   Target Column: Generic Segmentation
+2025-09-29 09:02:31 - image_treatment - INFO -   Process Date Column: Process Date
+2025-09-29 09:02:31 - image_treatment - INFO -   Height Column: Planned Height
+2025-09-29 09:02:31 - image_treatment - INFO - GenerateAFMOptico initialized successfully.
+2025-09-29 09:02:37 - image_treatment - INFO - Running generation for pre-process type: 'AFM-Only'
+2025-09-29 09:02:41 - image_treatment - INFO - Selecting feature type based on pre_process: AFM-Only
+2025-09-29 09:05:32 - image_treatment - ERROR - Value error during image/mask generation: cannot convert float NaN to integer

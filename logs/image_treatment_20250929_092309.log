@@ -1,0 +1,100 @@
+2025-09-29 09:23:13 - image_treatment - INFO - Initializing GenerateAFMOptico:
+2025-09-29 09:23:13 - image_treatment - INFO -   Image Path: /home/arthur/lgcm/projects/Unet_AFM/data/input/optical_images_resized/2023.03.23-12.42.52_optico_crop_resized.png
+2025-09-29 09:23:13 - image_treatment - INFO -   DataFrame Path: /home/arthur/lgcm/projects/Unet_AFM/data/input/Usefull_data/2023.03.23-12.42.52_UsefullData.tsv
+2025-09-29 09:23:13 - image_treatment - INFO -   Target Column: Generic Segmentation
+2025-09-29 09:23:13 - image_treatment - INFO -   Process Date Column: Process Date
+2025-09-29 09:23:13 - image_treatment - INFO -   Height Column: Planned Height
+2025-09-29 09:23:13 - image_treatment - INFO - GenerateAFMOptico initialized successfully.
+2025-09-29 09:23:28 - image_treatment - INFO - Running generation for pre-process type: 'AFM-Only'
+2025-09-29 09:23:31 - image_treatment - INFO - Selecting feature type based on pre_process: AFM-Only
+2025-09-29 09:23:39 - image_treatment - INFO - Image and mask generation completed successfully.
+2025-09-29 09:23:41 - image_treatment - INFO - Initializing GenerateAFMOptico:
+2025-09-29 09:23:41 - image_treatment - INFO -   Image Path: /home/arthur/lgcm/projects/Unet_AFM/data/input/optical_images_resized/2023.03.22-16.33.15_optico_crop_resized.png
+2025-09-29 09:23:41 - image_treatment - INFO -   DataFrame Path: /home/arthur/lgcm/projects/Unet_AFM/data/input/Usefull_data/2023.03.22-16.33.15_UsefullData.tsv
+2025-09-29 09:23:41 - image_treatment - INFO -   Target Column: Generic Segmentation
+2025-09-29 09:23:41 - image_treatment - INFO -   Process Date Column: Process Date
+2025-09-29 09:23:41 - image_treatment - INFO -   Height Column: Planned Height
+2025-09-29 09:23:41 - image_treatment - INFO - GenerateAFMOptico initialized successfully.
+2025-09-29 09:23:41 - image_treatment - INFO - Running generation for pre-process type: 'AFM-Only'
+2025-09-29 09:23:43 - image_treatment - INFO - Selecting feature type based on pre_process: AFM-Only
+2025-09-29 09:23:48 - image_treatment - INFO - Image and mask generation completed successfully.
+2025-09-29 09:23:55 - image_treatment - INFO - Initializing GenerateAFMOptico:
+2025-09-29 09:23:55 - image_treatment - INFO -   Image Path: /home/arthur/lgcm/projects/Unet_AFM/data/input/optical_images_resized/2023.06.04-12.45.36_optico_crop_resized.png
+2025-09-29 09:23:55 - image_treatment - INFO -   DataFrame Path: /home/arthur/lgcm/projects/Unet_AFM/data/input/Usefull_data/2023.06.04-12.45.36_UsefullData.tsv
+2025-09-29 09:23:55 - image_treatment - INFO -   Target Column: Generic Segmentation
+2025-09-29 09:23:55 - image_treatment - INFO -   Process Date Column: Process Date
+2025-09-29 09:23:55 - image_treatment - INFO -   Height Column: Planned Height
+2025-09-29 09:23:55 - image_treatment - INFO - GenerateAFMOptico initialized successfully.
+2025-09-29 09:23:58 - image_treatment - INFO - Running generation for pre-process type: 'AFM-Only'
+2025-09-29 09:24:00 - image_treatment - INFO - Selecting feature type based on pre_process: AFM-Only
+2025-09-29 09:24:37 - image_treatment - INFO - Image and mask generation completed successfully.
+2025-09-29 09:24:53 - image_treatment - INFO - Initializing GenerateAFMOptico:
+2025-09-29 09:24:53 - image_treatment - INFO -   Image Path: /home/arthur/lgcm/projects/Unet_AFM/data/input/optical_images_resized/2023.03.12-15.59.44_optico_crop_resized.png
+2025-09-29 09:24:53 - image_treatment - INFO -   DataFrame Path: /home/arthur/lgcm/projects/Unet_AFM/data/input/Usefull_data/2023.03.12-15.59.44_UsefullData.tsv
+2025-09-29 09:24:53 - image_treatment - INFO -   Target Column: Generic Segmentation
+2025-09-29 09:24:53 - image_treatment - INFO -   Process Date Column: Process Date
+2025-09-29 09:24:53 - image_treatment - INFO -   Height Column: Planned Height
+2025-09-29 09:24:53 - image_treatment - INFO - GenerateAFMOptico initialized successfully.
+2025-09-29 09:25:12 - image_treatment - INFO - Running generation for pre-process type: 'AFM-Only'
+2025-09-29 09:25:16 - image_treatment - INFO - Selecting feature type based on pre_process: AFM-Only
+2025-09-29 09:29:43 - image_treatment - INFO - Image and mask generation completed successfully.
+2025-09-29 09:29:47 - image_treatment - INFO - Initializing GenerateAFMOptico:
+2025-09-29 09:29:47 - image_treatment - INFO -   Image Path: /home/arthur/lgcm/projects/Unet_AFM/data/input/optical_images_resized/2023.06.04-23.04.46_optico_crop_resized.png
+2025-09-29 09:29:47 - image_treatment - INFO -   DataFrame Path: /home/arthur/lgcm/projects/Unet_AFM/data/input/Usefull_data/2023.06.04-23.04.46_UsefullData.tsv
+2025-09-29 09:29:47 - image_treatment - INFO -   Target Column: Generic Segmentation
+2025-09-29 09:29:47 - image_treatment - INFO -   Process Date Column: Process Date
+2025-09-29 09:29:47 - image_treatment - INFO -   Height Column: Planned Height
+2025-09-29 09:29:47 - image_treatment - INFO - GenerateAFMOptico initialized successfully.
+2025-09-29 09:29:48 - image_treatment - INFO - Running generation for pre-process type: 'AFM-Only'
+2025-09-29 09:30:28 - image_treatment - INFO - Selecting feature type based on pre_process: AFM-Only
+2025-09-29 09:32:38 - image_treatment - INFO - Image and mask generation completed successfully.
+2025-09-29 09:32:45 - image_treatment - INFO - Initializing GenerateAFMOptico:
+2025-09-29 09:32:45 - image_treatment - INFO -   Image Path: /home/arthur/lgcm/projects/Unet_AFM/data/input/optical_images_resized/2023.06.02-20.33.17_optico_crop_resized.png
+2025-09-29 09:32:45 - image_treatment - INFO -   DataFrame Path: /home/arthur/lgcm/projects/Unet_AFM/data/input/Usefull_data/2023.06.02-20.33.17_UsefullData.tsv
+2025-09-29 09:32:45 - image_treatment - INFO -   Target Column: Generic Segmentation
+2025-09-29 09:32:45 - image_treatment - INFO -   Process Date Column: Process Date
+2025-09-29 09:32:45 - image_treatment - INFO -   Height Column: Planned Height
+2025-09-29 09:32:45 - image_treatment - INFO - GenerateAFMOptico initialized successfully.
+2025-09-29 09:32:59 - image_treatment - INFO - Running generation for pre-process type: 'AFM-Only'
+2025-09-29 09:33:03 - image_treatment - INFO - Selecting feature type based on pre_process: AFM-Only
+2025-09-29 09:35:16 - image_treatment - INFO - Image and mask generation completed successfully.
+2025-09-29 09:35:21 - image_treatment - INFO - Initializing GenerateAFMOptico:
+2025-09-29 09:35:21 - image_treatment - INFO -   Image Path: /home/arthur/lgcm/projects/Unet_AFM/data/input/optical_images_resized/2023.03.26-07.00.18_optico_crop_resized.png
+2025-09-29 09:35:21 - image_treatment - INFO -   DataFrame Path: /home/arthur/lgcm/projects/Unet_AFM/data/input/Usefull_data/2023.03.26-07.00.18_UsefullData.tsv
+2025-09-29 09:35:21 - image_treatment - INFO -   Target Column: Generic Segmentation
+2025-09-29 09:35:21 - image_treatment - INFO -   Process Date Column: Process Date
+2025-09-29 09:35:21 - image_treatment - INFO -   Height Column: Planned Height
+2025-09-29 09:35:21 - image_treatment - INFO - GenerateAFMOptico initialized successfully.
+2025-09-29 09:35:34 - image_treatment - INFO - Running generation for pre-process type: 'AFM-Only'
+2025-09-29 09:35:38 - image_treatment - INFO - Selecting feature type based on pre_process: AFM-Only
+2025-09-29 09:37:23 - image_treatment - INFO - Image and mask generation completed successfully.
+2025-09-29 09:37:36 - image_treatment - INFO - Initializing GenerateAFMOptico:
+2025-09-29 09:37:36 - image_treatment - INFO -   Image Path: /home/arthur/lgcm/projects/Unet_AFM/data/input/optical_images_resized/2023.03.26-22.54.41_optico_crop_resized.png
+2025-09-29 09:37:36 - image_treatment - INFO -   DataFrame Path: /home/arthur/lgcm/projects/Unet_AFM/data/input/Usefull_data/2023.03.26-22.54.41_UsefullData.tsv
+2025-09-29 09:37:36 - image_treatment - INFO -   Target Column: Generic Segmentation
+2025-09-29 09:37:36 - image_treatment - INFO -   Process Date Column: Process Date
+2025-09-29 09:37:36 - image_treatment - INFO -   Height Column: Planned Height
+2025-09-29 09:37:36 - image_treatment - INFO - GenerateAFMOptico initialized successfully.
+2025-09-29 09:37:50 - image_treatment - INFO - Running generation for pre-process type: 'AFM-Only'
+2025-09-29 09:38:10 - image_treatment - INFO - Selecting feature type based on pre_process: AFM-Only
+2025-09-29 09:40:11 - image_treatment - INFO - Image and mask generation completed successfully.
+2025-09-29 09:40:14 - image_treatment - INFO - Initializing GenerateAFMOptico:
+2025-09-29 09:40:14 - image_treatment - INFO -   Image Path: /home/arthur/lgcm/projects/Unet_AFM/data/input/optical_images_resized/2023.06.04-23.21.49_optico_crop_resized.png
+2025-09-29 09:40:14 - image_treatment - INFO -   DataFrame Path: /home/arthur/lgcm/projects/Unet_AFM/data/input/Usefull_data/2023.06.04-23.21.49_UsefullData.tsv
+2025-09-29 09:40:14 - image_treatment - INFO -   Target Column: Generic Segmentation
+2025-09-29 09:40:14 - image_treatment - INFO -   Process Date Column: Process Date
+2025-09-29 09:40:14 - image_treatment - INFO -   Height Column: Planned Height
+2025-09-29 09:40:14 - image_treatment - INFO - GenerateAFMOptico initialized successfully.
+2025-09-29 09:40:24 - image_treatment - INFO - Running generation for pre-process type: 'AFM-Only'
+2025-09-29 09:41:02 - image_treatment - INFO - Selecting feature type based on pre_process: AFM-Only
+2025-09-29 09:42:26 - image_treatment - INFO - Image and mask generation completed successfully.
+2025-09-29 09:42:32 - image_treatment - INFO - Initializing GenerateAFMOptico:
+2025-09-29 09:42:32 - image_treatment - INFO -   Image Path: /home/arthur/lgcm/projects/Unet_AFM/data/input/optical_images_resized/2023.03.26-22.58.33_optico_crop_resized.png
+2025-09-29 09:42:32 - image_treatment - INFO -   DataFrame Path: /home/arthur/lgcm/projects/Unet_AFM/data/input/Usefull_data/2023.03.26-22.58.33_UsefullData.tsv
+2025-09-29 09:42:32 - image_treatment - INFO -   Target Column: Generic Segmentation
+2025-09-29 09:42:32 - image_treatment - INFO -   Process Date Column: Process Date
+2025-09-29 09:42:32 - image_treatment - INFO -   Height Column: Planned Height
+2025-09-29 09:42:32 - image_treatment - INFO - GenerateAFMOptico initialized successfully.
+2025-09-29 09:42:50 - image_treatment - INFO - Running generation for pre-process type: 'AFM-Only'
+2025-09-29 09:43:17 - image_treatment - INFO - Selecting feature type based on pre_process: AFM-Only
+2025-09-29 09:47:03 - image_treatment - INFO - Image and mask generation completed successfully.
