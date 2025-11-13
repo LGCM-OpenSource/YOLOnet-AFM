@@ -1,0 +1,3 @@
+2025-11-13 10:24:59 - Model predicts - INFO - Starting prediction process for model: unet_afm_1_channels_only_AFM_CosHeightSum
+2025-11-13 10:25:00 - Model predicts - INFO - Visualization enabled: False
+2025-11-13 10:25:06 - Model predicts - ERROR - Preprocess image directory not found: /home/arthur/lgcm/projects/data/intermediate/pre_processing_afm/image/
