@@ -65,8 +65,8 @@ UNET_MODELS_PATH = {
             'preprocess_mask': os.path.join(PROJECT_ROOT, f'data{os.sep}intermediate{os.sep}pre_processing_afm{os.sep}mask{os.sep}'),
             'train_path': os.path.join(PROJECT_ROOT, f'data{os.sep}input{os.sep}train{os.sep}train_1_channels_only_AFM_CosHeightSum{os.sep}opt_img_training{os.sep}'),
             'mask_path': os.path.join(PROJECT_ROOT, f'data{os.sep}input{os.sep}train{os.sep}train_1_channels_only_AFM_CosHeightSum{os.sep}msk_img_training{os.sep}'),
-            'save_predict': os.path.join(PROJECT_ROOT, f'data{os.sep}output{os.sep}unet_afm_1_channels_only_AFM_CosHeightSum{os.sep}predicts{os.sep}'),
-            'save_metrics': os.path.join(PROJECT_ROOT, f'data{os.sep}output{os.sep}unet_afm_1_channels_only_AFM_CosHeightSum{os.sep}')
+            'save_predict': os.path.join(PROJECT_ROOT, f'results{os.sep}unet_afm_1_channels_only_AFM_CosHeightSum{os.sep}predicts{os.sep}'),
+            'save_metrics': os.path.join(PROJECT_ROOT, f'results{os.sep}unet_afm_1_channels_only_AFM_CosHeightSum{os.sep}')
     },
     
     'unet_afm_2_channels_like_yolo_opt_afm':{
@@ -76,8 +76,8 @@ UNET_MODELS_PATH = {
             'preprocess_mask': os.path.join(PROJECT_ROOT, f'data{os.sep}intermediate{os.sep}pre_processing_optico_and_afm{os.sep}mask{os.sep}'),
             'train_path': os.path.join(PROJECT_ROOT, f'data{os.sep}input{os.sep}train{os.sep}train_2_channels_like_yolo_opt_afm{os.sep}opt_img_training{os.sep}'),
             'mask_path': os.path.join(PROJECT_ROOT, f'data{os.sep}input{os.sep}train{os.sep}train_2_channels_like_yolo_opt_afm{os.sep}msk_img_training{os.sep}'),
-            'save_predict': os.path.join(PROJECT_ROOT, f'data{os.sep}output{os.sep}unet_afm_2_channels_like_yolo_opt_afm{os.sep}predicts{os.sep}'),
-            'save_metrics': os.path.join(PROJECT_ROOT, f'data{os.sep}output{os.sep}unet_afm_2_channels_like_yolo_opt_afm{os.sep}')
+            'save_predict': os.path.join(PROJECT_ROOT, f'results{os.sep}unet_afm_2_channels_like_yolo_opt_afm{os.sep}predicts{os.sep}'),
+            'save_metrics': os.path.join(PROJECT_ROOT, f'results{os.sep}unet_afm_2_channels_like_yolo_opt_afm{os.sep}')
             
             
     },
@@ -88,8 +88,8 @@ UNET_MODELS_PATH = {
             'preprocess_mask': os.path.join(PROJECT_ROOT, f'data{os.sep}intermediate{os.sep}pre_processing_optico{os.sep}mask{os.sep}'),
             'train_path': os.path.join(PROJECT_ROOT, f'data{os.sep}input{os.sep}train{os.sep}train_2_channels_only_optical{os.sep}opt_img_training{os.sep}'),
             'mask_path': os.path.join(PROJECT_ROOT, f'data{os.sep}input{os.sep}train{os.sep}train_2_channels_only_optical{os.sep}msk_img_training{os.sep}'),
-            'save_predict': os.path.join(PROJECT_ROOT, f'data{os.sep}output{os.sep}unet_afm_2_channels_only_optical{os.sep}predicts{os.sep}'),
-            'save_metrics': os.path.join(PROJECT_ROOT, f'data{os.sep}output{os.sep}unet_afm_2_channels_only_optical{os.sep}')
+            'save_predict': os.path.join(PROJECT_ROOT, f'results{os.sep}unet_afm_2_channels_only_optical{os.sep}predicts{os.sep}'),
+            'save_metrics': os.path.join(PROJECT_ROOT, f'results{os.sep}unet_afm_2_channels_only_optical{os.sep}')
             
     }
     

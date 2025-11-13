@@ -10,6 +10,7 @@ services:
     volumes:
       - ../data:/app/data
       - ../models:/app/models
+      - ../results:/app/results
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
     environment:
       - DISPLAY=:1.0
