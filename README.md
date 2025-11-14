@@ -80,33 +80,35 @@ Follow these steps to get the project running locally using Docker:
    git clone https://github.com/LGCM-OpenSource/YOLOnet-AFM.git
    ```
 
-2.**Download the dataset and pretrained models (Zenodo)**
-Access the dataset and models on Zenodo using the [link](10.5281/zenodo.17609119).
-After downloading, unzip the package data_YOLOnetAFM.
-Then:
+2. **Download the dataset and pretrained models (Zenodo)**
 
-Rename the unzipped folder to data and place it in the project root directory.
-
-Move the models folder (also included in the Zenodo package) to the project root.
-
-Your directory structure should look like:
-```
-YOLOnet-AFM/
-├── data/
-├── models/
-├── dev/
-├── docker
-├── requirements.txt
-└──...
-```
-3. **Build and Start the Docker Container:**
+   Access the dataset and models on Zenodo using the [link](10.5281/zenodo.17609119).
+   
+   After downloading, unzip the package data_YOLOnetAFM.
+   Then:
+   
+   Rename the unzipped folder to data and place it in the project root directory.
+   
+   Move the models folder (also included in the Zenodo package) to the project root.
+   
+   Your directory structure should look like:
+   ```
+   YOLOnet-AFM/
+   ├── data/
+   ├── models/
+   ├── dev/
+   ├── docker
+   ├── requirements.txt
+   └──...
+   ```
+4. **Build and Start the Docker Container:**
 
    ```bash
    make build
    make up
    ```
-> [!WARN]
-> If the `Makefile` fails to run, open it and execute the listed commands manually in your terminal.
+> [!WARNING]
+> If the make commands do not work, open the Makefile and manually execute the commands listed inside it in your terminal.
 
 ### 📚 Python Libraries
 
@@ -187,20 +189,25 @@ The following commands are defined in the `Makefile` to simplify your workflow:
 1. **Select the Model Pipeline**
   The script will prompt you to select an option:
 
-  * **Option 1:** Run the **AFM-Only** model pipeline
-  * **Option 2:** Run the **YOLOnet-AFM** model pipeline
-  * **Option 3:** Run the **OptiCon-PC** model pipeline
+      * **Option 1:** Select the **AFM-Only** model pipeline
+      * **Option 2:** Select the **YOLOnet-AFM** model pipeline
+      * **Option 3:** Select the **OptiCon-PC** model pipeline
 
-Each pipeline loads the corresponding configuration and prepares the appropriate input channels.
+> [!TIP]
+> Each pipeline loads the corresponding configuration and prepares the appropriate input channels.
+
 2. **Choose How to Execute the Pipeline**
    After choosing the model type, the script provides two execution options:
 
    * **Option 1** — `Train a new model`
+
       The full training pipeline will run, including preprocessing, dataset assembly, training, and generation of predictions.
 
    * **Option 2** — `Use our pre-trained model`
+
       The script will load the pre-trained weights available in the models/ folder and run only inference, generating segmentation masks without retraining.
---
+
+
 ### Output
 
 Regardless of the selected path, the workflow will generate results in:
