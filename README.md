@@ -79,7 +79,7 @@ Follow these steps to get the project running locally using Docker:
 1. **Clone the Repository:**
 
    ```bash
-   git clone git@github.com:ArtRocha/Unet_AFM.git
+   git clone https://github.com/LGCM-OpenSource/YOLOnet-AFM.git
    ```
 
 2. **Build and Start the Docker Container:**
