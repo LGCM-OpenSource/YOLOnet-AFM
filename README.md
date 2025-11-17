@@ -82,7 +82,7 @@ Follow these steps to get the project running locally using Docker:
 
 2. **Download the dataset and pretrained models (Zenodo)**
 
-   Access the dataset and models on Zenodo using the [link](10.5281/zenodo.17609119).
+   Access the dataset and models on Zenodo using the link: 10.5281/zenodo.17609119
    
    After downloading, unzip the package data_YOLOnetAFM.
    Then:
