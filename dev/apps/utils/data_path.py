@@ -31,6 +31,7 @@ def build_file_path(path, file, actual_process = '_OpticalImg.png',  new_process
         >>> treat_file_names(path, file)
         '{os.sep}data{os.sep}images{os.sep}sample'
     """
+    create_dir(path)
     if isinstance(new_process, list):
         for process in new_process:
             filename = file.replace(actual_process, process)

@@ -624,11 +624,6 @@ class GenerateAFMOptico:
         self.logger.debug(f"Attempting to save matrix of shape {img.shape} to: {save_path}")
         try:
             # Ensure directory exists before saving
-            save_dir = os.path.dirname(save_path)
-            if not os.path.exists(save_dir):
-                self.logger.warning(f"Save directory does not exist, creating: {save_dir}")
-                os.makedirs(save_dir) # Use makedirs to create parent dirs if needed
-
             np.save(save_path, img)
             self.logger.info(f"Matrix saved successfully to: {save_path}")
             return True

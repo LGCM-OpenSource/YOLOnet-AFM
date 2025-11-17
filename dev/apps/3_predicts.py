@@ -19,9 +19,9 @@ def build_paths(files_list, actual_process='_channels_added.npy'):
 
         opt = build_file_path(CROP_PATH['optical_crop_resized'], img_file, actual_process=actual_process, new_process='_optico_crop_resized.png')
         use = build_file_path(CROP_PATH['usefull_data'], img_file, actual_process=actual_process, new_process='_UsefullData.tsv')
-        pre = os.path.join(model_info['preprocess_img'], img_file) # Use the original file name from listdir
-        mask = os.path.join(model_info['preprocess_mask'], img_file) # Use the original file name from listdir
-        save = os.path.join(model_info['save_predict'], base_name + '_unet.png') # Construct save path from base name
+        pre = build_file_path(model_info['preprocess_img'], img_file) # Use the original file name from listdir
+        mask = build_file_path(model_info['preprocess_mask'], img_file) # Use the original file name from listdir
+        save = build_file_path(model_info['save_predict'], base_name + '_unet.png') # Construct save path from base name
 
         paths = {
             "optical": opt,
