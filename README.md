@@ -85,6 +85,7 @@ Follow these steps to get the project running locally using Docker:
    Access the dataset and models on Zenodo using the DOI: [10.5281/zenodo.17609119](https://doi.org/10.5281/zenodo.17609119)
    
    After downloading, unzip the package data_YOLOnetAFM.
+   
    Then:
    
    Rename the unzipped folder to data and place it in the project root directory.
@@ -97,11 +98,23 @@ Follow these steps to get the project running locally using Docker:
    ├── data/
    ├── models/
    ├── dev/
-   ├── docker
+   ├── docker/
    ├── requirements.txt
    └──...
    ```
-4. **Build and Start the Docker Container:**
+   **2.1 Demonstration Test (Optional)**
+   
+   To quickly test the tool without downloading the full Zenodo package, you can use a lightweight demonstration setup:
+   
+   1. Download the pretrained model weights from the Google Drive link below:
+   
+      👉 **Google Drive (demo pretrained weights):**  
+      *<https://drive.google.com/drive/folders/1GRaSkKVlbGsPPjdvLNAdBB6G5pvqrKvt?usp=sharing>*  
+   
+   2. Download the example input data available in the GitHub repository:
+   3. **Follow the same folder structure shown in Section 2**
+
+3. **Build and Start the Docker Container:**
 
    ```bash
    make build
