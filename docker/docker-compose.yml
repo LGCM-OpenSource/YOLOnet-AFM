@@ -3,16 +3,20 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile
+
+    container_name: YOLOnet-AFM
     command: ["tail", "-f", "/dev/null"]
 
     stdin_open: true
-    container_name: YOLOnet-AFM
+    tty: true
+
     volumes:
       - ../data:/app/data
       - ../models:/app/models
       - ../results:/app/results
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
+
     environment:
-      - DISPLAY=:1.0
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
       - PYTHONUNBUFFERED=1
-    tty: true

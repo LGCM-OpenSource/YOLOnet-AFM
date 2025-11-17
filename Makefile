@@ -8,6 +8,7 @@ build:
 	docker compose -f $(COMPOSE_FILE) build
 
 up:
+	xhost +SI:localuser:$(shell whoami)
 	docker compose -f $(COMPOSE_FILE) up -d
 
 down:
